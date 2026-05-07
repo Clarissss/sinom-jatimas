@@ -3,390 +3,185 @@
 @section('title', 'Register - PT. Sinom Jati Mas')
 
 @section('content')
-<style>
-    /* Reset Background Luar */
-    .bg-main-wrapper {
-        background-color: #f8fafc; /* Warna dasar abu-abu sangat muda */
-    }
-
-    /* Pattern Kertas Arsitektur (Dalam Form) */
-    .bg-grid-pattern {
-        background-image: linear-gradient(to right, #f1f5f9 1px, transparent 1px),
-                          linear-gradient(to bottom, #f1f5f9 1px, transparent 1px);
-        background-size: 24px 24px;
-    }
-
-    /* Input Focus Styling */
-    .input-group:focus-within label { color: #DD3517; }
-    .input-group:focus-within .icon-wrapper {
-        color: #DD3517;
-        background-color: #fff1eb;
-    }
-
-    /* Cursor Animasi Mengetik */
-    .cursor-blink {
-        display: inline-block;
-        width: 3px;
-        height: 1.1em;
-        background-color: #DD3517;
-        vertical-align: text-bottom;
-        margin-left: 2px;
-        animation: blink 1s step-end infinite;
-    }
-    @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-    }
-    
-    /* Canvas Layer untuk Efek Partikel */
-    #particle-canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0; /* Berada paling belakang */
-    }
-</style>
-
-{{-- Canvas Particle Network --}}
-<canvas id="particle-canvas"></canvas>
-
-{{-- Wrapper Layar Penuh (pointer-events-none agar tidak menghalangi) --}}
-<div class="min-h-screen w-full flex items-center justify-center bg-transparent p-4 sm:p-8 relative z-10 pointer-events-none">
-    
-    {{-- Main Container Card (pointer-events-auto agar bisa diklik/diisi) --}}
-    <div class="flex w-full max-w-5xl bg-white rounded-[2rem] shadow-2xl shadow-gray-300/80 overflow-hidden min-h-[650px] border border-gray-100 pointer-events-auto relative">
-        
-        {{-- KIRI: Visual Branding --}}
-        <div class="hidden lg:flex w-1/2 relative flex-col justify-center px-12 py-16 bg-gray-900">
-            <img src="https://images.unsplash.com/photo-1541888086425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop" 
-                 alt="Konstruksi Profesional" 
-                 class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay hover:scale-105 transition-transform duration-[15s] ease-out">
-            
-            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
-
-            <div class="relative z-10 w-full">
-                <div class="w-16 h-16 bg-[#DD3517] rounded-2xl flex items-center justify-center shadow-lg shadow-[#DD3517]/30 mb-8">
-                    <i class="fa-solid fa-handshake text-white text-3xl"></i>
-                </div>
-                
-                {{-- Animasi Mengetik --}}
-                <h1 class="text-4xl font-black text-white leading-tight mb-4 min-h-[90px]">
-                    <span id="type-line-1"></span><span id="cursor1" class="cursor-blink"></span><br>
-                    <span id="type-line-2" class="text-[#DD3517]"></span><span id="cursor2" class="cursor-blink" style="display:none;"></span>
-                </h1>
-                
-                <p class="text-gray-300 text-base font-medium leading-relaxed mb-8 opacity-0 transition-opacity duration-1000" id="fade-text">
-                    Bergabunglah bersama kami sebagai mitra proyek terpercaya. Kami menghadirkan transparansi dan kualitas di setiap tahap pembangunan.
-                </p>
-                
-                <div class="inline-flex items-center space-x-3 bg-white/10 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/20 opacity-0 transition-opacity duration-1000" id="fade-badge">
-                    <span class="relative flex h-2.5 w-2.5">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                    </span>
-                    <span class="text-sm font-bold text-white tracking-wide">Pendaftaran Klien Resmi</span>
+<div class="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full">
+        {{-- Card --}}
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            {{-- Header with gradient --}}
+            <div class="bg-gradient-to-r from-primary-600 to-secondary-500 px-8 py-6">
+                <div class="text-center">
+                    <div class="mx-auto h-16 w-16 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-user-plus text-white text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Daftar Akun</h2>
+                    <p class="text-primary-100 mt-1">Jadilah Klien PT. Sinom Jati Mas</p>
                 </div>
             </div>
-        </div>
-
-        {{-- KANAN: Form Register --}}
-        <div class="w-full lg:w-1/2 flex items-center justify-center relative bg-white bg-grid-pattern overflow-y-auto px-6 py-10 lg:px-12">
             
-            <div class="w-full max-w-md relative z-10">
-                
-                {{-- Header Mobile --}}
-                <div class="lg:hidden flex items-center space-x-4 mb-8">
-                    <div class="w-12 h-12 bg-[#DD3517] rounded-xl flex items-center justify-center shadow-md">
-                        <i class="fa-solid fa-building text-white text-xl"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-black text-gray-900 tracking-tight">SINOM JATI MAS</h2>
-                        <p class="text-[11px] text-gray-500 uppercase font-bold tracking-widest">Portal Registrasi</p>
-                    </div>
-                </div>
-
-                {{-- Judul Form --}}
-                <div class="mb-8 lg:mt-0 mt-2">
-                    <h2 class="text-3xl font-black text-gray-900 mb-2">Daftar Akun</h2>
-                    <p class="text-gray-500 font-medium text-sm">Lengkapi data di bawah untuk membuat profil klien Anda.</p>
-                </div>
-
-                {{-- Form Elements --}}
+            {{-- Form --}}
+            <div class="px-8 py-8">
                 <form method="POST" action="{{ route('register') }}" class="space-y-5" x-data="{ loading: false }" @submit.prevent="loading = true; $el.submit()">
                     @csrf
                     
-                    {{-- Input Nama --}}
-                    <div class="input-group group">
-                        <label for="name" class="block text-sm font-bold text-gray-700 mb-1.5 transition-colors">Nama Lengkap / Perusahaan</label>
-                        <div class="relative flex items-center">
-                            <div class="icon-wrapper absolute left-1.5 w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 bg-gray-50 transition-all duration-300">
-                                <i class="fa-regular fa-user text-sm"></i>
+                    {{-- Name Field --}}
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+                            Nama Lengkap <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-regular fa-user text-gray-400"></i>
                             </div>
-                            <input id="name" name="name" type="text" required autocomplete="name"
-                                   class="block w-full pl-14 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#DD3517]/20 focus:border-[#DD3517] transition-all font-medium @error('name') border-red-500 @enderror"
-                                   value="{{ old('name') }}" placeholder="PT Sumber Berkah">
+                            <input id="name" 
+                                   name="name" 
+                                   type="text" 
+                                   required 
+                                   autocomplete="name"
+                                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors @error('name') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror"
+                                   value="{{ old('name') }}" 
+                                   placeholder="Nama perusahaan/perorangan">
                         </div>
                         @error('name')
-                            <p class="mt-1.5 text-sm text-red-500 font-medium flex items-center"><i class="fa-solid fa-circle-exclamation mr-1.5"></i> {{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600 flex items-center">
+                                <i class="fa-solid fa-circle-exclamation mr-1"></i>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
-                    {{-- Input Email --}}
-                    <div class="input-group group">
-                        <label for="email" class="block text-sm font-bold text-gray-700 mb-1.5 transition-colors">Alamat Email</label>
-                        <div class="relative flex items-center">
-                            <div class="icon-wrapper absolute left-1.5 w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 bg-gray-50 transition-all duration-300">
-                                <i class="fa-solid fa-at text-sm"></i>
+                    {{-- Email Field --}}
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                            Email <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-regular fa-envelope text-gray-400"></i>
                             </div>
-                            <input id="email" name="email" type="email" required autocomplete="email"
-                                   class="block w-full pl-14 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#DD3517]/20 focus:border-[#DD3517] transition-all font-medium @error('email') border-red-500 @enderror"
-                                   value="{{ old('email') }}" placeholder="kontak@perusahaan.com">
+                            <input id="email" 
+                                   name="email" 
+                                   type="email" 
+                                   required 
+                                   autocomplete="email"
+                                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors @error('email') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror"
+                                   value="{{ old('email') }}" 
+                                   placeholder="email@perusahaan.com">
                         </div>
                         @error('email')
-                            <p class="mt-1.5 text-sm text-red-500 font-medium flex items-center"><i class="fa-solid fa-circle-exclamation mr-1.5"></i> {{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600 flex items-center">
+                                <i class="fa-solid fa-circle-exclamation mr-1"></i>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
-                    {{-- Input Telepon --}}
-                    <div class="input-group group">
-                        <label for="phone" class="block text-sm font-bold text-gray-700 mb-1.5 transition-colors">Nomor Telepon / HP</label>
-                        <div class="relative flex items-center">
-                            <div class="icon-wrapper absolute left-1.5 w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 bg-gray-50 transition-all duration-300">
-                                <i class="fa-solid fa-phone text-sm"></i>
+                    {{-- Phone Field --}}
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+                            No. Telepon / HP <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-phone text-gray-400"></i>
                             </div>
-                            <input id="phone" name="phone" type="text" required
-                                   class="block w-full pl-14 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#DD3517]/20 focus:border-[#DD3517] transition-all font-medium @error('phone') border-red-500 @enderror"
-                                   value="{{ old('phone') }}" placeholder="08123456789">
+                            <input id="phone" 
+                                   name="phone" 
+                                   type="text" 
+                                   required
+                                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors @error('phone') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror"
+                                   value="{{ old('phone') }}" 
+                                   placeholder="08123456789">
                         </div>
                         @error('phone')
-                            <p class="mt-1.5 text-sm text-red-500 font-medium flex items-center"><i class="fa-solid fa-circle-exclamation mr-1.5"></i> {{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-600 flex items-center">
+                                <i class="fa-solid fa-circle-exclamation mr-1"></i>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
-                    {{-- Grid untuk Password & Konfirmasi --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {{-- Password --}}
-                        <div class="input-group group" x-data="{ show: false }">
-                            <label for="password" class="block text-sm font-bold text-gray-700 mb-1.5 transition-colors">Kata Sandi</label>
-                            <div class="relative flex items-center">
-                                <div class="icon-wrapper absolute left-1.5 w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 bg-gray-50 transition-all duration-300">
-                                    <i class="fa-solid fa-lock text-sm"></i>
-                                </div>
-                                <input id="password" name="password" :type="show ? 'text' : 'password'" required autocomplete="new-password"
-                                       class="block w-full pl-14 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#DD3517]/20 focus:border-[#DD3517] transition-all font-medium @error('password') border-red-500 @enderror"
-                                       placeholder="••••••••">
-                                <button type="button" @click="show = !show" class="absolute right-2 w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all">
-                                    <i x-show="!show" class="fa-regular fa-eye"></i>
-                                    <i x-show="show" class="fa-regular fa-eye-slash" style="display: none;"></i>
-                                </button>
+                    {{-- Password Field --}}
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                            Password <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative" x-data="{ show: false }">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-lock text-gray-400"></i>
                             </div>
+                            <input id="password" 
+                                   name="password" 
+                                   :type="show ? 'text' : 'password'" 
+                                   required
+                                   autocomplete="new-password"
+                                   class="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors @error('password') border-red-500 focus:ring-red-500 focus:border-red-500 @enderror"
+                                   placeholder="Minimal 8 karakter">
+                            <button type="button" 
+                                    @click="show = !show" 
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none">
+                                <i x-show="!show" class="fa-regular fa-eye"></i>
+                                <i x-show="show" class="fa-regular fa-eye-slash" style="display: none;"></i>
+                            </button>
                         </div>
+                        @error('password')
+                            <p class="mt-1 text-sm text-red-600 flex items-center">
+                                <i class="fa-solid fa-circle-exclamation mr-1"></i>
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
 
-                        {{-- Konfirmasi Password --}}
-                        <div class="input-group group" x-data="{ show: false }">
-                            <label for="password_confirmation" class="block text-sm font-bold text-gray-700 mb-1.5 transition-colors">Ulangi Sandi</label>
-                            <div class="relative flex items-center">
-                                <div class="icon-wrapper absolute left-1.5 w-10 h-10 flex items-center justify-center rounded-xl text-gray-400 bg-gray-50 transition-all duration-300">
-                                    <i class="fa-solid fa-check-double text-sm"></i>
-                                </div>
-                                <input id="password_confirmation" name="password_confirmation" :type="show ? 'text' : 'password'" required autocomplete="new-password"
-                                       class="block w-full pl-14 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-[#DD3517]/20 focus:border-[#DD3517] transition-all font-medium"
-                                       placeholder="••••••••">
-                                <button type="button" @click="show = !show" class="absolute right-2 w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all">
-                                    <i x-show="!show" class="fa-regular fa-eye"></i>
-                                    <i x-show="show" class="fa-regular fa-eye-slash" style="display: none;"></i>
-                                </button>
+                    {{-- Password Confirmation Field --}}
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">
+                            Konfirmasi Password <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative" x-data="{ show: false }">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-check-double text-gray-400"></i>
                             </div>
+                            <input id="password_confirmation" 
+                                   name="password_confirmation" 
+                                   :type="show ? 'text' : 'password'" 
+                                   required
+                                   autocomplete="new-password"
+                                   class="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                                   placeholder="Ulangi password">
+                            <button type="button" 
+                                    @click="show = !show" 
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none">
+                                <i x-show="!show" class="fa-regular fa-eye"></i>
+                                <i x-show="show" class="fa-regular fa-eye-slash" style="display: none;"></i>
+                            </button>
                         </div>
                     </div>
-                    
-                    {{-- Pesan Error Password Global (Jika ada) --}}
-                    @error('password')
-                        <p class="text-sm text-red-500 font-medium flex items-center"><i class="fa-solid fa-circle-exclamation mr-1.5"></i> {{ $message }}</p>
-                    @enderror
 
-                    {{-- Tombol Daftar --}}
-                    <button type="submit" :disabled="loading" 
-                            class="relative w-full overflow-hidden flex justify-center items-center py-4 px-4 rounded-2xl text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl group mt-6">
-                        
-                        <div class="absolute inset-0 w-0 bg-[#DD3517] transition-all duration-500 ease-out group-hover:w-full z-0"></div>
-                        
-                        <div class="relative z-10 flex items-center">
-                            <i x-show="loading" class="fa-solid fa-circle-notch fa-spin mr-2" style="display: none;"></i>
-                            <span x-text="loading ? 'Memproses Pendaftaran...' : 'Daftarkan Perusahaan'"></span>
-                            <i x-show="!loading" class="fa-solid fa-user-check ml-2 transition-transform group-hover:translate-x-1"></i>
-                        </div>
+                    {{-- Submit Button --}}
+                    <button type="submit" 
+                            :disabled="loading"
+                            :class="{ 'opacity-75 cursor-not-allowed': loading }"
+                            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                        <i x-show="loading" class="fa-solid fa-circle-notch fa-spin mr-2" style="display: none;"></i>
+                        <span x-text="loading ? 'Mendaftar...' : 'Daftar'"></span>
                     </button>
                 </form>
 
-                {{-- Footer Text --}}
-                <div class="mt-8 text-center border-t border-gray-100 pt-6">
-                    <p class="text-sm text-gray-500 font-medium">
-                        Sudah memiliki akun? 
-                        <a href="{{ route('login') }}" class="font-bold text-[#DD3517] hover:opacity-80 transition-opacity ml-1">
-                            Masuk di sini
+                {{-- Login Link --}}
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Sudah punya akun? 
+                        <a href="{{ route('login') }}" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">
+                            Masuk
                         </a>
                     </p>
                 </div>
-                
             </div>
         </div>
+        
+        {{-- Footer Info --}}
+        <p class="mt-6 text-center text-xs text-gray-500">
+            © {{ date('Y') }} PT. Sinom Jati Mas. Seluruh hak cipta dilindungi.
+        </p>
     </div>
 </div>
-
-{{-- Skrip Gabungan: Animasi Ketik & Particle Network --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        // ==========================================
-        // 1. TYPEWRITER ANIMATION
-        // ==========================================
-        const line1 = "Mari Bangun Relasi,";
-        const line2 = "Wujudkan Mahakarya.";
-        const typeSpeed = 70;
-        const deleteSpeed = 30;
-        const delayBetween = 3000;
-        
-        const el1 = document.getElementById("type-line-1");
-        const el2 = document.getElementById("type-line-2");
-        const cursor1 = document.getElementById("cursor1");
-        const cursor2 = document.getElementById("cursor2");
-        let isFirstCycle = true;
-
-        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-        async function typeWriterLoop() {
-            while(true) {
-                cursor1.style.display = 'inline-block';
-                cursor2.style.display = 'none';
-                for(let i = 0; i <= line1.length; i++) {
-                    el1.innerHTML = line1.substring(0, i);
-                    await sleep(typeSpeed);
-                }
-
-                cursor1.style.display = 'none';
-                cursor2.style.display = 'inline-block';
-                for(let i = 0; i <= line2.length; i++) {
-                    el2.innerHTML = line2.substring(0, i);
-                    await sleep(typeSpeed);
-                }
-
-                if(isFirstCycle) {
-                    document.getElementById("fade-text").classList.remove('opacity-0');
-                    document.getElementById("fade-badge").classList.remove('opacity-0');
-                    isFirstCycle = false;
-                }
-
-                await sleep(delayBetween);
-
-                for(let i = line2.length; i >= 0; i--) {
-                    el2.innerHTML = line2.substring(0, i);
-                    await sleep(deleteSpeed);
-                }
-
-                cursor1.style.display = 'inline-block';
-                cursor2.style.display = 'none';
-                for(let i = line1.length; i >= 0; i--) {
-                    el1.innerHTML = line1.substring(0, i);
-                    await sleep(deleteSpeed);
-                }
-
-                await sleep(500);
-            }
-        }
-        
-        setTimeout(typeWriterLoop, 500);
-
-        // ==========================================
-        // 2. PARTICLE NETWORK ANIMATION (SOLID)
-        // ==========================================
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let particlesArray;
-
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            init();
-        });
-
-        class Particle {
-            constructor(x, y, directionX, directionY, size, color) {
-                this.x = x;
-                this.y = y;
-                this.directionX = directionX;
-                this.directionY = directionY;
-                this.size = size;
-                this.color = color;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-            update() {
-                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
-                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
-
-                this.x += this.directionX;
-                this.y += this.directionY;
-                this.draw();
-            }
-        }
-
-        function init() {
-            particlesArray = [];
-            let numberOfParticles = (canvas.height * canvas.width) / 12000;
-            for (let i = 0; i < numberOfParticles; i++) {
-                let size = (Math.random() * 2) + 1;
-                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
-                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-                let directionX = (Math.random() * 1) - 0.5; 
-                let directionY = (Math.random() * 1) - 0.5; 
-                let color = '#cbd5e1'; 
-
-                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
-            }
-        }
-
-        function connect() {
-            let opacityValue = 1;
-            for (let a = 0; a < particlesArray.length; a++) {
-                for (let b = a; b < particlesArray.length; b++) {
-                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
-                                 + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
-                    
-                    if (distance < (canvas.width/7) * (canvas.height/7)) {
-                        opacityValue = 1 - (distance/20000);
-                        ctx.strokeStyle = 'rgba(221, 53, 23,' + opacityValue + ')';
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            ctx.clearRect(0, 0, innerWidth, innerHeight);
-            
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-            }
-            connect();
-        }
-
-        init();
-        animate();
-    });
-</script>
 @endsection

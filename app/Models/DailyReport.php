@@ -11,26 +11,16 @@ class DailyReport extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'client_id',
         'project_id',
         'report_date',
         'activity_description',
         'weather_condition',
-        'photo',
         'created_by',
     ];
 
     protected $casts = [
         'report_date' => 'date',
     ];
-
-    /**
-     * Get the client that owns this daily report.
-     */
-    public function client(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(User::class, 'client_id');
-    }
 
     /**
      * Get the project that owns this daily report.

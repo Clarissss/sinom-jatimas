@@ -1,201 +1,53 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Laporan Harian - PT. Sinom Jati Mas')
-@section('page-title', 'Edit Laporan Harian')
+@section('title', 'Edit Laporan - PT. Sinom Jati Mas')
+@section('page-title', 'Edit Laporan')
 
 @section('content')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <form action="{{ route('admin.daily-reports.update', $dailyReport) }}" method="POST">
+            @csrf
+            @method('PUT')
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Proyek</label>
+                <select name="project_id" class="w-full border-gray-300 rounded-lg">
+                    @foreach($projects as $project)
+                        <option value="{{ $project->id }}" {{ $dailyReport->project_id == $project->id ? 'selected' : '' }}>
+                            {{ $project->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
 
-<style>
-    /* Styling Tom Select agar sesuai branding Sinom Jati Mas */
-    .ts-control { 
-        border-radius: 0.5rem !important; 
-        padding: 0.6rem 0.75rem !important; 
-        border-color: #d1d5db !important; 
-    }
-    .ts-wrapper.focus .ts-control { 
-        border-color: #DD3517 !important; 
-        box-shadow: 0 0 0 2px rgba(221, 53, 23, 0.1) !important; 
-    }
-    .ts-dropdown .active { 
-        background-color: rgba(221, 53, 23, 0.05) !important; 
-        color: #DD3517 !important; 
-    }
-</style>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
+                <input type="date" name="report_date" value="{{ $dailyReport->report_date->format('Y-m-d') }}" class="w-full border-gray-300 rounded-lg" required>
+            </div>
 
-<div class="max-w-2xl mx-auto animate-fade-in">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h3 class="text-lg font-semibold text-gray-900">Edit Laporan Harian</h3>
-        </div>
-        
-        <div class="p-6">
-            <form action="{{ route('admin.daily-reports.update', $dailyReport) }}" method="POST" enctype="multipart/form-data" 
-                  x-data='{ 
-                      loading: false,
-                      /* Inisialisasi preview dengan foto lama jika ada */
-                      imagePreview: "{{ $dailyReport->photo ? asset('storage/' . $dailyReport->photo) : null }}",
-                      selectedClient: "{{ old("client_id", $dailyReport->client_id) }}",
-                      selectedProject: "{{ old("project_id", $dailyReport->project_id) }}",
-                      allProjects: @json($projects),
-                      
-                      clientSelect: null,
-                      projectSelect: null,
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Kondisi Cuaca</label>
+                <select name="weather_condition" class="w-full border-gray-300 rounded-lg">
+                    <option value="sunny" {{ $dailyReport->weather_condition == 'sunny' ? 'selected' : '' }}>Cerah</option>
+                    <option value="cloudy" {{ $dailyReport->weather_condition == 'cloudy' ? 'selected' : '' }}>Berawan</option>
+                    <option value="rainy" {{ $dailyReport->weather_condition == 'rainy' ? 'selected' : '' }}>Hujan</option>
+                    <option value="storm" {{ $dailyReport->weather_condition == 'storm' ? 'selected' : '' }}>Badai</option>
+                </select>
+            </div>
 
-                      init() {
-                          // Dropdown Klien
-                          this.clientSelect = new TomSelect(this.$refs.client_select, {
-                              render: {
-                                  option: (data, escape) => `<div><span class="mr-2 text-gray-400"><i class="fas fa-user-tie w-4"></i></span>${escape(data.text)}</div>`,
-                                  item: (data, escape) => `<div><span class="mr-2 text-[#DD3517]"><i class="fas fa-user-tie w-4"></i></span>${escape(data.text)}</div>`
-                              },
-                              onChange: (val) => { 
-                                  this.selectedClient = val;
-                                  this.updateProjects(true);
-                              }
-                          });
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Aktivitas</label>
+                <textarea name="activity_description" rows="4" class="w-full border-gray-300 rounded-lg" required>{{ $dailyReport->activity_description }}</textarea>
+            </div>
 
-                          // Dropdown Proyek
-                          this.projectSelect = new TomSelect(this.$refs.project_select, {
-                              render: {
-                                  option: (data, escape) => `<div><span class="mr-2 text-gray-400"><i class="fas fa-building w-4"></i></span>${escape(data.text)}</div>`,
-                                  item: (data, escape) => `<div><span class="mr-2 text-[#DD3517]"><i class="fas fa-building w-4"></i></span>${escape(data.text)}</div>`
-                              },
-                              onChange: (val) => { this.selectedProject = val; }
-                          });
-
-                          // Muat proyek pertama kali (tanpa reset pilihan proyek yang sudah ada)
-                          this.updateProjects(false);
-                      },
-
-                      updateProjects(isChange) {
-                          if (!this.projectSelect) return;
-                          
-                          this.projectSelect.clearOptions();
-                          
-                          if (this.selectedClient) {
-                              const filtered = this.allProjects.filter(p => p.client_id == this.selectedClient);
-                              const options = filtered.map(p => ({ value: p.id, text: p.name }));
-                              this.projectSelect.addOptions(options);
-                              
-                              if (!isChange) {
-                                  this.projectSelect.setValue(this.selectedProject);
-                              } else {
-                                  this.projectSelect.clear();
-                              }
-                              this.projectSelect.enable();
-                          } else {
-                              this.projectSelect.disable();
-                          }
-                      }
-                  }' 
-                  @submit="loading = true">
-                @csrf
-                @method('PUT')
-                
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    {{-- Dropdown Klien --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Klien <span class="text-red-500">*</span></label>
-                        <select x-ref="client_select" name="client_id" required>
-                            @foreach($clients as $client)
-                                <option value="{{ $client->id }}" {{ $dailyReport->client_id == $client->id ? 'selected' : '' }}>
-                                    {{ $client->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Dropdown Proyek --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Proyek <span class="text-red-500">*</span></label>
-                        <select x-ref="project_select" name="project_id" required>
-                            <option value="">Pilih Proyek</option>
-                        </select>
-                    </div>
-                </div>
-
-                {{-- Tanggal --}}
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Laporan <span class="text-red-500">*</span></label>
-                    <input type="date" name="report_date" value="{{ old('report_date', $dailyReport->report_date->format('Y-m-d')) }}" 
-                           class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517]" required>
-                </div>
-
-                {{-- Cuaca --}}
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Kondisi Cuaca</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        @foreach(['sunny' => 'Cerah', 'cloudy' => 'Berawan', 'rainy' => 'Hujan', 'storm' => 'Badai'] as $val => $label)
-                        <label class="cursor-pointer">
-                            <input type="radio" name="weather_condition" value="{{ $val }}" class="peer hidden" 
-                                   {{ old('weather_condition', $dailyReport->weather_condition) == $val ? 'checked' : '' }}>
-                            <div class="text-center p-2 border rounded-lg peer-checked:border-[#DD3517] peer-checked:bg-orange-50 peer-checked:text-[#DD3517] hover:bg-gray-50 transition-all">
-                                <span class="text-xs font-medium">{{ $label }}</span>
-                            </div>
-                        </label>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- Upload Foto dengan Preview --}}
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ganti Foto (Opsional)</label>
-                    <div @click="$refs.photoInput.click()" 
-                         class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#DD3517] hover:bg-orange-50/30 transition-all cursor-pointer group relative">
-                        
-                        <div class="space-y-1 text-center">
-                            <template x-if="imagePreview">
-                                <div class="relative inline-block">
-                                    <img :src="imagePreview" class="mx-auto h-40 w-auto rounded-lg object-cover border shadow-sm">
-                                    <button type="button" @click.stop="imagePreview = null; $refs.photoInput.value = ''" 
-                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-lg">
-                                        <i class="fas fa-times text-xs"></i>
-                                    </button>
-                                </div>
-                            </template>
-
-                            <template x-if="!imagePreview">
-                                <div>
-                                    <i class="fas fa-image text-4xl text-gray-400 group-hover:text-[#DD3517] mb-3 transition-colors"></i>
-                                    <div class="flex text-sm text-gray-600 justify-center">
-                                        <span class="font-medium text-[#DD3517]">Klik untuk ganti foto</span>
-                                    </div>
-                                    <p class="text-xs text-gray-400 mt-1">Biarkan kosong jika tidak ingin mengubah</p>
-                                </div>
-                            </template>
-                        </div>
-
-                        <input type="file" x-ref="photoInput" name="photo" class="hidden" accept="image/*"
-                               @change="
-                                    const file = $event.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = (e) => { imagePreview = e.target.result; };
-                                        reader.readAsDataURL(file);
-                                    }
-                               ">
-                    </div>
-                </div>
-
-                {{-- Deskripsi --}}
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Aktivitas <span class="text-red-500">*</span></label>
-                    <textarea name="activity_description" rows="4" class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517]" required>{{ old('activity_description', $dailyReport->activity_description) }}</textarea>
-                </div>
-
-                {{-- Tombol --}}
-                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
-                    <a href="{{ route('admin.daily-reports.index') }}" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50">Batal</a>
-                    <button type="submit" :disabled="loading" class="bg-[#DD3517] text-white px-6 py-2.5 rounded-lg hover:bg-[#FF812E] text-sm font-medium shadow-md transition-all inline-flex items-center">
-                        <i x-show="loading" class="fas fa-spinner fa-spin mr-2"></i>
-                        <span x-text="loading ? 'Mengupdate...' : 'Update Laporan'"></span>
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="flex justify-end space-x-3">
+                <a href="{{ route('admin.daily-reports.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Batal</a>
+                <button type="submit" class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700">
+                    Update
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

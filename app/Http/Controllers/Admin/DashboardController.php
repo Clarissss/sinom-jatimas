@@ -28,9 +28,9 @@ class DashboardController extends Controller
         ];
 
         // 2. Data untuk Peta Nasional (Hanya yang memiliki koordinat)
-        $projects_for_map = Project::whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->get(['id', 'name', 'latitude', 'longitude', 'status', 'progress_percentage']);
+         $projects_for_map = Project::whereNotNull('latitude')
+    ->whereNotNull('longitude')
+    ->get(['id', 'name', 'latitude', 'longitude', 'status', 'progress_percentage', 'location']); 
 
         // 3. Data Grafik Arus Kas (6 Bulan Terakhir)
         $revenue_data = Invoice::where('status', 'paid')

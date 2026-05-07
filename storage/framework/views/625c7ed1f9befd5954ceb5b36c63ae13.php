@@ -149,7 +149,6 @@
         var projects = <?php echo json_encode($projects_for_map); ?>;
         
         // --- 2. LOGIKA PENGELOMPOKAN KOORDINAT ---
-        // Kita gunakan objek untuk menyimpan proyek berdasarkan "lat,lng" sebagai key
         var groupedProjects = {};
 
         projects.forEach(function(p) {
@@ -163,30 +162,33 @@
         // --- 3. RENDERING MARKER ---
         for (var key in groupedProjects) {
             var items = groupedProjects[key];
-            var firstItem = items[0];
             var coords = key.split(',');
+            
+            // Ambil nama kota dari proyek pertama di grup ini
+            var cityLocation = items[0].location ? items[0].location : 'Lokasi Tidak Diketahui';
 
-            // Tentukan warna marker: jika ada salah satu yang 'in_progress', beri warna oranye. 
-            // Jika semua selesai, beri warna hijau.
             var hasActive = items.some(i => i.status === 'in_progress');
             var color = hasActive ? '#FF812E' : '#10B981';
 
-            // Susun HTML untuk Pop-up (Menampilkan semua proyek di lokasi ini)
-            var popupContent = `<div class="custom-popup space-y-3 p-1 min-w-[200px]">
+            // Header Pop-up sekarang menyertakan Nama Kota/Lokasi
+            var popupContent = `<div class="custom-popup space-y-3 p-1 min-w-[220px]">
                 <div class="border-b border-gray-100 pb-2 mb-2">
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Titik Lokasi</p>
-                    <p class="text-xs font-bold text-gray-900">${items.length} Proyek Ditemukan</p>
+                    <div class="flex items-center text-[#DD3517] mb-1">
+                        <i class="fa-solid fa-location-dot text-[10px] mr-1"></i>
+                        <p class="text-[10px] font-black uppercase tracking-widest">${cityLocation}</p>
+                    </div>
+                    <p class="text-[11px] font-bold text-gray-900">${items.length} Proyek di wilayah ini</p>
                 </div>
-                <div class="max-h-[200px] overflow-y-auto space-y-4">`;
+                <div class="max-h-[220px] overflow-y-auto pr-1 space-y-4">`;
 
             items.forEach(function(item) {
                 var statusColor = item.status === 'completed' ? 'text-emerald-500' : 'text-[#FF812E]';
                 popupContent += `
-                    <div class="border-l-2 border-gray-100 pl-3">
-                        <p class="text-[8px] font-black text-gray-300 uppercase leading-none mb-1">#SJM-${item.id}</p>
+                    <div class="border-l-2 border-gray-100 pl-3 group">
+                        <p class="text-[8px] font-black text-gray-300 uppercase leading-none mb-1 group-hover:text-[#DD3517] transition-colors">#SJM-${item.id}</p>
                         <h4 class="font-black text-gray-900 uppercase text-[11px] leading-tight mb-1">${item.name}</h4>
                         <div class="flex justify-between items-center">
-                            <span class="text-[9px] font-bold text-gray-500 italic">${item.progress_percentage}% Done</span>
+                            <span class="text-[9px] font-bold text-gray-500 italic">${item.progress_percentage}% Selesai</span>
                             <span class="text-[9px] font-black uppercase ${statusColor}">${item.status}</span>
                         </div>
                     </div>`;
@@ -194,9 +196,8 @@
 
             popupContent += `</div></div>`;
 
-            // Buat satu marker untuk koordinat ini
             L.circleMarker([coords[0], coords[1]], {
-                radius: 12, // Sedikit lebih besar karena bisa menampung banyak data
+                radius: 12,
                 fillColor: color,
                 color: "#fff",
                 weight: 3,

@@ -5,12 +5,14 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\Admin\CompanyProfileController;
+use App\Http\Controllers\Admin\ServiceController;
 use Illuminate\Support\Facades\Route;
 
 // Landing Page
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-// Default home redirect (fallback untuk middleware guest)
+// Default home redirect
 Route::get('/home', function () {
     return auth()->user()?->isAdmin()
         ? redirect()->route('admin.dashboard')
@@ -21,13 +23,10 @@ Route::get('/home', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'show'])->name('login');
     Route::post('/login', [LoginController::class, 'authenticate']);
-    
     Route::get('/register', [RegisterController::class, 'show'])->name('register');
     Route::post('/register', [RegisterController::class, 'store']);
-    
     Route::get('/forgot-password', [ForgotPasswordController::class, 'show'])->name('password.request');
     Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
-    
     Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'show'])->name('password.reset');
     Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'store'])->name('password.update');
 });
@@ -51,7 +50,7 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     
-    // Projects
+    // Projects & Progress
     Route::resource('projects', \App\Http\Controllers\Admin\ProjectController::class);
     Route::post('/projects/{project}/progress', [\App\Http\Controllers\Admin\ProjectProgressController::class, 'store'])->name('projects.progress.store');
     Route::patch('/projects/{project}/progress', [\App\Http\Controllers\Admin\ProjectProgressController::class, 'updateProgress'])->name('projects.progress.update');
@@ -73,22 +72,23 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Users (Clients)
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     
+    // Content Management (Services & Compro)
+    Route::resource('services', ServiceController::class);
+    Route::resource('company-profile', CompanyProfileController::class);
+
     // Activity Logs
     Route::get('/activity-logs', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::get('/activity-logs/{activity_log}', [\App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('activity-logs.show');
     Route::delete('/activity-logs/{activity_log}', [\App\Http\Controllers\Admin\ActivityLogController::class, 'destroy'])->name('activity-logs.destroy');
 });
 
-// Profile Routes
+// Profile & Chat Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::delete('/profile/photo', [\App\Http\Controllers\ProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
-});
 
-// Chat Routes (Both roles)
-Route::middleware('auth')->group(function () {
     Route::get('/projects/{project}/chat', [ChatController::class, 'index'])->name('chat.index');
     Route::post('/projects/{project}/chat', [ChatController::class, 'store'])->name('chat.store');
     Route::get('/projects/{project}/chat/unread', [ChatController::class, 'unreadCount'])->name('chat.unread');

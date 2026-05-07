@@ -4,162 +4,201 @@
 @section('page-title', 'Kelola Proyek')
 
 @section('content')
-<div class="space-y-6 animate-fade-in">
-    {{-- Header Section --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+<style>
+    .ts-control { 
+        border-radius: 0.75rem !important; 
+        padding: 0.6rem 0.75rem !important; 
+        border-color: #f3f4f6 !important;
+        background-color: #f9fafb !important;
+        font-size: 0.875rem !important;
+        font-weight: 700 !important;
+    }
+    .ts-wrapper.focus .ts-control { 
+        border-color: #DD3517 !important; 
+        box-shadow: 0 0 0 2px rgba(221, 53, 23, 0.1) !important; 
+    }
+    .ts-dropdown { border-radius: 1rem !important; shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important; }
+</style>
+
+<div class="space-y-6 animate-fade-in pb-10">
+    {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900">Daftar Proyek</h2>
-            <p class="text-sm text-gray-500 mt-1">Kelola semua proyek konstruksi Anda</p>
+            <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">Daftar Proyek</h2>
+            <p class="text-sm text-gray-500 mt-2 font-medium">Monitoring pengerjaan operasional PT. Sinom Jati Mas.</p>
         </div>
         <a href="{{ route('admin.projects.create') }}" 
-           class="inline-flex items-center justify-center px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-sm">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Tambah Proyek
+           class="inline-flex items-center justify-center px-8 py-3 bg-gray-900 text-white text-[10px] font-black rounded-2xl hover:bg-[#DD3517] transition-all transform hover:-translate-y-1 active:scale-[0.98] shadow-xl uppercase tracking-widest">
+            <i class="fas fa-plus mr-2 text-[8px]"></i> Tambah Proyek Baru
         </a>
     </div>
 
-    {{-- Projects Table --}}
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+    {{-- Filter Bar (Gaya Laporan Harian) --}}
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+        <form action="{{ route('admin.projects.index') }}" method="GET" id="filterForm" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 items-end">
+            
+            {{-- Filter Klien --}}
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">1. Pilih Klien</label>
+                <select name="client_id" id="filter_client" placeholder="Cari Klien...">
+                    <option value="">Semua Klien</option>
+                    @foreach($clients as $client)
+                        <option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Filter Proyek (Dependent Dropdown) --}}
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">2. Pilih Proyek</label>
+                <select name="project_id" id="filter_project" placeholder="Pilih Klien Dahulu...">
+                    <option value="">Pilih Klien Dahulu</option>
+                </select>
+            </div>
+
+            {{-- Filter Status --}}
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">3. Status</label>
+                <select name="status" class="w-full border-gray-100 bg-gray-50 rounded-xl text-sm h-[46px] font-bold focus:ring-[#DD3517] uppercase tracking-tighter transition-all">
+                    <option value="">SEMUA STATUS</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>PENDING</option>
+                    <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>InProgress</option>
+                    <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Done</option>
+                </select>
+            </div>
+
+            {{-- Tombol Aksi --}}
+            <div class="flex space-x-2 h-[46px]">
+                <button type="submit" class="flex-1 bg-gray-900 text-white rounded-xl hover:bg-black text-[10px] font-black uppercase tracking-widest transition-all shadow-md">
+                    <i class="fas fa-filter mr-1 text-[8px]"></i> Terapkan
+                </button>
+                @if(request()->anyFilled(['client_id', 'project_id', 'status']))
+                    <a href="{{ route('admin.projects.index') }}" class="w-14 inline-flex items-center justify-center bg-gray-100 text-gray-400 rounded-xl hover:bg-gray-200 transition-all shadow-sm">
+                        <i class="fas fa-rotate-left"></i>
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
+    {{-- Tabel Data --}}
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50/50 border-b border-gray-100">
                     <tr>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Proyek</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Klien</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Progress</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Detail Proyek</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Klien</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Progress</th>
+                        <th class="px-8 py-6 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
+                        <th class="px-8 py-6 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
+                <tbody class="divide-y divide-gray-50">
                     @forelse($projects as $project)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="font-medium text-gray-900">{{ $project->name }}</div>
-                                <div class="text-sm text-gray-500 flex items-center mt-1">
-                                    <svg class="w-3.5 h-3.5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
-                                    {{ Str::limit($project->location, 40) }}
+                        <tr class="hover:bg-gray-50/50 transition-all group">
+                            <td class="px-8 py-5">
+                                <div class="font-black text-gray-900 text-sm uppercase tracking-tight group-hover:text-[#DD3517] transition-colors">{{ $project->name }}</div>
+                                <div class="text-[10px] text-gray-400 font-bold mt-1 flex items-center uppercase tracking-widest italic">
+                                    <i class="fa-solid fa-location-dot mr-1.5 text-[#FF812E]"></i>
+                                    {{ $project->location ?? 'Indonesia' }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="h-8 w-8 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-white text-xs font-bold mr-2">
-                                        {{ strtoupper(substr($project->client->name, 0, 1)) }}
+                            <td class="px-8 py-5 font-black text-gray-700 text-xs uppercase tracking-tighter">
+                                {{ $project->client->name }}
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-1 bg-gray-100 rounded-full h-1.5 min-w-[80px] overflow-hidden">
+                                        <div class="bg-[#FF812E] h-full rounded-full transition-all duration-1000" style="width: {{ $project->progress_percentage }}%"></div>
                                     </div>
-                                    <span class="text-sm text-gray-600">{{ $project->client->name }}</span>
+                                    <span class="text-[11px] font-black text-gray-900">{{ $project->progress_percentage }}%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="w-24 bg-gray-200 rounded-full h-2 mr-3">
-                                        <div class="bg-primary-600 h-2 rounded-full transition-all duration-500" style="width: {{ $project->progress_percentage }}%"></div>
-                                    </div>
-                                    <span class="text-sm font-medium text-gray-600">{{ $project->progress_percentage }}%</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
+                            <td class="px-8 py-5 text-center">
                                 @php
-                                    $statusConfig = [
-                                        'in_progress' => ['class' => 'bg-green-100 text-green-800', 'label' => 'Aktif'],
-                                        'completed' => ['class' => 'bg-blue-100 text-blue-800', 'label' => 'Selesai'],
-                                        'pending' => ['class' => 'bg-yellow-100 text-yellow-800', 'label' => 'Pending'],
-                                        'cancelled' => ['class' => 'bg-gray-100 text-gray-800', 'label' => 'Dibatalkan'],
+                                    $styles = [
+                                        'in_progress' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                        'completed' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                        'pending' => 'bg-orange-50 text-orange-600 border-orange-100',
                                     ];
-                                    $config = $statusConfig[$project->status] ?? $statusConfig['pending'];
                                 @endphp
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $config['class'] }}">
-                                    {{ $config['label'] }}
+                                <span class="inline-flex px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border {{ $styles[$project->status] ?? 'bg-gray-50 text-gray-400' }}">
+                                    {{ $project->status }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center justify-center space-x-2">
-                                    {{-- View Button --}}
-                                    <a href="{{ route('admin.projects.show', $project) }}" 
-                                       class="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
-                                       title="Detail Proyek">
-                                        <span class="sr-only">Detail</span>
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                        </svg>
-                                    </a>
-                                    
-                                    {{-- Edit Button --}}
-                                    <a href="{{ route('admin.projects.edit', $project) }}" 
-                                       class="p-2 text-yellow-600 hover:text-yellow-800 hover:bg-yellow-50 rounded-lg transition-colors"
-                                       title="Edit Proyek">
-                                        <span class="sr-only">Edit</span>
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                    </a>
-                                    
-                                    {{-- Chat Button --}}
-                                    <a href="{{ route('chat.index', $project) }}" 
-                                       class="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
-                                       title="Chat Proyek">
-                                        <span class="sr-only">Chat</span>
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                        </svg>
-                                    </a>
-                                    
-                                    {{-- Delete Button --}}
-                                    <form action="{{ route('admin.projects.destroy', $project) }}" 
-                                          method="POST" 
-                                          class="inline"
-                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus proyek ini? Tindakan ini tidak dapat dibatalkan.');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
-                                                title="Hapus Proyek">
-                                            <span class="sr-only">Hapus</span>
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                        </button>
+                            <td class="px-8 py-5 text-right whitespace-nowrap">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <a href="{{ route('admin.projects.show', $project) }}" class="p-2 text-gray-400 hover:text-[#DD3517] transition-all"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ route('admin.projects.edit', $project) }}" class="p-2 text-gray-400 hover:text-blue-600 transition-all"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" class="inline" onsubmit="return confirm('Hapus?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="p-2 text-gray-300 hover:text-red-600 transition-all"><i class="fa-solid fa-trash-can"></i></button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center">
-                                <div class="flex flex-col items-center">
-                                    <div class="bg-gray-100 rounded-full p-4 mb-4">
-                                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-lg font-medium text-gray-900 mb-1">Belum ada proyek</h3>
-                                    <p class="text-sm text-gray-500 mb-4">Mulai dengan menambahkan proyek pertama Anda</p>
-                                    <a href="{{ route('admin.projects.create') }}" 
-                                       class="inline-flex items-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                        </svg>
-                                        Tambah Proyek
-                                    </a>
-                                </div>
-                            </td>
+                            <td colspan="5" class="px-8 py-20 text-center text-gray-400 font-black uppercase text-[10px] tracking-widest">Data Tidak Ditemukan</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        
-        {{-- Pagination --}}
-        @if($projects->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-                {{ $projects->links() }}
-            </div>
-        @endif
     </div>
 </div>
+
+{{-- JAVASCRIPT DEPENDENT DROPDOWN --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inisialisasi TomSelect
+        var clientSelect = new TomSelect('#filter_client', { plugins: ['clear_button'] });
+        var projectSelect = new TomSelect('#filter_project', { plugins: ['clear_button'] });
+
+        // Fungsi Memuat Proyek
+        function loadProjects(clientId, selectedProjectId = null) {
+            projectSelect.clearOptions();
+            projectSelect.clear();
+            
+            if (!clientId) {
+                projectSelect.addOption({value: '', text: 'Pilih Klien Dahulu'});
+                projectSelect.refreshOptions();
+                return;
+            }
+
+            // AJAX call ke route index
+            fetch(`{{ route('admin.projects.index') }}?get_projects=true&client_id=${clientId}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.length > 0) {
+                    data.forEach(p => projectSelect.addOption({value: p.id, text: p.name}));
+                } else {
+                    projectSelect.addOption({value: '', text: 'Tidak ada proyek'});
+                }
+                projectSelect.refreshOptions();
+                if (selectedProjectId) projectSelect.setValue(selectedProjectId);
+            })
+            .catch(err => console.error('Error fetching projects:', err));
+        }
+
+        // Listener saat Klien berubah
+        clientSelect.on('change', function(val) {
+            loadProjects(val);
+        });
+
+        // Cek jika ada filter yang sedang aktif (setelah submit)
+        const currentClientId = "{{ request('client_id') }}";
+        const currentProjectId = "{{ request('project_id') }}";
+        if (currentClientId) {
+            loadProjects(currentClientId, currentProjectId);
+        }
+    });
+</script>
 @endsection

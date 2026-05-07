@@ -9,11 +9,44 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::with('client')->latest()->paginate(10);
-        return view('admin.projects.index', compact('projects'));
+        // LOGIKA AJAX: Harus diletakkan paling atas agar langsung merespon request JavaScript
+        if ($request->ajax() || $request->has('get_projects')) {
+            $projects = Project::where('client_id', $request->client_id)
+                ->orderBy('name')
+                ->get(['id', 'name']);
+            return response()->json($projects);
+        }
+
+        $query = Project::with('client');
+
+        // Filter Pencarian
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter Klien
+        if ($request->filled('client_id')) {
+            $query->where('client_id', $request->client_id);
+        }
+
+        // Filter Proyek Tertentu
+        if ($request->filled('project_id')) {
+            $query->where('id', $request->project_id);
+        }
+
+        // Filter Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $projects = $query->latest()->paginate(10)->withQueryString();
+        $clients = User::where('role', 'client')->orderBy('name')->get();
+
+        return view('admin.projects.index', compact('projects', 'clients'));
     }
+
 
     public function create()
     {
@@ -70,7 +103,6 @@ class ProjectController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'location' => ['nullable', 'string', 'max:255'],
-            
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
             'start_date' => ['nullable', 'date'],

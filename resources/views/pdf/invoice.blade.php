@@ -1,380 +1,316 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
     <meta charset="utf-8">
     <title>Invoice {{ $invoice->invoice_number }}</title>
     <style>
-        /* RESET & BASE */
-        @page {
-            margin: 0px; /* Reset margin bawaan PDF */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 12px;
-            color: #374151;
-            margin: 0;
-            padding: 0;
             line-height: 1.5;
+            color: #333;
         }
-        
-        /* DEKORASI ATAS */
-        .top-accent {
-            background-color: #DD3517;
-            height: 12px;
-            width: 100%;
-        }
-
-        /* CONTAINER UTAMA */
-        .container {
-            padding: 40px 50px;
-        }
-
-        /* HEADER SECTION */
-        .header-table {
-            width: 100%;
-            margin-bottom: 40px;
-            border-bottom: 2px solid #f3f4f6;
+        .header {
+            border-bottom: 4px solid #ea580c;
             padding-bottom: 20px;
+            margin-bottom: 30px;
         }
-        .header-table td {
-            vertical-align: middle;
+        .logo-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
         }
-        .company-name {
-            font-size: 26px;
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #dc2626, #ea580c);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: bold;
-            color: #DD3517;
-            margin: 0;
-            letter-spacing: 0.5px;
+            font-size: 24px;
+            margin-right: 15px;
         }
-        .company-tagline {
-            font-size: 11px;
-            color: #1f2937;
+        .company-info h1 {
+            color: #dc2626;
+            font-size: 22px;
             font-weight: bold;
-            margin-bottom: 6px;
-            margin-top: 2px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 3px;
         }
-        .company-address {
+        .company-info p {
+            color: #666;
             font-size: 10px;
-            color: #6b7280;
-            line-height: 1.4;
+            margin: 2px 0;
         }
-        .invoice-text {
-            font-size: 38px;
-            font-weight: 900;
-            color: #111827;
+        .invoice-title {
             text-align: right;
-            text-transform: uppercase;
-            margin: 0;
-            letter-spacing: 2px;
         }
-        .invoice-meta {
-            text-align: right;
-            font-size: 11px;
-            color: #4b5563;
-            margin-top: 8px;
+        .invoice-title h2 {
+            color: #ea580c;
+            font-size: 28px;
+            font-weight: bold;
         }
-        .invoice-meta strong {
-            color: #111827;
-            font-size: 12px;
+        .invoice-title p {
+            color: #666;
+            margin-top: 5px;
         }
-
-        /* INFO KLIEN & PROYEK (GRID) */
-        .info-table {
+        .invoice-details {
+            margin-bottom: 30px;
+        }
+        .invoice-details table {
             width: 100%;
-            margin-bottom: 35px;
-            border-collapse: separate;
-            border-spacing: 15px 0; /* Jarak antar kotak */
-            margin-left: -15px; /* Kompensasi spacing kiri */
         }
-        .info-table td {
-            vertical-align: top;
-            width: 50%;
+        .invoice-details td {
+            padding: 5px 0;
+        }
+        .invoice-details .label {
+            color: #666;
+            width: 150px;
+        }
+        .invoice-details .value {
+            font-weight: bold;
+            color: #333;
+        }
+        .section-title {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 12px;
+            text-transform: uppercase;
         }
         .info-box {
-            background-color: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
-            padding: 15px 20px;
+            margin-bottom: 25px;
         }
-        .box-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #DD3517;
-            font-weight: bold;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 5px;
-            letter-spacing: 0.5px;
-        }
-        .box-content strong {
-            color: #111827;
-            font-size: 15px;
-            display: block;
-            margin-bottom: 5px;
-        }
-        .box-content p {
-            margin: 3px 0;
-            color: #4b5563;
+        .info-box h4 {
+            color: #dc2626;
             font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
         }
-
-        /* TABEL ITEM INVOICE */
+        .info-box p {
+            margin: 3px 0;
+            color: #444;
+        }
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         .items-table th {
-            background-color: #1f2937;
-            color: #ffffff;
+            background: #dc2626;
+            color: white;
             padding: 12px 10px;
-            font-size: 10px;
-            text-transform: uppercase;
             text-align: left;
-            letter-spacing: 0.5px;
-            border: 1px solid #1f2937;
+            font-size: 11px;
+            text-transform: uppercase;
         }
         .items-table td {
             padding: 12px 10px;
-            border-bottom: 1px solid #e5e7eb;
-            border-left: 1px solid #e5e7eb;
-            border-right: 1px solid #e5e7eb;
-            color: #1f2937;
+            border-bottom: 1px solid #eee;
         }
-        .items-table tr:nth-child(even) td {
-            background-color: #fcfcfc;
+        .items-table tr:nth-child(even) {
+            background: #fafafa;
         }
-
-        /* KALKULASI TOTAL */
-        .total-wrapper {
-            width: 100%;
+        .total-section {
+            margin-top: 20px;
+            border-top: 2px solid #dc2626;
+            padding-top: 15px;
         }
-        .table-totals {
-            width: 45%;
-            float: right;
-            border-collapse: collapse;
-        }
-        .table-totals td {
-            padding: 10px 12px;
-            text-align: right;
-            border-bottom: 1px solid #e5e7eb;
+        .total-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: 8px 0;
         }
         .total-label {
-            color: #4b5563;
-            font-size: 11px;
-            text-transform: uppercase;
-            font-weight: bold;
+            width: 150px;
+            text-align: right;
+            color: #666;
         }
         .total-value {
+            width: 200px;
+            text-align: right;
             font-weight: bold;
-            color: #111827;
         }
-        .grand-total td {
+        .grand-total {
             font-size: 16px;
-            color: #DD3517;
-            font-weight: 900;
-            border-bottom: none;
-            background-color: #fef2f2; /* Merah sangat muda */
-            border-top: 2px solid #DD3517;
-            padding: 15px 12px;
+            color: #dc2626;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
         }
-
-        /* CLEARFIX UNTUK FLOAT */
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
-
-        /* FOOTER & KETENTUAN */
-        .footer-table {
-            width: 100%;
+        .status-draft { background: #f3f4f6; color: #6b7280; }
+        .status-sent { background: #dbeafe; color: #1d4ed8; }
+        .status-overdue { background: #fee2e2; color: #dc2626; }
+        .status-paid { background: #d1fae5; color: #059669; }
+        .footer {
             margin-top: 50px;
-            border-collapse: collapse;
-        }
-        .footer-table td {
-            vertical-align: bottom;
-        }
-        .terms-box {
-            background-color: #f9fafb;
-            border-left: 3px solid #DD3517;
-            padding: 12px 15px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #666;
             font-size: 10px;
-            color: #4b5563;
-            line-height: 1.6;
-            width: 60%;
+        }
+        .signature-section {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
         }
         .signature-box {
+            width: 200px;
             text-align: center;
-            width: 40%;
         }
-        .signature-title {
-            color: #4b5563;
-            margin-bottom: 10px;
+        .signature-line {
+            border-top: 1px solid #333;
+            margin-top: 60px;
+            padding-top: 10px;
         }
-        .signature-space {
-            height: 70px;
-        }
-        .signature-name {
-            font-weight: bold;
-            color: #111827;
-            text-decoration: underline;
-            font-size: 13px;
-        }
-        .signature-role {
+        .terms {
+            margin-top: 30px;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 5px;
             font-size: 10px;
-            color: #6b7280;
-            margin-top: 3px;
-        }
-
-        /* PAGE FOOTER */
-        .page-footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 9px;
-            color: #9ca3af;
-            padding: 15px 0;
-            border-top: 1px solid #f3f4f6;
-            background-color: #ffffff;
+            color: #666;
         }
     </style>
 </head>
 <body>
-
-    {{-- Aksen Merah di Ujung Atas Kertas --}}
-    <div class="top-accent"></div>
-
-    <div class="container">
-        
-        {{-- HEADER --}}
-        <table class="header-table">
+    <div class="header">
+        <table style="width: 100%;">
             <tr>
                 <td style="width: 60%;">
-                    <h1 class="company-name">PT. SINOM JATI MAS</h1>
-                    <p class="company-tagline">General Contractor & General Trading</p>
-                    <p class="company-address">
-                        Link. Sukarela RT/RW 006/001, Kel. Mekarsari, Kec. Pulomerak<br>
-                        Email: sinomjatimas@gmail.com &nbsp;|&nbsp; Telp: 087771300570
-                    </p>
+                    <div class="logo-section">
+                        <div class="logo-icon">S</div>
+                        <div class="company-info">
+                            <h1>PT. SINOM JATI MAS</h1>
+                            <p>General Contractor & General Trading</p>
+                            <p>Link. Sukarela RT/RW 006/001, Kel. Mekarsari, Kec. Pulomerak</p>
+                            <p>Email: sinomjatimas@gmail.com | Telp: 087771300570</p>
+                        </div>
+                    </div>
                 </td>
-                <td style="width: 40%;">
-                    <h2 class="invoice-text">INVOICE</h2>
-                    <div class="invoice-meta">
-                        Nomor: <strong>{{ $invoice->invoice_number }}</strong><br>
-                        Tanggal Terbit: <strong>{{ $invoice->created_at->format('d F Y') }}</strong><br>
-                        Termin Penagihan: <strong style="color: #DD3517;">{{ $invoice->termin_percentage }}%</strong>
+                <td style="width: 40%; vertical-align: top;">
+                    <div class="invoice-title">
+                        <h2>INVOICE</h2>
+                        <p>No: <strong>{{ $invoice->invoice_number }}</strong></p>
+                        <p>Tanggal: {{ $invoice->created_at->format('d F Y') }}</p>
+                        <p style="margin-top: 10px;">
+                            <span class="status-badge status-{{ $invoice->status }}">{{ $invoice->status_label }}</span>
+                        </p>
                     </div>
                 </td>
             </tr>
         </table>
+    </div>
 
-        {{-- INFO BOX (Klien & Proyek) --}}
-        <table class="info-table">
+    <table style="width: 100%; margin-bottom: 30px;">
+        <tr>
+            <td style="width: 50%; vertical-align: top; padding-right: 20px;">
+                <div class="info-box">
+                    <h4>Ditagihkan Kepada:</h4>
+                    <p style="font-size: 14px; font-weight: bold; color: #333;">{{ $invoice->project->client->name }}</p>
+                    <p>{{ $invoice->project->client->email }}</p>
+                    <p>{{ $invoice->project->client->phone ?? '-' }}</p>
+                </div>
+            </td>
+            <td style="width: 50%; vertical-align: top;">
+                <div class="info-box">
+                    <h4>Detail Proyek:</h4>
+                    <p style="font-weight: bold;">{{ $invoice->project->name }}</p>
+                    <p>{{ $invoice->project->location ?? 'Lokasi belum ditentukan' }}</p>
+                    <p>Progress: {{ $invoice->project->progress_percentage }}%</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">Rincian Pembayaran</div>
+    
+    <table class="items-table">
+        <thead>
             <tr>
-                <td>
-                    <div class="info-box">
-                        <div class="box-title">Ditagihkan Kepada:</div>
-                        <div class="box-content">
-                            <strong>{{ $invoice->project->client->name }}</strong>
-                            <p>Email: {{ $invoice->project->client->email }}</p>
-                            <p>Telp: {{ $invoice->project->client->phone ?? '-' }}</p>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div class="info-box">
-                        <div class="box-title">Detail Proyek:</div>
-                        <div class="box-content">
-                            <strong>{{ $invoice->project->name }}</strong>
-                            <p>Lokasi: {{ $invoice->project->location ?? 'Sesuai Kontrak' }}</p>
-                            <p>Jatuh Tempo: <span style="color: #DD3517; font-weight: bold;">{{ $invoice->due_date ? \Carbon\Carbon::parse($invoice->due_date)->format('d F Y') : 'Sesuai Perjanjian' }}</span></p>
-                        </div>
-                    </div>
-                </td>
+                <th style="width: 5%;">No</th>
+                <th style="width: 55%;">Deskripsi</th>
+                <th style="width: 20%;">Termin</th>
+                <th style="width: 20%; text-align: right;">Jumlah</th>
             </tr>
-        </table>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>
+                    <strong>Pembayaran Termin {{ $invoice->termin_percentage }}%</strong><br>
+                    <span style="color: #666; font-size: 10px;">{{ $invoice->project->name }}</span>
+                </td>
+                <td>{{ $invoice->termin_percentage }}%</td>
+                <td style="text-align: right;">Rp {{ number_format($invoice->amount, 0, ',', '.') }}</td>
+            </tr>
+        </tbody>
+    </table>
 
-        {{-- TABEL ITEM --}}
-        <table class="items-table">
-            <thead>
-                <tr>
-                    <th style="width: 5%; text-align: center;">No</th>
-                    <th style="width: 40%;">Uraian Pekerjaan / Barang</th>
-                    <th style="width: 10%; text-align: center;">Qty</th>
-                    <th style="width: 10%; text-align: center;">Sat</th>
-                    <th style="width: 15%; text-align: right;">Harga (Rp)</th>
-                    <th style="width: 20%; text-align: right;">Jumlah (Rp)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($invoice->items as $index => $item)
-                    <tr>
-                        <td style="text-align: center;">{{ $index + 1 }}</td>
-                        <td><strong>{{ $item->item_name }}</strong></td>
-                        <td style="text-align: center;">{{ number_format($item->quantity, 1, ',', '') }}</td>
-                        <td style="text-align: center;">{{ $item->unit }}</td>
-                        <td style="text-align: right;">{{ number_format($item->price, 0, ',', '.') }}</td>
-                        <td style="text-align: right; font-weight: bold;">{{ number_format($item->total, 0, ',', '.') }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px; color: #9ca3af;">
-                            <em>Rincian pekerjaan belum diisi.</em>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-
-        {{-- TOTAL TAGIHAN --}}
-        <div class="total-wrapper clearfix">
-            <table class="table-totals">
-                <tr>
-                    <td class="total-label">Subtotal</td>
-                    <td class="total-value">Rp {{ number_format($invoice->amount, 0, ',', '.') }}</td>
-                </tr>
-                <tr class="grand-total">
-                    <td>TOTAL KESELURUHAN</td>
-                    <td>Rp {{ number_format($invoice->amount, 0, ',', '.') }}</td>
-                </tr>
-            </table>
+    <div class="total-section">
+        <div class="total-row">
+            <div class="total-label">Subtotal:</div>
+            <div class="total-value">Rp {{ number_format($invoice->amount, 0, ',', '.') }}</div>
         </div>
-
-        {{-- FOOTER & TTD --}}
-        <table class="footer-table">
-            <tr>
-                <td style="width: 60%; padding-right: 30px;">
-                    <div class="terms-box">
-                        <strong style="color: #111827;">Ketentuan Pembayaran:</strong><br>
-                        1. Pembayaran disesuaikan dengan termin progres ({{ $invoice->termin_percentage }}%).<br>
-                        2. Mohon cantumkan Nomor Invoice pada berita transfer bank.<br>
-                        3. Keterlambatan pembayaran dapat mengganggu jadwal progres di lapangan.
-                    </div>
-                </td>
-                <td style="width: 40%;">
-                    <div class="signature-box">
-                        <div class="signature-title">Hormat Kami,</div>
-                        <div style="font-weight: bold; font-size: 14px; color: #111827;">PT. SINOM JATI MAS</div>
-                        
-                        <div class="signature-space"></div>
-                        
-                        <div class="signature-name">{{ $invoice->creator->name ?? 'Finance Dept.' }}</div>
-                        <div class="signature-role">Manajemen / Keuangan</div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-
+        <div class="total-row">
+            <div class="total-label">PPN (11%):</div>
+            <div class="total-value">-</div>
+        </div>
+        <div class="total-row grand-total">
+            <div class="total-label" style="color: #dc2626;">TOTAL:</div>
+            <div class="total-value" style="color: #dc2626;">Rp {{ number_format($invoice->amount, 0, ',', '.') }}</div>
+        </div>
     </div>
 
-    {{-- KETERANGAN BAWAH HALAMAN --}}
-    <div class="page-footer">
-        Dokumen ini sah dan diterbitkan secara otomatis oleh Sistem Informasi PT. Sinom Jati Mas pada {{ now()->format('d F Y, H:i') }} WIB.
+    <div class="terms">
+        <strong>Ketentuan:</strong><br>
+        1. Pembayaran dilakukan sesuai dengan termin yang telah disepakati dalam kontrak.<br>
+        2. Invoice ini sah dan diproses oleh sistem PT. Sinom Jati Mas.<br>
+        3. Jatuh tempo pembayaran: {{ $invoice->due_date ? $invoice->due_date->format('d F Y') : 'Sesuai kontrak' }}
     </div>
 
+    <div class="signature-section">
+        <div class="signature-box">
+            <p style="margin-bottom: 10px;">Dibuat oleh,</p>
+            <div class="signature-line">
+                <strong>{{ $invoice->creator->name }}</strong><br>
+                <span style="font-size: 10px;">{{ $invoice->created_at->format('d F Y') }}</span>
+            </div>
+        </div>
+        <div class="signature-box">
+            <p style="margin-bottom: 10px;">Disetujui,</p>
+            <div class="signature-line">
+                <strong>PT. SINOM JATI MAS</strong><br>
+                <span style="font-size: 10px;">Management</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>PT. SINOM JATI MAS - General Contractor & General Trading</p>
+        <p>Link. Sukarela RT/RW 006/001, Kel. Mekarsari, Kec. Pulomerak | Email: sinomjatimas@gmail.com | Telp: 087771300570</p>
+        <p style="margin-top: 5px;">Dokumen ini digenerate secara otomatis oleh sistem pada {{ now()->format('d F Y H:i') }}</p>
+    </div>
 </body>
 </html>

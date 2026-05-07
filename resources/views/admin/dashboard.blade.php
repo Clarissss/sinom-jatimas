@@ -1,263 +1,247 @@
 @extends('layouts.app')
 
 @section('title', 'Admin Dashboard - PT. Sinom Jati Mas')
+@section('page-title', 'Dashboard Admin')
 
 @section('content')
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-    #projectMap { height: 500px; width: 100%; border-radius: 2.5rem; z-index: 1; }
-    .leaflet-container { font-family: inherit; background: #f8fafc; }
-    .custom-popup .leaflet-popup-content-wrapper { border-radius: 1.5rem; padding: 5px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-</style>
-
-<div class="space-y-6 animate-fade-in pb-10">
-    
-    {{-- Header --}}
-    <div class="flex justify-between items-end px-2">
-        <div>
-            <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">Dashboard</h2>
-            <p class="text-sm text-gray-500 font-medium mt-2">Monitoring operasional nasional PT. Sinom Jati Mas.</p>
-        </div>
-        <div class="text-right hidden md:block border-l-2 border-gray-100 pl-6">
-            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Update Terakhir</p>
-            <p class="text-xs font-bold text-gray-900 uppercase tracking-tighter">{{ now()->translatedFormat('d F Y, H:i') }}</p>
-        </div>
-    </div>
-
-    {{-- STATS GRID --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white rounded-[2rem] shadow-sm p-6 border border-gray-100">
+<div class="space-y-6 animate-fade-in">
+    {{-- Stats Grid --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {{-- Total Projects --}}
+        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-primary-500 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pendapatan Proyek Selesai</p>
-                    <p class="text-2xl font-black text-gray-900 mt-1">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</p>
+                    <p class="text-sm font-medium text-gray-600">Total Proyek</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($stats['total_projects']) }}</p>
                 </div>
-                <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600"><i class="fa-solid fa-money-bill-trend-up text-xl"></i></div>
+                <div class="p-3 bg-primary-100 rounded-lg">
+                    <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
+                    {{ number_format($stats['active_projects']) }} Aktif
+                </span>
+                <span class="text-gray-300 mx-2">•</span>
+                <span class="text-gray-500">{{ number_format($stats['completed_projects']) }} Selesai</span>
             </div>
         </div>
-        <div class="bg-white rounded-[2rem] shadow-sm p-6 border border-gray-100">
+
+        {{-- Total Clients --}}
+        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-secondary-500 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Proyek</p>
-                    <p class="text-2xl font-black text-gray-900 mt-1">{{ $stats['total_projects'] }}</p>
+                    <p class="text-sm font-medium text-gray-600">Total Klien</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($stats['total_clients']) }}</p>
                 </div>
-                <div class="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center text-[#FF812E]"><i class="fa-solid fa-helmet-safety text-xl"></i></div>
+                <div class="p-3 bg-secondary-100 rounded-lg">
+                    <svg class="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                </div>
             </div>
-            <div class="mt-4 flex items-center text-[10px] font-black uppercase tracking-tighter">
-                <span class="text-[#FF812E]">{{ $stats['active_projects'] }} Aktif</span>
-                <span class="text-gray-200 mx-2">|</span>
-                <span class="text-gray-400">{{ $stats['completed_projects'] }} Selesai</span>
+            <div class="mt-4 text-sm text-gray-500">
+                Klien terdaftar di sistem
             </div>
         </div>
-        <div class="bg-white rounded-[2rem] shadow-sm p-6 border border-gray-100">
+
+        {{-- Pending Invoices --}}
+        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-yellow-500 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
-                <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Database Klien</p><p class="text-2xl font-black text-gray-900 mt-1">{{ $stats['total_clients'] }}</p></div>
-                <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600"><i class="fa-solid fa-users text-xl"></i></div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Invoice Pending</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-1">{{ number_format($stats['pending_invoices']) }}</p>
+                </div>
+                <div class="p-3 bg-yellow-100 rounded-lg">
+                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                    </svg>
+                </div>
             </div>
-        </div>
-        <div class="bg-white rounded-[2rem] shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div><p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tagihan Terkirim</p><p class="text-2xl font-black text-gray-900 mt-1">{{ $stats['pending_invoices'] }}</p></div>
-                <div class="w-12 h-12 bg-yellow-50 rounded-2xl flex items-center justify-center text-yellow-600"><i class="fa-solid fa-file-invoice-dollar text-xl"></i></div>
-            </div>
-        </div>
-    </div>
-
-    {{-- PETA NASIONAL --}}
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden p-8">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h3 class="text-sm font-black text-gray-900 uppercase tracking-[0.2em]">Sebaran Proyek Indonesia</h3>
-                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 italic">Titik operasional pengerjaan lapangan</p>
-            </div>
-            <div class="flex space-x-4">
-                <div class="flex items-center text-[9px] font-black uppercase text-gray-400"><span class="w-2 h-2 rounded-full bg-[#FF812E] mr-2"></span> Aktif</div>
-                <div class="flex items-center text-[9px] font-black uppercase text-gray-400"><span class="w-2 h-2 rounded-full bg-[#10B981] mr-2"></span> Selesai</div>
-            </div>
-        </div>
-        <div id="projectMap" class="bg-gray-50 border border-gray-50"></div>
-    </div>
-
-    {{-- ANALYTICS GRID --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between mb-8">
-                <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest">Tren Arus Kas Selesai</h3>
-                <div class="text-[10px] font-black text-[#DD3517] uppercase tracking-widest underline decoration-2 underline-offset-4">6 Bulan Terakhir</div>
-            </div>
-            <div class="h-[300px]"><canvas id="revenueChart"></canvas></div>
-        </div>
-
-        <div class="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm text-center">
-            <h3 class="text-sm font-black text-gray-900 uppercase tracking-widest mb-8">Status Proyek</h3>
-            <div class="h-[250px] relative"><canvas id="projectChart"></canvas></div>
-            <div class="mt-6 space-y-3">
-                <div class="flex justify-between text-[10px] font-black uppercase"><span class="text-gray-400 tracking-widest">Penyelesaian</span><span class="text-gray-900">{{ $stats['completed_projects'] }} / {{ $stats['total_projects'] }}</span></div>
-                <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full" style="width: {{ $stats['total_projects'] > 0 ? ($stats['completed_projects']/$stats['total_projects'])*100 : 0 }}%"></div></div>
+            <div class="mt-4 flex items-center text-sm">
+                @if($stats['overdue_invoices'] > 0)
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        {{ number_format($stats['overdue_invoices']) }} Jatuh Tempo
+                    </span>
+                @else
+                    <span class="text-green-600 font-medium flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Tidak ada yang jatuh tempo
+                    </span>
+                @endif
             </div>
         </div>
     </div>
 
-    {{-- TABLES --}}
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-gray-100">
-            <div class="px-8 py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">Aktivitas Proyek</h3>
-                <a href="{{ route('admin.projects.index') }}" class="text-[9px] font-black text-[#DD3517] uppercase tracking-widest">View All</a>
+    {{-- Recent Projects --}}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                <h3 class="text-lg font-semibold text-gray-900">Proyek Terbaru</h3>
             </div>
-            <table class="w-full text-xs">
-                <tbody class="divide-y divide-gray-50">
-                    @foreach($recent_projects as $project)
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-8 py-4"><p class="font-black text-gray-900 uppercase tracking-tight">{{ $project->name }}</p><p class="text-[9px] text-gray-400 font-bold uppercase mt-0.5">{{ $project->client->name }}</p></td>
-                        <td class="px-8 py-4 text-right"><span class="font-black text-gray-900">{{ $project->progress_percentage }}%</span></td>
+            <a href="{{ route('admin.projects.index') }}" class="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center transition-colors">
+                Lihat Semua
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Proyek</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Klien</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Progress</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                     </tr>
-                    @endforeach
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse($recent_projects as $project)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4">
+                                <a href="{{ route('admin.projects.show', $project) }}" class="font-medium text-gray-900 hover:text-primary-600 transition-colors">
+                                    {{ $project->name }}
+                                </a>
+                                <p class="text-sm text-gray-500 flex items-center mt-1">
+                                    <svg class="w-3.5 h-3.5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    {{ Str::limit($project->location, 30) }}
+                                </p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="h-8 w-8 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-white text-xs font-bold mr-2">
+                                        {{ strtoupper(substr($project->client->name, 0, 1)) }}
+                                    </div>
+                                    <span class="text-sm text-gray-600">{{ $project->client->name }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5 mr-3 max-w-[100px]">
+                                        <div class="bg-primary-600 h-2.5 rounded-full transition-all duration-500" style="width: {{ $project->progress_percentage }}%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-600">{{ $project->progress_percentage }}%</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                @php
+                                    $statusConfig = [
+                                        'in_progress' => ['class' => 'bg-green-100 text-green-800', 'icon' => 'M13 10V3L4 14h7v7l9-11h-7z', 'label' => 'Aktif'],
+                                        'completed' => ['class' => 'bg-blue-100 text-blue-800', 'icon' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', 'label' => 'Selesai'],
+                                        'pending' => ['class' => 'bg-yellow-100 text-yellow-800', 'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', 'label' => 'Pending'],
+                                        'cancelled' => ['class' => 'bg-gray-100 text-gray-800', 'icon' => 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z', 'label' => 'Dibatalkan'],
+                                    ];
+                                    $config = $statusConfig[$project->status] ?? $statusConfig['pending'];
+                                @endphp
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $config['class'] }}">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $config['icon'] }}"/>
+                                    </svg>
+                                    {{ $config['label'] }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-gray-100 rounded-full p-4 mb-3">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-gray-500 font-medium">Belum ada proyek</p>
+                                    <p class="text-sm text-gray-400 mt-1">Tambahkan proyek baru untuk memulai</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+    </div>
 
-        <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-gray-100">
-            <div class="px-8 py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-                <h3 class="text-xs font-black text-gray-900 uppercase tracking-widest">Log Penagihan</h3>
-                <a href="{{ route('admin.invoices.index') }}" class="text-[9px] font-black text-[#DD3517] uppercase tracking-widest">View All</a>
+    {{-- Recent Invoices --}}
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                </svg>
+                <h3 class="text-lg font-semibold text-gray-900">Invoice Terbaru</h3>
             </div>
-            <table class="w-full text-xs">
-                <tbody class="divide-y divide-gray-50">
-                    @foreach($recent_invoices as $invoice)
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-8 py-4 font-black text-gray-900">{{ $invoice->invoice_number }}</td>
-                        <td class="px-8 py-4 font-black text-gray-700 tracking-tighter text-sm">Rp {{ number_format($invoice->amount, 0, ',', '.') }}</td>
-                        <td class="px-8 py-4 text-right"><span class="px-3 py-1 bg-gray-100 rounded text-[8px] font-black uppercase text-gray-400 border border-gray-200">{{ $invoice->status_label }}</span></td>
+            <a href="{{ route('admin.invoices.index') }}" class="text-sm font-medium text-primary-600 hover:text-primary-700 flex items-center transition-colors">
+                Lihat Semua
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">No. Invoice</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Proyek</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Jumlah</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                     </tr>
-                    @endforeach
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse($recent_invoices as $invoice)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 font-medium text-gray-900">{{ $invoice->invoice_number }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600">{{ $invoice->project->name }}</td>
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">Rp {{ number_format($invoice->amount, 0, ',', '.') }}</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-{{ $invoice->status_color }}-100 text-{{ $invoice->status_color }}-800">
+                                    @php
+                                        $statusIcons = [
+                                            'draft' => 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z',
+                                            'sent' => 'M12 19l9 2-9-18-9 18 9-2zm0 0v-8',
+                                            'overdue' => 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+                                            'paid' => 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
+                                        ];
+                                    @endphp
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $statusIcons[$invoice->status] ?? $statusIcons['draft'] }}"/>
+                                    </svg>
+                                    {{ $invoice->status_label }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-gray-100 rounded-full p-4 mb-3">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-gray-500 font-medium">Belum ada invoice</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. INISIALISASI PETA ---
-        var map = L.map('projectMap', { scrollWheelZoom: false }).setView([-2.5489, 118.0149], 5);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { 
-            attribution: 'PT. Sinom Jati Mas' 
-        }).addTo(map);
-
-        var projects = {!! json_encode($projects_for_map) !!};
-        
-        // --- 2. LOGIKA PENGELOMPOKAN KOORDINAT ---
-        // Kita gunakan objek untuk menyimpan proyek berdasarkan "lat,lng" sebagai key
-        var groupedProjects = {};
-
-        projects.forEach(function(p) {
-            var key = p.latitude + ',' + p.longitude;
-            if (!groupedProjects[key]) {
-                groupedProjects[key] = [];
-            }
-            groupedProjects[key].push(p);
-        });
-
-        // --- 3. RENDERING MARKER ---
-        for (var key in groupedProjects) {
-            var items = groupedProjects[key];
-            var firstItem = items[0];
-            var coords = key.split(',');
-
-            // Tentukan warna marker: jika ada salah satu yang 'in_progress', beri warna oranye. 
-            // Jika semua selesai, beri warna hijau.
-            var hasActive = items.some(i => i.status === 'in_progress');
-            var color = hasActive ? '#FF812E' : '#10B981';
-
-            // Susun HTML untuk Pop-up (Menampilkan semua proyek di lokasi ini)
-            var popupContent = `<div class="custom-popup space-y-3 p-1 min-w-[200px]">
-                <div class="border-b border-gray-100 pb-2 mb-2">
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Titik Lokasi</p>
-                    <p class="text-xs font-bold text-gray-900">${items.length} Proyek Ditemukan</p>
-                </div>
-                <div class="max-h-[200px] overflow-y-auto space-y-4">`;
-
-            items.forEach(function(item) {
-                var statusColor = item.status === 'completed' ? 'text-emerald-500' : 'text-[#FF812E]';
-                popupContent += `
-                    <div class="border-l-2 border-gray-100 pl-3">
-                        <p class="text-[8px] font-black text-gray-300 uppercase leading-none mb-1">#SJM-${item.id}</p>
-                        <h4 class="font-black text-gray-900 uppercase text-[11px] leading-tight mb-1">${item.name}</h4>
-                        <div class="flex justify-between items-center">
-                            <span class="text-[9px] font-bold text-gray-500 italic">${item.progress_percentage}% Done</span>
-                            <span class="text-[9px] font-black uppercase ${statusColor}">${item.status}</span>
-                        </div>
-                    </div>`;
-            });
-
-            popupContent += `</div></div>`;
-
-            // Buat satu marker untuk koordinat ini
-            L.circleMarker([coords[0], coords[1]], {
-                radius: 12, // Sedikit lebih besar karena bisa menampung banyak data
-                fillColor: color,
-                color: "#fff",
-                weight: 3,
-                opacity: 1,
-                fillOpacity: 0.9
-            })
-            .addTo(map)
-            .bindPopup(popupContent);
-        }
-
-        // --- 4. REVENUE CHART (Tetap Sama) ---
-        const revCtx = document.getElementById('revenueChart').getContext('2d');
-        new Chart(revCtx, {
-            type: 'line',
-            data: {
-                labels: {!! json_encode($revenue_data->pluck('month')) !!},
-                datasets: [{
-                    label: 'Revenue', 
-                    data: {!! json_encode($revenue_data->pluck('total')) !!},
-                    borderColor: '#DD3517', 
-                    backgroundColor: 'rgba(221, 53, 23, 0.05)', 
-                    borderWidth: 4, 
-                    fill: true, 
-                    tension: 0.4, 
-                    pointRadius: 5
-                }]
-            },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                plugins: { legend: { display: false } }, 
-                scales: { 
-                    y: { beginAtZero: true, grid: { color: '#f3f4f6' }, border: { display: false } }, 
-                    x: { grid: { display: false }, border: { display: false } } 
-                } 
-            }
-        });
-
-        // --- 5. PROJECT CHART (Tetap Sama) ---
-        const projCtx = document.getElementById('projectChart').getContext('2d');
-        new Chart(projCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Pending', 'Active', 'Completed'],
-                datasets: [{
-                    data: {!! json_encode($project_distribution) !!},
-                    backgroundColor: ['#f3f4f6', '#FF812E', '#10B981'], 
-                    borderWidth: 0
-                }]
-            },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                cutout: '80%', 
-                plugins: { 
-                    legend: { position: 'bottom', labels: { usePointStyle: true, font: { weight: 'bold', size: 10 } } } 
-                } 
-            }
-        });
-    });
-</script>
 @endsection

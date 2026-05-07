@@ -1,90 +1,70 @@
-<aside class="fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-primary-800 to-primary-900 text-white z-40 overflow-y-auto" aria-label="Admin sidebar">
-    {{-- Logo Section --}}
-    <div class="p-6">
-        <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 group">
-            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                <i class="fa-solid fa-building text-primary-600 text-xl"></i>
-            </div>
-            <div>
-                <h2 class="text-lg font-bold tracking-tight">SINOM JATI MAS</h2>
-                <p class="text-xs text-primary-200">Admin Portal</p>
-            </div>
-        </a>
+<aside class="fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-primary-800 to-primary-900 text-white z-40 flex flex-col shadow-2xl" aria-label="Admin sidebar">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <div class="flex-1 overflow-y-auto">
+        {{-- Logo Section --}}
+        <div class="p-8 text-center">
+            <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-xl mb-4 transition-transform group-hover:scale-105">
+                    <i class="fa-solid fa-building text-primary-600 text-2xl"></i>
+                </div>
+                <div class="space-y-1">
+                    <h2 class="text-sm font-black tracking-[0.2em] uppercase">SINOM JATI MAS</h2>
+                    <p class="text-[10px] font-medium text-primary-300 uppercase tracking-widest">Admin Portal</p>
+                </div>
+            </a>
+        </div>
+        
+        {{-- Navigation --}}
+        <nav class="px-6 space-y-2">
+            @php
+                $navItems = [
+                    ['route' => 'admin.dashboard', 'icon' => 'fa-th-large', 'label' => 'Dashboard'],
+                    ['route' => 'admin.projects.index', 'icon' => 'fa-building-user', 'label' => 'Proyek'],
+                    ['route' => 'admin.daily-reports.index', 'icon' => 'fa-clipboard-list', 'label' => 'Laporan Harian'],
+                    ['route' => 'admin.documents.index', 'icon' => 'fa-file-lines', 'label' => 'Dokumen'],
+                    ['route' => 'admin.invoices.index', 'icon' => 'fa-file-invoice-dollar', 'label' => 'Invoice'],
+                    ['route' => 'admin.users.index', 'icon' => 'fa-users', 'label' => 'Data Klien'],
+                    
+                    // PENAMBAHAN MENU LAYANAN & COMPRO
+                    ['route' => 'admin.services.index', 'icon' => 'fa-screwdriver-wrench', 'label' => 'Layanan'],
+                    ['route' => 'admin.company-profile.index', 'icon' => 'fa-id-card', 'label' => 'Profil Perusahaan'],
+                    
+                    ['route' => 'admin.activity-logs.index', 'icon' => 'fa-clock-rotate-left', 'label' => 'Activity Log'],
+                ];
+            @endphp
+
+            @foreach($navItems as $item)
+            <a href="{{ route($item['route']) }}" 
+               class="flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+               {{ request()->routeIs($item['route'] . '*') ? 'bg-white/10 text-white border border-white/10' : 'text-primary-100 hover:bg-white/5' }}">
+                <i class="fa-solid {{ $item['icon'] }} w-5 text-center text-sm {{ request()->routeIs($item['route'] . '*') ? 'text-white' : 'text-primary-400 group-hover:text-white' }}"></i>
+                <span class="text-sm font-semibold tracking-wide">{{ $item['label'] }}</span>
+            </a>
+            @endforeach
+        </nav>
     </div>
-    
-    {{-- Navigation --}}
-    <nav class="mt-6 px-4 space-y-1" aria-label="Admin navigation">
-        {{-- Dashboard --}}
-        <a href="{{ route('admin.dashboard') }}" 
-           class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-primary-700 text-white shadow-md' : 'text-primary-100 hover:bg-primary-700 hover:text-white hover:shadow-sm' }}"
-           aria-current="{{ request()->routeIs('admin.dashboard') ? 'page' : 'false' }}">
-            <i class="fa-solid fa-grid-2 w-5 text-center"></i>
-            <span class="font-medium">Dashboard</span>
-        </a>
-        
-        {{-- Projects --}}
-        <a href="{{ route('admin.projects.index') }}" 
-           class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.projects.*') ? 'bg-primary-700 text-white shadow-md' : 'text-primary-100 hover:bg-primary-700 hover:text-white hover:shadow-sm' }}"
-           aria-current="{{ request()->routeIs('admin.projects.*') ? 'page' : 'false' }}">
-            <i class="fa-solid fa-building-user w-5 text-center"></i>
-            <span class="font-medium">Proyek</span>
-        </a>
-        
-        {{-- Daily Reports --}}
-        <a href="{{ route('admin.daily-reports.index') }}" 
-           class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.daily-reports.*') ? 'bg-primary-700 text-white shadow-md' : 'text-primary-100 hover:bg-primary-700 hover:text-white hover:shadow-sm' }}"
-           aria-current="{{ request()->routeIs('admin.daily-reports.*') ? 'page' : 'false' }}">
-            <i class="fa-solid fa-clipboard-list w-5 text-center"></i>
-            <span class="font-medium">Laporan Harian</span>
-        </a>
-        
-        {{-- Documents --}}
-        <a href="{{ route('admin.documents.index') }}" 
-           class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.documents.*') ? 'bg-primary-700 text-white shadow-md' : 'text-primary-100 hover:bg-primary-700 hover:text-white hover:shadow-sm' }}"
-           aria-current="{{ request()->routeIs('admin.documents.*') ? 'page' : 'false' }}">
-            <i class="fa-solid fa-file-lines w-5 text-center"></i>
-            <span class="font-medium">Dokumen</span>
-        </a>
-        
-        {{-- Invoices --}}
-        <a href="{{ route('admin.invoices.index') }}" 
-           class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.invoices.*') ? 'bg-primary-700 text-white shadow-md' : 'text-primary-100 hover:bg-primary-700 hover:text-white hover:shadow-sm' }}"
-           aria-current="{{ request()->routeIs('admin.invoices.*') ? 'page' : 'false' }}">
-            <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i>
-            <span class="font-medium">Invoice</span>
-        </a>
-        
-        {{-- Users --}}
-        <a href="{{ route('admin.users.index') }}" 
-           class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.users.*') ? 'bg-primary-700 text-white shadow-md' : 'text-primary-100 hover:bg-primary-700 hover:text-white hover:shadow-sm' }}"
-           aria-current="{{ request()->routeIs('admin.users.*') ? 'page' : 'false' }}">
-            <i class="fa-solid fa-users w-5 text-center"></i>
-            <span class="font-medium">Data Klien</span>
-        </a>
-        
-        {{-- Activity Logs --}}
-        <a href="{{ route('admin.activity-logs.index') }}" 
-           class="flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 {{ request()->routeIs('admin.activity-logs.*') ? 'bg-primary-700 text-white shadow-md' : 'text-primary-100 hover:bg-primary-700 hover:text-white hover:shadow-sm' }}"
-           aria-current="{{ request()->routeIs('admin.activity-logs.*') ? 'page' : 'false' }}">
-            <i class="fa-solid fa-clock-rotate-left w-5 text-center"></i>
-            <span class="font-medium">Activity Log</span>
-        </a>
-    </nav>
-    
-    {{-- User Profile Section --}}
-    <div class="absolute bottom-0 left-0 right-0 p-4">
-        <div class="bg-primary-800/80 backdrop-blur-sm rounded-lg p-3 border border-primary-700">
-            <a href="{{ route('profile.edit') }}" class="flex items-center space-x-3 group">
-                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-400 flex-shrink-0">
-                    <img src="{{ auth()->user()->photo_url }}" 
-                         alt="{{ auth()->user()->name }}"
-                         class="w-full h-full object-cover">
+
+    {{-- Bagian Bawah: User Profile --}}
+    <div class="p-6 bg-primary-900/50 backdrop-blur-md border-t border-white/5">
+        <div class="bg-white/5 rounded-[2rem] p-3 border border-white/10 shadow-inner flex items-center justify-between group transition-all hover:bg-white/10">
+            <div class="flex items-center space-x-3 overflow-hidden">
+                <div class="relative flex-shrink-0">
+                    <div class="w-11 h-11 rounded-2xl bg-[#DD3517] flex items-center justify-center text-lg font-bold text-white shadow-lg border border-white/20">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-[#4ADE80] border-[3px] border-primary-900 rounded-full"></div>
                 </div>
-                <div class="min-w-0 flex-1">
-                    <p class="text-sm font-medium text-white truncate">{{ auth()->user()->name }}</p>
-                    <p class="text-xs text-primary-200 truncate">{{ auth()->user()->email }}</p>
+
+                <div class="min-w-0">
+                    <p class="text-xs font-bold text-white truncate">{{ auth()->user()->name }}</p>
+                    <p class="text-[10px] text-primary-300 truncate font-medium uppercase tracking-tighter">{{ auth()->user()->role }}</p>
                 </div>
-                <i class="fa-solid fa-gear text-primary-300 group-hover:text-white transition-colors"></i>
+            </div>
+
+            <a href="{{ route('profile.edit') }}" class="p-2 rounded-2xl bg-white/5 text-primary-300 hover:text-white hover:bg-white/20 transition-all">
+                <i class="fa-solid fa-gear text-xs transition-transform group-hover:rotate-90 duration-500"></i>
             </a>
         </div>
     </div>

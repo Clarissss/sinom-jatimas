@@ -102,4 +102,9 @@ class Invoice extends Model
 
         return $colors[$this->status] ?? 'gray';
     }
+
+public function items()
+{
+    return $this->hasMany(InvoiceItem::class);
+}
 }

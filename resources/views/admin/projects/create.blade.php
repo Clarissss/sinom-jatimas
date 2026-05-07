@@ -1,154 +1,125 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Proyek - PT. Sinom Jati Mas')
-@section('page-title', 'Tambah Proyek')
-
 @section('content')
-<div class="max-w-3xl mx-auto animate-fade-in">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h3 class="text-lg font-semibold text-gray-900">Informasi Proyek</h3>
-        </div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="max-w-5xl mx-auto pb-10">
+    <form action="{{ route('admin.projects.store') }}" method="POST" x-data="{ loading: false }" @submit="loading = true">
+        @csrf
         
-        <div class="p-6">
-            <form action="{{ route('admin.projects.store') }}" method="POST" x-data="{ loading: false }" @submit="loading = true">
-                @csrf
-                
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                            Nama Proyek <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" 
-                               id="name"
-                               name="name" 
-                               class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('name') border-red-500 @enderror"
-                               placeholder="Masukkan nama proyek"
-                               required>
-                        @error('name')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+        <div class="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm space-y-8">
+            {{-- Form Header --}}
+            <div class="border-b border-gray-50 pb-6">
+                <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tighter">Tambah Proyek Baru</h2>
+            </div>
 
-                    <div>
-                        <label for="client_id" class="block text-sm font-medium text-gray-700 mb-2">
-                            Klien <span class="text-red-500">*</span>
-                        </label>
-                        <select id="client_id" 
-                                name="client_id" 
-                                class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('client_id') border-red-500 @enderror"
-                                required>
-                            <option value="">Pilih Klien</option>
-                            @foreach($clients as $client)
-                                <option value="{{ $client->id }}">{{ $client->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('client_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                {{-- Nama Proyek --}}
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nama Proyek</label>
+                    <input type="text" name="name" class="w-full bg-gray-50 border-gray-100 rounded-2xl py-4 px-6 font-bold" required>
                 </div>
 
-                <div class="mb-6">
-                    <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Lokasi</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
+                {{-- Klien --}}
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Klien</label>
+                    <select name="client_id" class="w-full bg-gray-50 border-gray-100 rounded-2xl py-4 px-6 font-bold" required>
+                        <option value="">Pilih Klien</option>
+                        @foreach($clients as $client)
+                            <option value="{{ $client->id }}">{{ $client->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            {{-- MAP PICKER SECTION --}}
+            <div class="bg-gray-50 rounded-[2rem] p-6 border border-gray-100">
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Nama Kota / Lokasi</label>
+                            <div class="relative">
+                                {{-- NAME="LOCATION" HARUS ADA DI SINI --}}
+                                <input type="text" id="citySearch" name="location" placeholder="Ketik nama kota..." 
+                                       class="w-full bg-white border-gray-100 rounded-xl py-3 px-4 font-bold text-sm">
+                                <button type="button" onclick="searchCity()" 
+                                        class="absolute right-1.5 top-1.5 bottom-1.5 px-4 bg-gray-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest">Cari</button>
+                            </div>
                         </div>
-                        <input type="text" 
-                               id="location"
-                               name="location" 
-                               class="block w-full pl-10 pr-3 py-2.5 border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                               placeholder="Masukkan lokasi proyek">
-                    </div>
-                </div>
 
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai</label>
-                        <input type="date" 
-                               id="start_date"
-                               name="start_date" 
-                               class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    </div>
-
-                    <div>
-                        <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Selesai</label>
-                        <input type="date" 
-                               id="end_date"
-                               name="end_date" 
-                               class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                        <select id="status" 
-                                name="status" 
-                                class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                            <option value="pending">Pending</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="progress_percentage" class="block text-sm font-medium text-gray-700 mb-2">Progress (%)</label>
-                        <input type="number" 
-                               id="progress_percentage"
-                               name="progress_percentage" 
-                               min="0" 
-                               max="100" 
-                               value="0" 
-                               class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <label for="contract_value" class="block text-sm font-medium text-gray-700 mb-2">Nilai Kontrak (Rp)</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="text-gray-500 text-sm">Rp</span>
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-black text-gray-400 uppercase">Latitude</label>
+                                <input type="text" name="latitude" id="latInput" readonly class="w-full bg-white border-none rounded-lg py-2 px-3 text-[10px] font-mono font-bold text-gray-400">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-black text-gray-400 uppercase">Longitude</label>
+                                <input type="text" name="longitude" id="lngInput" readonly class="w-full bg-white border-none rounded-lg py-2 px-3 text-[10px] font-mono font-bold text-gray-400">
+                            </div>
                         </div>
-                        <input type="number" 
-                               id="contract_value"
-                               name="contract_value" 
-                               class="block w-full pl-12 pr-3 py-2.5 border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                               placeholder="0">
+                    </div>
+                    <div class="lg:col-span-2">
+                        <div id="mapPicker" class="h-64 rounded-2xl border border-white shadow-sm z-10"></div>
                     </div>
                 </div>
+            </div>
 
-                <div class="mb-6">
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
-                    <textarea id="description"
-                              name="description" 
-                              rows="4" 
-                              class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                              placeholder="Masukkan deskripsi proyek"></textarea>
+            {{-- Status & Progress --}}
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</label>
+                    <select name="status" class="w-full bg-gray-50 border-gray-100 rounded-2xl py-4 px-6 font-bold">
+                        <option value="pending">PENDING</option>
+                        <option value="in_progress">IN PROGRESS</option>
+                        <option value="completed">COMPLETED</option>
+                    </select>
                 </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Progress (%)</label>
+                    <input type="number" name="progress_percentage" value="0" class="w-full bg-gray-50 border-gray-100 rounded-2xl py-4 px-6 font-bold">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nilai Kontrak</label>
+                    <input type="number" name="contract_value" class="w-full bg-gray-50 border-gray-100 rounded-2xl py-4 px-6 font-bold">
+                </div>
+            </div>
 
-                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
-                    <a href="{{ route('admin.projects.index') }}" 
-                       class="inline-flex items-center px-6 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                        Batal
-                    </a>
-                    <button type="submit" 
-                            :disabled="loading"
-                            class="inline-flex items-center px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-sm">
-                        <svg x-show="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" style="display: none;">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span x-text="loading ? 'Menyimpan...' : 'Simpan'"></span>
-                    </button>
-                </div>
-            </form>
+            {{-- Submit --}}
+            <div class="flex justify-end pt-6">
+                <button type="submit" :disabled="loading" 
+                        class="px-12 py-4 bg-gray-900 text-white text-[10px] font-black rounded-2xl hover:bg-[#DD3517] transition-all uppercase tracking-widest">
+                    <span x-text="loading ? 'Menyimpan...' : 'Simpan Proyek'"></span>
+                </button>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
+
+<script>
+    var map, marker;
+    document.addEventListener('DOMContentLoaded', function() {
+        map = L.map('mapPicker').setView([-2.5489, 118.0149], 5);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+        map.on('click', function(e) { updateMarker(e.latlng.lat, e.latlng.lng); });
+    });
+
+    async function searchCity() {
+        const query = document.getElementById('citySearch').value;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=id`);
+        const data = await res.json();
+        if (data.length > 0) {
+            const lat = data[0].lat, lon = data[0].lon;
+            map.flyTo([lat, lon], 12);
+            updateMarker(lat, lon);
+        }
+    }
+
+    function updateMarker(lat, lng) {
+        if (marker) marker.setLatLng([lat, lng]);
+        else marker = L.marker([lat, lng]).addTo(map);
+        document.getElementById('latInput').value = parseFloat(lat).toFixed(8);
+        document.getElementById('lngInput').value = parseFloat(lng).toFixed(8);
+    }
+</script>
 @endsection

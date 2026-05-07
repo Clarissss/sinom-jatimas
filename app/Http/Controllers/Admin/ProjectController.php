@@ -28,6 +28,8 @@ class ProjectController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'location' => ['nullable', 'string', 'max:255'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'contract_value' => ['nullable', 'numeric', 'min:0'],
@@ -42,13 +44,22 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $project->load(['client', 'progressPhotos.uploader', 'dailyReports.creator', 'documents', 'invoices', 'chatMessages.sender']);
+        $project->load([
+            'client', 
+            'progressPhotos.uploader', 
+            'dailyReports.creator', 
+            'documents', 
+            'invoices', 
+            'chatMessages.sender'
+        ]);
+        
         return view('admin.projects.show', compact('project'));
     }
 
     public function edit(Project $project)
     {
-        $clients = User::where('role', 'client')->where('is_active', true)->get();
+        $project->load('invoices');
+        $clients = User::where('role', 'client')->get();
         return view('admin.projects.edit', compact('project', 'clients'));
     }
 
@@ -59,6 +70,9 @@ class ProjectController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'location' => ['nullable', 'string', 'max:255'],
+            
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'contract_value' => ['nullable', 'numeric', 'min:0'],

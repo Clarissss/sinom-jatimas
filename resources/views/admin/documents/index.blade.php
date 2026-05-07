@@ -1,80 +1,163 @@
 @extends('layouts.app')
 
-@section('title', 'Dokumen - PT. Sinom Jati Mas')
-@section('page-title', 'Kelola Dokumen')
-
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+<style>
+    .ts-control { border-radius: 0.5rem !important; padding: 0.5rem 0.75rem !important; border-color: #d1d5db !important; }
+    .ts-wrapper.focus .ts-control { border-color: #DD3517 !important; box-shadow: 0 0 0 2px rgba(221, 53, 23, 0.1) !important; }
+</style>
+
 <div class="space-y-6 animate-fade-in">
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900">Daftar Dokumen</h2>
-            <p class="text-sm text-gray-500 mt-1">Kelola dokumen proyek</p>
+            <h2 class="text-2xl font-black text-gray-900 tracking-tight">Pusat Arsip Digital</h2>
+            <p class="text-sm text-gray-500">PT. Sinom Jati Mas - Manajemen Berkas Terintegrasi</p>
         </div>
-        <a href="{{ route('admin.documents.create') }}" 
-           class="inline-flex items-center justify-center px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-sm">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Upload Dokumen
-        </a>
     </div>
 
-    {{-- Table --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    {{-- Filter Bar (Menggunakan Dropdown Searchable) --}}
+    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200"
+         x-data="{
+            init() {
+                new TomSelect('#filter_client', {
+                    render: {
+                        option: (data, escape) => `<div><span class='mr-2 text-gray-400'><i class='fas fa-user-tie w-4'></i></span>${escape(data.text)}</div>`,
+                        item: (data, escape) => `<div><span class='mr-2 text-[#DD3517]'><i class='fas fa-user-tie w-4'></i></span>${escape(data.text)}</div>`
+                    }
+                });
+                new TomSelect('#filter_project', {
+                    render: {
+                        option: (data, escape) => `<div><span class='mr-2 text-gray-400'><i class='fas fa-building w-4'></i></span>${escape(data.text)}</div>`,
+                        item: (data, escape) => `<div><span class='mr-2 text-[#DD3517]'><i class='fas fa-building w-4'></i></span>${escape(data.text)}</div>`
+                    }
+                });
+            }
+         }">
+        <form action="{{ route('admin.documents.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 items-end">
+            
+            {{-- Filter Klien (Dropdown Search) --}}
+            <div>
+                <label for="filter_client" class="block text-sm font-medium text-gray-700 mb-1">Klien</label>
+                <select name="client_id" id="filter_client" placeholder="Pilih Klien...">
+                    <option value="">Semua Klien</option>
+                    @foreach($clients as $client)
+                        <option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>
+                            {{ $client->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Filter Proyek (Dropdown Search) --}}
+            <div>
+                <label for="filter_project" class="block text-sm font-medium text-gray-700 mb-1">Proyek</label>
+                <select name="project_id" id="filter_project" placeholder="Pilih Proyek...">
+                    <option value="">Semua Proyek</option>
+                    @foreach($projects as $project)
+                        <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>
+                            {{ $project->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Filter Tanggal --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal</label>
+                <input type="date" name="date" value="{{ request('date') }}" 
+                       class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517] h-[42px] text-sm">
+            </div>
+
+            {{-- Filter Jenis File --}}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Jenis File</label>
+                <select name="type" class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517] h-[42px] text-sm">
+                    <option value="">Semua Jenis</option>
+                    @foreach($categories as $key => $cat)
+                        <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>{{ $cat['label'] }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Tombol Aksi --}}
+            <div class="flex space-x-2">
+                <button type="submit" class="w-full bg-gray-900 text-white px-4 py-2.5 rounded-lg hover:bg-gray-800 text-sm font-medium transition-colors h-[42px]">
+                    <i class="fa-solid fa-filter mr-1"></i> Terapkan
+                </button>
+                @if(request()->anyFilled(['client_id', 'project_id', 'date', 'type']))
+                    <a href="{{ route('admin.documents.index') }}" 
+                       class="inline-flex items-center justify-center bg-gray-100 text-gray-700 px-4 py-2.5 rounded-lg hover:bg-gray-200 text-sm font-medium h-[42px]">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
+    {{-- Category Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @foreach($categories as $key => $cat)
+        <a href="{{ route('admin.documents.index', ['type' => $key, 'client_id' => request('client_id'), 'project_id' => request('project_id'), 'date' => request('date')]) }}" 
+           class="group bg-white p-6 rounded-[2rem] border-2 {{ request('type') == $key ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
+            <div class="{{ $cat['color'] }} w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-4 shadow-lg group-hover:scale-110 transition-transform">
+                <i class="fa-solid {{ $cat['icon'] }}"></i>
+            </div>
+            <h4 class="font-black text-gray-900 text-sm">{{ $cat['label'] }}</h4>
+            <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">{{ $cat['count'] }} Berkas</p>
+        </a>
+        @endforeach
+    </div>
+
+    {{-- Data Table --}}
+    <div class="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 border-b border-gray-100">
                     <tr>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama File</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Proyek</th>
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tipe</th>
-                        <th scope="col" class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Berkas</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Klien</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Proyek</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @forelse($documents ?? [] as $document)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
-                                    </div>
-                                    <span class="font-medium text-gray-900">{{ $document->file_name }}</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $document->project->name }}</td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    {{ $document->type_label }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <a href="{{ route('admin.documents.download', $document) }}" 
-                                   class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors">
-                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                    Download
-                                </a>
-                            </td>
-                        </tr>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($results as $file)
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                @php
+                                    $icon = 'fa-file-lines text-gray-400';
+                                    if($file->source == 'chat') $icon = 'fa-comment-dots text-blue-500';
+                                    if($file->source == 'report') $icon = 'fa-images text-emerald-500';
+                                @endphp
+                                <i class="fa-solid {{ $icon }} mr-3 text-lg"></i>
+                                <span class="font-bold text-gray-800 text-xs break-all">{{ $file->file_name ?? 'N/A' }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-xs font-bold text-gray-600">
+                            {{ $file->client_name }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-black text-gray-500 uppercase">
+                                {{ $file->project_name }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="{{ route('admin.documents.download', $file->id) }}?source={{ $file->source }}" 
+                               class="bg-gray-900 text-white px-4 py-2 rounded-lg font-black text-[10px] hover:bg-gray-800 transition-all">
+                                <i class="fa-solid fa-download mr-1"></i> DOWNLOAD
+                            </a>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-12 text-center">
-                                <div class="flex flex-col items-center">
-                                    <div class="bg-gray-100 rounded-full p-4 mb-4">
-                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
-                                    </div>
-                                    <p class="text-gray-500 font-medium">Belum ada dokumen</p>
-                                    <p class="text-sm text-gray-400 mt-1">Upload dokumen pertama</p>
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="4" class="px-6 py-20 text-center text-gray-400 font-bold">
+                            Data tidak ditemukan.
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

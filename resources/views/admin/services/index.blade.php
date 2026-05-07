@@ -6,7 +6,7 @@
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
             <h2 class="text-2xl font-black text-gray-900 tracking-tighter uppercase">Katalog Layanan</h2>
-            <p class="text-sm text-gray-500 font-medium">Manajemen daftar jasa konstruksi & alat berat PT. Sinom Jati Mas</p>
+            <p class="text-sm text-gray-500 font-medium">Manajemen daftar jasa konstruksi & alat berat PT. Sinom Jati Mas.</p>
         </div>
         <a href="{{ route('admin.services.create') }}" 
            class="px-8 py-3 bg-[#DD3517] text-white font-black rounded-2xl shadow-lg hover:bg-[#FF812E] transition-all transform hover:scale-105 active:scale-95 text-xs tracking-widest uppercase">

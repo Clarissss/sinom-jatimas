@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Invoice - PT. Sinom Jati Mas')
-@section('page-title', 'Kelola Invoice')
+@section('title', 'Laporan Harian - PT. Sinom Jati Mas')
+@section('page-title', 'Laporan Harian')
 
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -9,7 +9,6 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
 <style>
-    /* Konsistensi styling Tom Select */
     .ts-control { 
         border-radius: 0.75rem !important; 
         padding: 0.6rem 0.75rem !important; 
@@ -21,48 +20,35 @@
         border-color: #DD3517 !important; 
         box-shadow: 0 0 0 2px rgba(221, 53, 23, 0.1) !important; 
     }
-    .ts-dropdown { border-radius: 1rem !important; shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important; }
 </style>
 
-<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in pb-10">
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-            <h2 class="text-2xl font-black text-gray-900 tracking-tighter uppercase">Daftar Invoice</h2>
-            <p class="text-sm text-gray-500 mt-1">Kelola invoice dan termin pembayaran proyek</p>
+            <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">Laporan Harian</h2>
+            <p class="text-sm text-gray-500 mt-2 font-medium">Monitoring aktivitas pengerjaan lapangan harian.</p>
         </div>
-        <a href="{{ route('admin.invoices.create') }}" 
-           class="inline-flex items-center justify-center px-6 py-2.5 bg-[#DD3517] text-white text-xs font-black rounded-xl hover:bg-[#FF812E] transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-md uppercase tracking-widest">
-            <i class="fas fa-plus mr-2"></i> Buat Invoice
+        <a href="{{ route('admin.daily-reports.create') }}" 
+           class="inline-flex items-center justify-center px-8 py-3 bg-gray-900 text-white text-[10px] font-black rounded-2xl hover:bg-[#DD3517] transition-all transform hover:-translate-y-1 active:scale-[0.98] shadow-xl uppercase tracking-widest">
+            <i class="fas fa-plus mr-2"></i> Buat Laporan Baru
         </a>
     </div>
 
-    {{-- Filter Bar (Gaya Laporan Harian) --}}
-    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100"
+    {{-- Filter Bar --}}
+    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100"
          x-data="{
             init() {
-                new TomSelect('#filter_client', {
-                    plugins: ['clear_button'],
-                    render: {
-                        option: (data, escape) => `<div><span class='mr-2 text-gray-400'><i class='fas fa-user-tie w-4'></i></span>${escape(data.text)}</div>`,
-                        item: (data, escape) => `<div><span class='mr-2 text-[#DD3517]'><i class='fas fa-user-tie w-4'></i></span>${escape(data.text)}</div>`
-                    }
-                });
-                new TomSelect('#filter_project', {
-                    plugins: ['clear_button'],
-                    render: {
-                        option: (data, escape) => `<div><span class='mr-2 text-gray-400'><i class='fas fa-building w-4'></i></span>${escape(data.text)}</div>`,
-                        item: (data, escape) => `<div><span class='mr-2 text-[#DD3517]'><i class='fas fa-building w-4'></i></span>${escape(data.text)}</div>`
-                    }
-                });
+                new TomSelect('#filter_client', { plugins: ['clear_button'] });
+                new TomSelect('#filter_project', { plugins: ['clear_button'] });
             }
          }">
-        <form action="{{ route('admin.invoices.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 items-end">
+        <form action="{{ route('admin.daily-reports.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 items-end">
             
             {{-- Filter Klien --}}
-            <div class="md:col-span-1">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Klien</label>
-                <select name="client_id" id="filter_client" placeholder="Pilih Klien...">
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Pilih Klien</label>
+                <select name="client_id" id="filter_client" placeholder="Cari Klien...">
                     <option value="">Semua Klien</option>
                     @foreach($clients as $client)
                         <option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>{{ $client->name }}</option>
@@ -71,9 +57,9 @@
             </div>
 
             {{-- Filter Proyek --}}
-            <div class="md:col-span-1">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Proyek</label>
-                <select name="project_id" id="filter_project" placeholder="Pilih Proyek...">
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Pilih Proyek</label>
+                <select name="project_id" id="filter_project" placeholder="Cari Proyek...">
                     <option value="">Semua Proyek</option>
                     @foreach($projects as $project)
                         <option value="{{ $project->id }}" {{ request('project_id') == $project->id ? 'selected' : '' }}>{{ $project->name }}</option>
@@ -81,121 +67,93 @@
                 </select>
             </div>
 
-            {{-- Filter Status --}}
-            <div class="md:col-span-1">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Status</label>
-                <select name="status" class="w-full border-gray-100 bg-gray-50 rounded-xl text-sm focus:ring-[#DD3517] focus:border-[#DD3517] h-[46px] font-bold transition-all">
-                    <option value="">Semua Status</option>
-                    <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>DRAFT</option>
-                    <option value="sent" {{ request('status') == 'sent' ? 'selected' : '' }}>TERKIRIM</option>
-                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>LUNAS</option>
-                    <option value="overdue" {{ request('status') == 'overdue' ? 'selected' : '' }}>JATUH TEMPO</option>
-                </select>
-            </div>
-
             {{-- Filter Tanggal --}}
-            <div class="md:col-span-1">
-                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Tanggal</label>
-                <input type="date" name="date" value="{{ request('date') }}" class="w-full border-gray-100 bg-gray-50 rounded-xl text-sm focus:ring-[#DD3517] focus:border-[#DD3517] h-[46px] font-medium">
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Pilih Tanggal</label>
+                <input type="date" name="date" value="{{ request('date') }}" class="w-full border-gray-100 bg-gray-50 rounded-xl text-sm h-[46px] font-bold focus:ring-[#DD3517] focus:border-[#DD3517] transition-all">
             </div>
 
-            {{-- Tombol Aksi --}}
+            {{-- Tombol Aksi (Gaya Button Invoice) --}}
             <div class="flex space-x-2 h-[46px]">
-                <button type="submit" class="w-full bg-gray-900 text-white rounded-xl hover:bg-black text-[10px] font-black uppercase tracking-widest transition-colors shadow-sm">
-                    <i class="fas fa-filter mr-1"></i> Terapkan
+                <button type="submit" class="flex-1 bg-gray-900 text-white rounded-xl hover:bg-black text-[10px] font-black uppercase tracking-widest transition-all shadow-md">
+                    <i class="fas fa-filter mr-1 text-[8px]"></i> Terapkan
                 </button>
-                @if(request()->anyFilled(['client_id', 'project_id', 'date', 'status']))
-                    <a href="{{ route('admin.invoices.index') }}" class="w-full inline-flex items-center justify-center bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 text-[10px] font-black uppercase tracking-widest transition-colors">
-                        Reset
+                @if(request()->anyFilled(['client_id', 'project_id', 'date']))
+                    <a href="{{ route('admin.daily-reports.index') }}" class="w-14 inline-flex items-center justify-center bg-gray-100 text-gray-400 rounded-xl hover:bg-gray-200 transition-all shadow-sm">
+                        <i class="fas fa-rotate-left"></i>
                     </a>
                 @endif
             </div>
         </form>
     </div>
+
     {{-- Table --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-50">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50/50">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Klien</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Proyek</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Aktivitas</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Cuaca</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Foto</th>
-                        <th class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Tanggal</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Proyek & Klien</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Aktivitas</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Cuaca</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Foto</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @forelse($reports ?? [] as $report)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center mr-3">
-                                        <i class="fas fa-calendar-day text-green-600 text-sm"></i>
-                                    </div>
-                                    <span class="font-medium text-gray-900 text-sm">{{ $report->report_date->format('d M Y') }}</span>
+                <tbody class="divide-y divide-gray-50">
+                    @forelse($reports as $report)
+                        <tr class="hover:bg-gray-50/50 transition-colors group">
+                            <td class="px-8 py-5">
+                                <p class="font-black text-gray-900 text-sm leading-none mb-1">{{ $report->report_date->format('d M Y') }}</p>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest italic">Oleh: {{ $report->creator->name ?? 'System' }}</p>
+                            </td>
+                            <td class="px-8 py-5">
+                                <p class="text-sm font-black text-gray-900 leading-none uppercase tracking-tighter">{{ $report->project->name }}</p>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 italic">{{ $report->client->name }}</p>
+                            </td>
+                            <td class="px-8 py-5">
+                                <p class="text-xs text-gray-600 line-clamp-2 max-w-xs font-medium">{{ $report->activity_description }}</p>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                @php
+                                    $weatherMap = [
+                                        'sunny' => ['icon' => 'fa-sun', 'color' => 'text-orange-500', 'label' => 'CERAH'],
+                                        'cloudy' => ['icon' => 'fa-cloud', 'color' => 'text-gray-400', 'label' => 'BERAWAN'],
+                                        'rainy' => ['icon' => 'fa-cloud-showers-heavy', 'color' => 'text-blue-500', 'label' => 'HUJAN'],
+                                        'storm' => ['icon' => 'fa-bolt', 'color' => 'text-purple-600', 'label' => 'BADAI'],
+                                    ];
+                                    $w = $weatherMap[$report->weather_condition] ?? $weatherMap['sunny'];
+                                @endphp
+                                <div class="{{ $w['color'] }} flex flex-col items-center">
+                                    <i class="fa-solid {{ $w['icon'] }} text-sm mb-1"></i>
+                                    <span class="text-[8px] font-black">{{ $w['label'] }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-sm font-medium text-gray-700">
-                                {{ $report->client->name ?? '-' }}
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $report->project->name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 truncate max-w-xs">{{ Str::limit($report->activity_description, 40) }}</td>
-                            <td class="px-6 py-4">
-                                @php
-                                    $weatherConfig = [
-                                        'sunny' => ['class' => 'bg-yellow-100 text-yellow-800', 'icon' => 'fa-sun', 'label' => 'Cerah'],
-                                        'cloudy' => ['class' => 'bg-gray-100 text-gray-800', 'icon' => 'fa-cloud', 'label' => 'Berawan'],
-                                        'rainy' => ['class' => 'bg-blue-100 text-blue-800', 'icon' => 'fa-cloud-showers-heavy', 'label' => 'Hujan'],
-                                        'storm' => ['class' => 'bg-purple-100 text-purple-800', 'icon' => 'fa-bolt', 'label' => 'Badai'],
-                                    ];
-                                    $config = $weatherConfig[$report->weather_condition] ?? $weatherConfig['sunny'];
-                                @endphp
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $config['class'] }}">
-                                    <i class="fas {{ $config['icon'] }} mr-1"></i>
-                                    {{ $config['label'] }}
-                                </span>
-                            </td>
-                            
-                            <td class="px-6 py-4 text-center">
+                            <td class="px-8 py-5 text-center">
                                 @if($report->photo)
-                                    <div class="inline-flex h-10 w-10 rounded-lg border border-gray-200 shadow-sm p-0.5 bg-white overflow-hidden">
-                                        <img src="{{ asset('storage/' . $report->photo) }}" alt="Foto" class="h-full w-full object-cover rounded-md">
-                                    </div>
+                                    <img src="{{ asset('storage/' . $report->photo) }}" class="w-10 h-10 rounded-xl object-cover border border-gray-100 shadow-sm mx-auto">
                                 @else
-                                    <i class="fas fa-image text-gray-300"></i>
+                                    <i class="fa-solid fa-image text-gray-200"></i>
                                 @endif
                             </td>
-
-                            <td class="px-6 py-4 text-right whitespace-nowrap">
+                            <td class="px-8 py-5 text-right whitespace-nowrap">
                                 <div class="flex items-center justify-end space-x-2">
-                                    <a href="{{ route('admin.daily-reports.show', $report) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Lihat">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin.daily-reports.edit', $report) }}" class="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                    <a href="{{ route('admin.daily-reports.show', $report) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-blue-600 rounded-xl transition-all"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ route('admin.daily-reports.edit', $report) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-yellow-600 rounded-xl transition-all"><i class="fa-solid fa-pen-to-square"></i></a>
                                     <form action="{{ route('admin.daily-reports.destroy', $report) }}" method="POST" class="inline" onsubmit="return confirm('Hapus laporan ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 rounded-xl transition-all"><i class="fa-solid fa-trash-can"></i></button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center">
+                            <td colspan="6" class="px-8 py-20 text-center">
                                 <div class="flex flex-col items-center">
-                                    <div class="bg-gray-100 rounded-full p-4 mb-4">
-                                        <i class="fas fa-search text-gray-400 text-xl"></i>
-                                    </div>
-                                    <p class="text-gray-500 font-medium">Laporan tidak ditemukan</p>
-                                    <p class="text-sm text-gray-400 mt-1">Coba sesuaikan filter pencarian Anda</p>
+                                    <i class="fa-solid fa-clipboard-list text-4xl text-gray-100 mb-4"></i>
+                                    <p class="text-gray-400 font-black uppercase text-[10px] tracking-widest">Laporan belum tersedia</p>
                                 </div>
                             </td>
                         </tr>
@@ -204,9 +162,8 @@
             </table>
         </div>
 
-        {{-- Pagination --}}
         @if($reports->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200">
+            <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-50">
                 {{ $reports->links() }}
             </div>
         @endif

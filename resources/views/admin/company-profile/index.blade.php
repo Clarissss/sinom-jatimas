@@ -5,7 +5,7 @@
     <div class="flex justify-between items-center">
         <div>
             <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tighter">Profil Perusahaan</h2>
-            <p class="text-sm text-gray-500 tracking-tight">Kelola Identitas PT. Sinom Jati Mas</p>
+            <p class="text-sm text-gray-500 tracking-tight">Kelola Identitas PT. Sinom Jati Mas.</p>
         </div>
     </div>
 

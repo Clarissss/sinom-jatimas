@@ -17,7 +17,7 @@
     <div class="flex justify-between items-end px-2">
         <div>
             <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">Dashboard</h2>
-            <p class="text-sm text-gray-500 font-medium mt-2">Monitoring operasional nasional PT. Sinom Jati Mas.</p>
+            <p class="text-sm text-gray-500 font-medium mt-2">Monitoring operasional PT. Sinom Jati Mas.</p>
         </div>
         <div class="text-right hidden md:block border-l-2 border-gray-100 pl-6">
             <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Update Terakhir</p>

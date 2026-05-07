@@ -66,17 +66,34 @@
                 <button @click="activeTab = 'overview'" 
                         :class="activeTab === 'overview' ? 'border-primary-500 text-primary-600 bg-primary-50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" 
                         class="py-4 px-6 border-b-2 font-medium text-sm whitespace-nowrap transition-colors">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
                     Overview
                 </button>
                 <button @click="activeTab = 'progress'" 
                         :class="activeTab === 'progress' ? 'border-primary-500 text-primary-600 bg-primary-50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" 
                         class="py-4 px-6 border-b-2 font-medium text-sm whitespace-nowrap transition-colors">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
                     Foto Progress
+                </button>
+                <button @click="activeTab = 'documents'" 
+                        :class="activeTab === 'documents' ? 'border-primary-500 text-primary-600 bg-primary-50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" 
+                        class="py-4 px-6 border-b-2 font-medium text-sm whitespace-nowrap transition-colors">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Dokumen
                 </button>
                 <button @click="activeTab = 'invoices'" 
                         :class="activeTab === 'invoices' ? 'border-primary-500 text-primary-600 bg-primary-50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" 
                         class="py-4 px-6 border-b-2 font-medium text-sm whitespace-nowrap transition-colors">
-                    Invoice & Finansial
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                    </svg>
+                    Invoice
                 </button>
             </nav>
         </div>
@@ -84,61 +101,56 @@
         <div class="p-6">
             {{-- Overview Tab --}}
             <div x-show="activeTab === 'overview'" class="space-y-6" x-cloak>
-                <div class="grid md:grid-cols-2 gap-8">
+                <div class="grid md:grid-cols-2 gap-6">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2">Informasi Proyek</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Proyek</h3>
                         <dl class="space-y-3">
-                            <div class="flex justify-between py-2 border-b border-gray-100">
+                            <div class="flex justify-between py-3 border-b border-gray-100">
                                 <dt class="text-sm text-gray-500">Klien</dt>
-                                <dd class="text-sm font-semibold text-gray-900">{{ $project->client->name }}</dd>
+                                <dd class="text-sm font-medium text-gray-900">{{ $project->client->name }}</dd>
                             </div>
-                            
-                            <div class="flex justify-between py-2 border-b border-gray-100">
-                                <dt class="text-sm text-gray-500">Nilai Kontrak</dt>
-                                <dd class="text-sm font-bold text-gray-900">Rp {{ number_format($project->contract_value, 0, ',', '.') }}</dd>
-                            </div>
-                            <div class="flex justify-between py-2 border-b border-gray-100 bg-blue-50/50 px-2 -mx-2 rounded">
-                                <dt class="text-sm text-blue-600 font-medium">Total Ter-Invoice</dt>
-                                <dd class="text-sm font-bold text-blue-700">Rp {{ number_format($project->total_invoiced, 0, ',', '.') }}</dd>
-                            </div>
-                            <div class="flex justify-between py-3 border-b border-gray-100 bg-red-50 px-2 -mx-2 rounded">
-                                <dt class="text-sm text-red-600 font-bold uppercase tracking-tight">Sisa Pembayaran</dt>
-                                <dd class="text-base font-black text-red-700">Rp {{ number_format($project->remaining_payment, 0, ',', '.') }}</dd>
-                            </div>
-                            
-                            <div class="flex justify-between py-2 border-b border-gray-100">
+                            <div class="flex justify-between py-3 border-b border-gray-100">
                                 <dt class="text-sm text-gray-500">Tanggal Mulai</dt>
                                 <dd class="text-sm font-medium text-gray-900">{{ $project->start_date ? $project->start_date->format('d M Y') : '-' }}</dd>
                             </div>
-                            <div class="flex justify-between py-2 border-b border-gray-100">
+                            <div class="flex justify-between py-3 border-b border-gray-100">
                                 <dt class="text-sm text-gray-500">Tanggal Selesai</dt>
                                 <dd class="text-sm font-medium text-gray-900">{{ $project->end_date ? $project->end_date->format('d M Y') : '-' }}</dd>
                             </div>
+                            <div class="flex justify-between py-3 border-b border-gray-100">
+                                <dt class="text-sm text-gray-500">Nilai Kontrak</dt>
+                                <dd class="text-sm font-medium text-gray-900">{{ $project->contract_value ? 'Rp ' . number_format($project->contract_value, 0, ',', '.') : '-' }}</dd>
+                            </div>
                         </dl>
                     </div>
-                    
-                    {{-- Form Update Progress tetap di sini --}}
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Update Progress</h3>
-                        <form action="{{ route('admin.projects.progress.update', $project) }}" method="POST" class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Update Progress</h3>
+                        <form action="{{ route('admin.projects.progress.update', $project) }}" method="POST" class="bg-gray-50 p-4 rounded-lg">
                             @csrf
                             @method('PATCH')
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Geser untuk Update %</label>
-                                <input type="range" name="progress_percentage" min="0" max="100" value="{{ $project->progress_percentage }}" 
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Persentase Progress</label>
+                                <input type="range" 
+                                       name="progress_percentage" 
+                                       min="0" 
+                                       max="100" 
+                                       value="{{ $project->progress_percentage }}" 
                                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
                                        oninput="document.getElementById('progress-preview').textContent = this.value + '%'">
                                 <div class="text-center mt-2">
-                                    <span id="progress-preview" class="text-2xl font-black text-primary-600">{{ $project->progress_percentage }}%</span>
+                                    <span id="progress-preview" class="text-lg font-bold text-primary-600">{{ $project->progress_percentage }}%</span>
                                 </div>
                             </div>
-                            <button type="submit" class="w-full py-2.5 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 shadow-sm transition-all">
+                            <button type="submit" 
+                                    class="w-full inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors shadow-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
                                 Update Progress
                             </button>
                         </form>
                     </div>
                 </div>
-            </div>
 
                 @if($project->description)
                     <div class="pt-6 border-t border-gray-100">

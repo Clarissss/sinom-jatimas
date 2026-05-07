@@ -4,27 +4,6 @@
 @section('page-title', 'Tambah Laporan Harian')
 
 @section('content')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-
-<style>
-    /* Styling Tom Select agar sesuai branding Sinom Jati Mas */
-    .ts-control { 
-        border-radius: 0.5rem !important; 
-        padding: 0.6rem 0.75rem !important; 
-        border-color: #d1d5db !important; 
-    }
-    .ts-wrapper.focus .ts-control { 
-        border-color: #DD3517 !important; 
-        box-shadow: 0 0 0 2px rgba(221, 53, 23, 0.1) !important; 
-    }
-    .ts-dropdown .active { 
-        background-color: rgba(221, 53, 23, 0.05) !important; 
-        color: #DD3517 !important; 
-    }
-</style>
-
 <div class="max-w-2xl mx-auto animate-fade-in">
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
@@ -32,155 +11,95 @@
         </div>
         
         <div class="p-6">
-            <form action="{{ route('admin.daily-reports.store') }}" method="POST" enctype="multipart/form-data" 
-                  x-data='{ 
-                      loading: false,
-                      imagePreview: null,
-                      selectedClient: "{{ old("client_id") }}",
-                      allProjects: @json($projects),
-                      
-                      clientSelect: null,
-                      projectSelect: null,
-
-                      init() {
-                          // Dropdown Klien dengan Ikon & Search
-                          this.clientSelect = new TomSelect(this.$refs.client_select, {
-                              render: {
-                                  option: (data, escape) => `<div><span class="mr-2 text-gray-400"><i class="fas fa-user-tie w-4"></i></span>${escape(data.text)}</div>`,
-                                  item: (data, escape) => `<div><span class="mr-2 text-[#DD3517]"><i class="fas fa-user-tie w-4"></i></span>${escape(data.text)}</div>`
-                              },
-                              onChange: (val) => { 
-                                  this.selectedClient = val;
-                                  this.updateProjects();
-                              }
-                          });
-
-                          // Dropdown Proyek dengan Ikon & Search
-                          this.projectSelect = new TomSelect(this.$refs.project_select, {
-                              render: {
-                                  option: (data, escape) => `<div><span class="mr-2 text-gray-400"><i class="fas fa-building w-4"></i></span>${escape(data.text)}</div>`,
-                                  item: (data, escape) => `<div><span class="mr-2 text-[#DD3517]"><i class="fas fa-building w-4"></i></span>${escape(data.text)}</div>`
-                              },
-                              onChange: (val) => { this.selectedProject = val; }
-                          });
-
-                          this.updateProjects();
-                      },
-
-                      updateProjects() {
-                          if (!this.projectSelect) return;
-                          this.projectSelect.clear();
-                          this.projectSelect.clearOptions();
-                          
-                          if (this.selectedClient) {
-                              const filtered = this.allProjects.filter(p => p.client_id == this.selectedClient);
-                              const options = filtered.map(p => ({ value: p.id, text: p.name }));
-                              this.projectSelect.addOptions(options);
-                              this.projectSelect.enable();
-                          } else {
-                              this.projectSelect.disable();
-                          }
-                      }
-                  }' 
-                  @submit="loading = true">
+            <form action="{{ route('admin.daily-reports.store') }}" method="POST" x-data="{ loading: false }" @submit="loading = true">
                 @csrf
                 
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    {{-- Dropdown Klien --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Klien <span class="text-red-500">*</span></label>
-                        <select x-ref="client_select" name="client_id" placeholder="Cari klien..." required>
-                            <option value="">Pilih Klien</option>
-                            @foreach($clients as $client)
-                                <option value="{{ $client->id }}">{{ $client->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    {{-- Dropdown Proyek --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Proyek <span class="text-red-500">*</span></label>
-                        <select x-ref="project_select" name="project_id" placeholder="Cari proyek..." required>
-                            <option value="">Pilih Proyek</option>
-                        </select>
-                    </div>
-                </div>
-
-                {{-- Tanggal --}}
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Laporan <span class="text-red-500">*</span></label>
-                    <input type="date" name="report_date" value="{{ old('report_date', date('Y-m-d')) }}" 
-                           class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517]" required>
-                </div>
-
-                {{-- Cuaca --}}
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Kondisi Cuaca</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        @foreach(['sunny' => 'Cerah', 'cloudy' => 'Berawan', 'rainy' => 'Hujan', 'storm' => 'Badai'] as $val => $label)
-                        <label class="cursor-pointer">
-                            <input type="radio" name="weather_condition" value="{{ $val }}" class="peer hidden" {{ $loop->first ? 'checked' : '' }}>
-                            <div class="text-center p-2 border rounded-lg peer-checked:border-[#DD3517] peer-checked:bg-orange-50 peer-checked:text-[#DD3517] hover:bg-gray-50 transition-all">
-                                <span class="text-xs font-medium">{{ $label }}</span>
-                            </div>
-                        </label>
+                    <label for="project_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        Proyek <span class="text-red-500">*</span>
+                    </label>
+                    <select id="project_id"
+                            name="project_id" 
+                            class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('project_id') border-red-500 @enderror"
+                            required>
+                        <option value="">Pilih Proyek</option>
+                        @foreach($projects as $project)
+                            <option value="{{ $project->id }}">{{ $project->name }}</option>
                         @endforeach
-                    </div>
+                    </select>
+                    @error('project_id')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                {{-- Upload Foto dengan Preview & Klik Border --}}
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Dokumentasi Foto</label>
-                    <div @click="$refs.photoInput.click()" 
-                         class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-[#DD3517] hover:bg-orange-50/30 transition-all cursor-pointer group relative">
-                        
-                        <div class="space-y-1 text-center">
-                            <template x-if="imagePreview">
-                                <div class="relative inline-block">
-                                    <img :src="imagePreview" class="mx-auto h-40 w-auto rounded-lg object-cover border shadow-sm">
-                                    <button type="button" @click.stop="imagePreview = null; $refs.photoInput.value = ''" 
-                                            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-lg">
-                                        <i class="fas fa-times text-xs"></i>
-                                    </button>
-                                </div>
-                            </template>
-
-                            <template x-if="!imagePreview">
-                                <div>
-                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 group-hover:text-[#DD3517] mb-3 transition-colors"></i>
-                                    <div class="flex text-sm text-gray-600 justify-center">
-                                        <span class="font-medium text-[#DD3517] group-hover:text-[#FF812E]">Klik untuk upload</span>
-                                        <p class="pl-1 text-gray-500">atau drag and drop</p>
-                                    </div>
-                                    <p class="text-xs text-gray-400 mt-1">PNG, JPG, JPEG (Maks. 2MB)</p>
-                                </div>
-                            </template>
+                    <label for="report_date" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tanggal <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
                         </div>
+                        <input type="date" 
+                               id="report_date"
+                               name="report_date" 
+                               class="block w-full pl-10 pr-3 py-2.5 border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('report_date') border-red-500 @enderror"
+                               required>
+                    </div>
+                    @error('report_date')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                        <input type="file" x-ref="photoInput" name="photo" class="hidden" accept="image/*"
-                               @change="
-                                    const file = $event.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = (e) => { imagePreview = e.target.result; };
-                                        reader.readAsDataURL(file);
-                                    }
-                               ">
+                <div class="mb-6">
+                    <label for="weather_condition" class="block text-sm font-medium text-gray-700 mb-2">Kondisi Cuaca</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                            </svg>
+                        </div>
+                        <select id="weather_condition"
+                                name="weather_condition" 
+                                class="block w-full pl-10 pr-3 py-2.5 border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500">
+                            <option value="sunny">Cerah</option>
+                            <option value="cloudy">Berawan</option>
+                            <option value="rainy">Hujan</option>
+                            <option value="storm">Badai</option>
+                        </select>
                     </div>
                 </div>
 
-                {{-- Deskripsi --}}
                 <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Aktivitas <span class="text-red-500">*</span></label>
-                    <textarea name="activity_description" rows="4" class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517]" placeholder="Jelaskan progres hari ini..." required>{{ old('activity_description') }}</textarea>
+                    <label for="activity_description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Deskripsi Aktivitas <span class="text-red-500">*</span>
+                    </label>
+                    <textarea id="activity_description"
+                              name="activity_description" 
+                              rows="4" 
+                              class="w-full border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 @error('activity_description') border-red-500 @enderror"
+                              placeholder="Jelaskan aktivitas yang dilakukan hari ini..."
+                              required></textarea>
+                    @error('activity_description')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                {{-- Tombol --}}
                 <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
-                    <a href="{{ route('admin.daily-reports.index') }}" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50">Batal</a>
-                    <button type="submit" :disabled="loading" class="bg-[#DD3517] text-white px-6 py-2.5 rounded-lg hover:bg-[#FF812E] text-sm font-medium shadow-md transition-all inline-flex items-center">
-                        <i x-show="loading" class="fas fa-spinner fa-spin mr-2"></i>
-                        <span x-text="loading ? 'Menyimpan...' : 'Simpan Laporan'"></span>
+                    <a href="{{ route('admin.daily-reports.index') }}" 
+                       class="inline-flex items-center px-6 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                        Batal
+                    </a>
+                    <button type="submit" 
+                            :disabled="loading"
+                            class="inline-flex items-center px-6 py-2.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-sm">
+                        <svg x-show="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" style="display: none;">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span x-text="loading ? 'Menyimpan...' : 'Simpan'"></span>
                     </button>
                 </div>
             </form>

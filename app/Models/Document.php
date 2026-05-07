@@ -37,17 +37,15 @@ class Document extends Model
     }
 
     public function getTypeLabelAttribute(): string
-{
-    $labels = [
-        'contract' => 'Kontrak Kerja',
-        'technical_drawing' => 'Gambar Teknis',
-        'bast' => 'BAST',
-        'invoice' => 'Invoice Tagihan',
-        'progress_photo' => 'Foto Lapangan',
-        'other' => 'Lainnya',
-    ];
+    {
+        $labels = [
+            'contract' => 'Kontrak Kerja',
+            'technical_drawing' => 'Gambar Teknis',
+            'bast' => 'BAST',
+            'material_report' => 'Laporan Material',
+            'other' => 'Lainnya',
+        ];
 
-    return $labels[$this->type] ?? 'Lainnya';
-}
-    
+        return $labels[$this->type] ?? 'Lainnya';
+    }
 }

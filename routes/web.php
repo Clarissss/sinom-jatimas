@@ -80,6 +80,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/activity-logs', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::get('/activity-logs/{activity_log}', [\App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('activity-logs.show');
     Route::delete('/activity-logs/{activity_log}', [\App\Http\Controllers\Admin\ActivityLogController::class, 'destroy'])->name('activity-logs.destroy');
+
+    // Partners
+    Route::resource('partners', \App\Http\Controllers\Admin\PartnerController::class);
+    Route::patch('/partners/{partner}/toggle', [\App\Http\Controllers\Admin\PartnerController::class, 'toggleStatus'])->name('partners.toggle');
 });
 
 // Profile & Chat Routes

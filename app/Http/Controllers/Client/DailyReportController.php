@@ -3,32 +3,60 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
+use App\Models\DailyReport;
 use Illuminate\Http\Request;
 
 class DailyReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $projectIds = auth()->user()->projects()->pluck('id');
-        
-        $reports = \App\Models\DailyReport::with('project')
-            ->whereIn('project_id', $projectIds)
-            ->latest()
-            ->paginate(15);
 
-        return view('client.daily-reports.index', compact('reports'));
+        $query = DailyReport::with([
+                'project',
+                'creator',
+                'client'
+            ])
+            ->whereIn('project_id', $projectIds)
+            ->latest();
+
+        // Jika filter project dipilih, tambahkan kondisi where untuk memfilter berdasarkan project_id
+        if ($request->filled('project_id')) {
+
+            $query->where('project_id', $request->project_id);
+        }
+
+        // Jika filter date dipilih, tambahkan kondisi where untuk memfilter berdasarkan report_date
+        if ($request->filled('date')) {
+
+            $query->whereDate('report_date', $request->date);
+        }
+
+        $reports = $query
+            ->paginate(15)
+            ->withQueryString();
+
+        $projects = auth()->user()
+            ->projects()
+            ->orderBy('name')
+            ->get();
+
+        return view('client.daily-reports.index', compact(
+            'reports',
+            'projects'
+        ));
     }
 
-    public function show(Project $project)
+    public function show($project)
     {
-        $this->authorize('view', $project);
+        $dailyReport = DailyReport::with([
+            'project',
+            'creator',
+            'client'
+        ])->findOrFail($project);
 
-        $reports = $project->dailyReports()
-            ->with('creator')
-            ->orderBy('report_date', 'desc')
-            ->paginate(15);
-
-        return view('client.daily-reports.show', compact('project', 'reports'));
+        return view('client.daily-reports.show', compact(
+            'dailyReport'
+        ));
     }
 }

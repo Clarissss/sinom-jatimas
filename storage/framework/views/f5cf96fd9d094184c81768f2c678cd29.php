@@ -1,9 +1,9 @@
-@extends('layouts.app')
 
-@section('title', 'Dokumen - PT. Sinom Jati Mas')
-@section('page-title', 'Dokumen Saya')
 
-@section('content')
+<?php $__env->startSection('title', 'Dokumen - PT. Sinom Jati Mas'); ?>
+<?php $__env->startSection('page-title', 'Dokumen Saya'); ?>
+
+<?php $__env->startSection('content'); ?>
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
@@ -39,7 +39,7 @@
 
     <div class="space-y-6 animate-fade-in">
 
-        {{-- HEADER --}}
+        
         <div class="flex justify-between items-end px-2">
             <div>
 
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        {{-- FILTER --}}
+        
         <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200" x-data="{
             init() {
         
@@ -81,10 +81,10 @@
             }
         }">
 
-            <form method="GET" action="{{ route('client.documents.index') }}"
+            <form method="GET" action="<?php echo e(route('client.documents.index')); ?>"
                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 items-end">
 
-                {{-- PROJECT --}}
+                
                 <div>
 
                     <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -97,20 +97,21 @@
                             Semua Proyek
                         </option>
 
-                        @foreach ($projects as $project)
-                            <option value="{{ $project->id }}"
-                                {{ request('project_id') == $project->id ? 'selected' : '' }}>
+                        <?php $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($project->id); ?>"
+                                <?php echo e(request('project_id') == $project->id ? 'selected' : ''); ?>>
 
-                                {{ $project->name }}
+                                <?php echo e($project->name); ?>
+
 
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                     </select>
 
                 </div>
 
-                {{-- TYPE --}}
+                
                 <div>
 
                     <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -124,19 +125,19 @@
                             Semua Jenis
                         </option>
 
-                        <option value="daily_report" {{ request('type') == 'daily_report' ? 'selected' : '' }}>
+                        <option value="daily_report" <?php echo e(request('type') == 'daily_report' ? 'selected' : ''); ?>>
 
                             Laporan Harian
 
                         </option>
 
-                        <option value="chat_file" {{ request('type') == 'chat_file' ? 'selected' : '' }}>
+                        <option value="chat_file" <?php echo e(request('type') == 'chat_file' ? 'selected' : ''); ?>>
 
                             File Chat
 
                         </option>
 
-                        <option value="contract" {{ request('type') == 'contract' ? 'selected' : '' }}>
+                        <option value="contract" <?php echo e(request('type') == 'contract' ? 'selected' : ''); ?>>
 
                             Kontrak Kerja
 
@@ -146,19 +147,19 @@
 
                 </div>
 
-                {{-- DATE --}}
+                
                 <div>
 
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Tanggal
                     </label>
 
-                    <input type="date" name="date" value="{{ request('date') }}"
+                    <input type="date" name="date" value="<?php echo e(request('date')); ?>"
                         class="w-full border-gray-300 rounded-xl focus:ring-[#DD3517] focus:border-[#DD3517] h-[42px] text-sm px-4">
 
                 </div>
 
-                {{-- SEARCH --}}
+                
                 <div>
 
                     <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -167,7 +168,7 @@
 
                     <div class="relative">
 
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari dokumen..."
+                        <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="Cari dokumen..."
                             class="w-full border-gray-300 rounded-xl focus:ring-[#DD3517] focus:border-[#DD3517] h-[42px] text-sm pl-10">
 
                         <i
@@ -177,7 +178,7 @@
 
                 </div>
 
-                {{-- BUTTON --}}
+                
                 <div class="flex gap-2">
 
                     <button type="submit"
@@ -188,14 +189,14 @@
 
                     </button>
 
-                    @if (request()->anyFilled(['project_id', 'type', 'date', 'search']))
-                        <a href="{{ route('client.documents.index') }}"
+                    <?php if(request()->anyFilled(['project_id', 'type', 'date', 'search'])): ?>
+                        <a href="<?php echo e(route('client.documents.index')); ?>"
                             class="inline-flex items-center justify-center bg-gray-100 text-gray-700 px-4 py-2.5 rounded-xl hover:bg-gray-200 text-sm font-medium h-[42px]">
 
                             Reset
 
                         </a>
-                    @endif
+                    <?php endif; ?>
 
                 </div>
 
@@ -203,12 +204,12 @@
 
         </div>
 
-        {{-- CATEGORY --}}
+        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            {{-- DAILY REPORT --}}
-            <a href="{{ route('client.documents.index', ['type' => 'daily_report']) }}"
-                class="group bg-white p-6 rounded-[2rem] border-2 {{ request('type') == 'daily_report' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
+            
+            <a href="<?php echo e(route('client.documents.index', ['type' => 'daily_report'])); ?>"
+                class="group bg-white p-6 rounded-[2rem] border-2 <?php echo e(request('type') == 'daily_report' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent'); ?> shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
 
                 <div
                     class="bg-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-4 shadow-lg group-hover:scale-110 transition-transform">
@@ -222,14 +223,14 @@
                 </h4>
 
                 <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">
-                    {{ $categories['daily_report']['count'] }} Berkas
+                    <?php echo e($categories['daily_report']['count']); ?> Berkas
                 </p>
 
             </a>
 
-            {{-- CHAT FILE --}}
-            <a href="{{ route('client.documents.index', ['type' => 'chat_file']) }}"
-                class="group bg-white p-6 rounded-[2rem] border-2 {{ request('type') == 'chat_file' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
+            
+            <a href="<?php echo e(route('client.documents.index', ['type' => 'chat_file'])); ?>"
+                class="group bg-white p-6 rounded-[2rem] border-2 <?php echo e(request('type') == 'chat_file' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent'); ?> shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
 
                 <div
                     class="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-4 shadow-lg group-hover:scale-110 transition-transform">
@@ -243,14 +244,14 @@
                 </h4>
 
                 <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">
-                    {{ $categories['chat_file']['count'] }} Berkas
+                    <?php echo e($categories['chat_file']['count']); ?> Berkas
                 </p>
 
             </a>
 
-            {{-- CONTRACT --}}
-            <a href="{{ route('client.documents.index', ['type' => 'contract']) }}"
-                class="group bg-white p-6 rounded-[2rem] border-2 {{ request('type') == 'contract' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
+            
+            <a href="<?php echo e(route('client.documents.index', ['type' => 'contract'])); ?>"
+                class="group bg-white p-6 rounded-[2rem] border-2 <?php echo e(request('type') == 'contract' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent'); ?> shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
 
                 <div
                     class="bg-orange-500 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-4 shadow-lg group-hover:scale-110 transition-transform">
@@ -264,14 +265,14 @@
                 </h4>
 
                 <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">
-                    {{ $categories['contract']['count'] }} Berkas
+                    <?php echo e($categories['contract']['count']); ?> Berkas
                 </p>
 
             </a>
 
         </div>
 
-        {{-- TABLE --}}
+        
         <div class="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
@@ -297,11 +298,11 @@
 
                     <tbody class="divide-y divide-gray-50">
 
-                        @forelse($results as $file)
+                        <?php $__empty_1 = true; $__currentLoopData = $results; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $file): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
-                                        @php
+                                        <?php
                                             $icon = 'fa-file-lines text-gray-400';
 
                                             if ($file->source == 'chat') {
@@ -311,10 +312,11 @@
                                             if ($file->source == 'report') {
                                                 $icon = 'fa-images text-emerald-500';
                                             }
-                                        @endphp
-                                        <i class="fa-solid {{ $icon }} mr-3 text-lg"></i>
+                                        ?>
+                                        <i class="fa-solid <?php echo e($icon); ?> mr-3 text-lg"></i>
                                         <span class="font-bold text-gray-800 text-xs break-all">
-                                            {{ basename($file->file_name) }}
+                                            <?php echo e(basename($file->file_name)); ?>
+
                                         </span>
                                     </div>
                                 </td>
@@ -322,19 +324,21 @@
                                 <td class="px-6 py-4">
                                     <span
                                         class="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-black text-gray-500 uppercase">
-                                        {{ $file->project_name }}
+                                        <?php echo e($file->project_name); ?>
+
                                     </span>
                                 </td>
 
                                 <td class="px-6 py-4">
                                     <span
                                         class="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-black text-gray-500 uppercase">
-                                        {{ str_replace('_', ' ', $file->type) }}
+                                        <?php echo e(str_replace('_', ' ', $file->type)); ?>
+
                                     </span>
                                 </td>
 
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('client.documents.download', ['project' => $file->project_id, 'document' => $file->id]) }}?source={{ $file->source }}"
+                                    <a href="<?php echo e(route('client.documents.download', ['project' => $file->project_id, 'document' => $file->id])); ?>?source=<?php echo e($file->source); ?>"
                                         class="bg-[#0F172A] text-white px-4 py-2 rounded-xl font-bold text-[10px] hover:bg-black transition-all">
 
                                         <i class="fa-solid fa-download mr-1"></i>
@@ -342,16 +346,18 @@
                                     </a>
                                 </td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="4" class="px-6 py-20 text-center text-gray-400 font-bold">
                                     Data tidak ditemukan.
                                 </td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\SIP\sinom-jatimas\resources\views/client/documents/index.blade.php ENDPATH**/ ?>

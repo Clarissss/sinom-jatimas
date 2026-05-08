@@ -1,9 +1,9 @@
-@extends('layouts.app')
 
-@section('title', 'Invoice Saya - PT. Sinom Jati Mas')
-@section('page-title', 'Invoice Saya')
 
-@section('content')
+<?php $__env->startSection('title', 'Invoice Saya - PT. Sinom Jati Mas'); ?>
+<?php $__env->startSection('page-title', 'Invoice Saya'); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
@@ -31,7 +31,7 @@
 
 <div class="space-y-6 animate-fade-in">
 
-    {{-- HEADER --}}
+    
         <div class="flex justify-between items-end px-2">
 
         <div>
@@ -48,7 +48,7 @@
 
     </div>
 
-    {{-- FILTER --}}
+    
     <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100"
          x-data="{
             init() {
@@ -79,11 +79,11 @@
             }
          }">
 
-        <form action="{{ route('client.invoices.index') }}"
+        <form action="<?php echo e(route('client.invoices.index')); ?>"
               method="GET"
               class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 items-end">
 
-            {{-- PROJECT --}}
+            
             <div>
 
                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
@@ -99,23 +99,24 @@
                         Semua Proyek
                     </option>
 
-                    @foreach($projects as $project)
+                    <?php $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
                         <option
-                            value="{{ $project->id }}"
-                            {{ request('project_id') == $project->id ? 'selected' : '' }}>
+                            value="<?php echo e($project->id); ?>"
+                            <?php echo e(request('project_id') == $project->id ? 'selected' : ''); ?>>
 
-                            {{ $project->name }}
+                            <?php echo e($project->name); ?>
+
 
                         </option>
 
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                 </select>
 
             </div>
 
-            {{-- STATUS --}}
+            
             <div>
 
                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">
@@ -130,19 +131,19 @@
                         SEMUA STATUS
                     </option>
 
-                    <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>
+                    <option value="draft" <?php echo e(request('status') == 'draft' ? 'selected' : ''); ?>>
                         DRAFT
                     </option>
 
-                    <option value="sent" {{ request('status') == 'sent' ? 'selected' : '' }}>
+                    <option value="sent" <?php echo e(request('status') == 'sent' ? 'selected' : ''); ?>>
                         TERKIRIM
                     </option>
 
-                    <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>
+                    <option value="paid" <?php echo e(request('status') == 'paid' ? 'selected' : ''); ?>>
                         LUNAS
                     </option>
 
-                    <option value="overdue" {{ request('status') == 'overdue' ? 'selected' : '' }}>
+                    <option value="overdue" <?php echo e(request('status') == 'overdue' ? 'selected' : ''); ?>>
                         JATUH TEMPO
                     </option>
 
@@ -150,7 +151,7 @@
 
             </div>
 
-            {{-- BUTTON --}}
+            
             <div class="flex space-x-2 h-[46px]">
 
                 <button
@@ -162,16 +163,16 @@
 
                 </button>
 
-                @if(request()->anyFilled(['project_id', 'status']))
+                <?php if(request()->anyFilled(['project_id', 'status'])): ?>
 
-                    <a href="{{ route('client.invoices.index') }}"
+                    <a href="<?php echo e(route('client.invoices.index')); ?>"
                        class="w-14 inline-flex items-center justify-center bg-gray-100 text-gray-400 rounded-xl hover:bg-gray-200 transition-all shadow-sm">
 
                         <i class="fas fa-rotate-left"></i>
 
                     </a>
 
-                @endif
+                <?php endif; ?>
 
             </div>
 
@@ -179,7 +180,7 @@
 
     </div>
 
-    {{-- TABLE --}}
+    
     <div class="bg-white rounded-[2.5rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-50 overflow-hidden">
 
         <div class="overflow-x-auto">
@@ -220,19 +221,21 @@
 
                 <tbody class="divide-y divide-gray-50">
 
-                    @forelse($invoices as $invoice)
+                    <?php $__empty_1 = true; $__currentLoopData = $invoices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invoice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
 
                         <tr class="hover:bg-gray-50/80 transition-all">
 
                             <td class="px-8 py-5">
 
                                 <span class="font-black text-gray-900 tracking-tight">
-                                    {{ $invoice->invoice_number }}
+                                    <?php echo e($invoice->invoice_number); ?>
+
                                 </span>
 
                                 <div class="text-[9px] text-gray-400 font-bold mt-1 uppercase">
                                     Diterbitkan:
-                                    {{ $invoice->created_at->format('d/m/Y') }}
+                                    <?php echo e($invoice->created_at->format('d/m/Y')); ?>
+
                                 </div>
 
                             </td>
@@ -240,7 +243,8 @@
                             <td class="px-8 py-5">
 
                                 <div class="font-black text-gray-800 text-sm uppercase tracking-tight">
-                                    {{ $invoice->project->name }}
+                                    <?php echo e($invoice->project->name); ?>
+
                                 </div>
 
                             </td>
@@ -248,20 +252,21 @@
                             <td class="px-8 py-5 text-center">
 
                                 <span class="px-3 py-1 bg-gray-100 rounded-lg text-[10px] font-black text-gray-600">
-                                    {{ $invoice->termin_percentage }}%
+                                    <?php echo e($invoice->termin_percentage); ?>%
                                 </span>
 
                             </td>
 
                             <td class="px-8 py-5 text-right font-black text-[#DD3517] text-sm tracking-tighter">
 
-                                Rp {{ number_format($invoice->amount, 0, ',', '.') }}
+                                Rp <?php echo e(number_format($invoice->amount, 0, ',', '.')); ?>
+
 
                             </td>
 
                             <td class="px-8 py-5 text-center">
 
-                                @php
+                                <?php
 
                                     $statusStyle = [
 
@@ -275,13 +280,14 @@
 
                                     ];
 
-                                @endphp
+                                ?>
 
-                                <span class="inline-flex items-center px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border {{ $statusStyle[$invoice->status] ?? '' }}">
+                                <span class="inline-flex items-center px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border <?php echo e($statusStyle[$invoice->status] ?? ''); ?>">
 
-                                    <span class="w-1.5 h-1.5 rounded-full mr-2 {{ $invoice->status === 'paid' ? 'bg-emerald-500' : ($invoice->status === 'overdue' ? 'bg-red-500 animate-pulse' : 'bg-current') }}"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full mr-2 <?php echo e($invoice->status === 'paid' ? 'bg-emerald-500' : ($invoice->status === 'overdue' ? 'bg-red-500 animate-pulse' : 'bg-current')); ?>"></span>
 
-                                    {{ $invoice->status_label }}
+                                    <?php echo e($invoice->status_label); ?>
+
 
                                 </span>
 
@@ -291,16 +297,16 @@
 
                                 <div class="flex items-center justify-center space-x-1">
 
-                                    {{-- DETAIL --}}
-                                    <a href="{{ route('client.invoices.show', $invoice) }}"
+                                    
+                                    <a href="<?php echo e(route('client.invoices.show', $invoice)); ?>"
                                        class="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-gray-900 hover:bg-white hover:shadow-sm rounded-xl transition-all">
 
                                         <i class="fa-solid fa-eye text-xs"></i>
 
                                     </a>
 
-                                    {{-- DOWNLOAD --}}
-                                    <a href="{{ route('client.invoices.download', $invoice) }}"
+                                    
+                                    <a href="<?php echo e(route('client.invoices.download', $invoice)); ?>"
                                        class="w-9 h-9 flex items-center justify-center text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
 
                                         <i class="fa-solid fa-file-pdf text-xs"></i>
@@ -313,7 +319,7 @@
 
                         </tr>
 
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
 
                         <tr>
 
@@ -333,7 +339,7 @@
 
                         </tr>
 
-                    @endforelse
+                    <?php endif; ?>
 
                 </tbody>
 
@@ -341,18 +347,20 @@
 
         </div>
 
-        @if($invoices->hasPages())
+        <?php if($invoices->hasPages()): ?>
 
             <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-100">
 
-                {{ $invoices->links() }}
+                <?php echo e($invoices->links()); ?>
+
 
             </div>
 
-        @endif
+        <?php endif; ?>
 
     </div>
 
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\SIP\sinom-jatimas\resources\views/client/invoices/index.blade.php ENDPATH**/ ?>

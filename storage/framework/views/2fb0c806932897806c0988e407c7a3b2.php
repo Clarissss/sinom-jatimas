@@ -1,12 +1,12 @@
-@extends('layouts.app')
 
-@section('title', 'Client Dashboard - PT. Sinom Jati Mas')
 
-@section('content')
+<?php $__env->startSection('title', 'Client Dashboard - PT. Sinom Jati Mas'); ?>
+
+<?php $__env->startSection('content'); ?>
 
     <div class="space-y-6 animate-fade-in pb-10">
 
-        {{-- HEADER --}}
+        
         <div class="flex justify-between items-end px-2">
             <div>
                 <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
@@ -24,14 +24,15 @@
                 </p>
 
                 <p class="text-xs font-bold text-gray-900 uppercase tracking-tighter">
-                    {{ now()->translatedFormat('d F Y, H:i') }}
+                    <?php echo e(now()->translatedFormat('d F Y, H:i')); ?>
+
                 </p>
             </div>
         </div>
 
-        {{-- STATS GRID --}}
+        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {{-- Total Proyek --}}
+            
             <div class="bg-white rounded-[2rem] shadow-sm p-6 border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
@@ -40,7 +41,8 @@
                         </p>
 
                         <p class="text-2xl font-black text-gray-900 mt-1">
-                            {{ $stats['total_projects'] }}
+                            <?php echo e($stats['total_projects']); ?>
+
                         </p>
                     </div>
 
@@ -50,7 +52,7 @@
                 </div>
             </div>
 
-            {{-- Aktif --}}
+            
             <div class="bg-white rounded-[2rem] shadow-sm p-6 border border-gray-100">
                 <div class="flex items-center justify-between">
 
@@ -60,7 +62,8 @@
                         </p>
 
                         <p class="text-2xl font-black text-gray-900 mt-1">
-                            {{ $stats['active_projects'] }}
+                            <?php echo e($stats['active_projects']); ?>
+
                         </p>
                     </div>
 
@@ -71,7 +74,7 @@
                 </div>
             </div>
 
-            {{-- Selesai --}}
+            
             <div class="bg-white rounded-[2rem] shadow-sm p-6 border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
@@ -80,7 +83,8 @@
                         </p>
 
                         <p class="text-2xl font-black text-gray-900 mt-1">
-                            {{ $stats['completed_projects'] }}
+                            <?php echo e($stats['completed_projects']); ?>
+
                         </p>
                     </div>
 
@@ -90,7 +94,7 @@
                 </div>
             </div>
 
-            {{-- Invoice --}}
+            
             <div class="bg-white rounded-[2rem] shadow-sm p-6 border border-gray-100">
                 <div class="flex items-center justify-between">
                     <div>
@@ -99,7 +103,8 @@
                         </p>
 
                         <p class="text-2xl font-black text-gray-900 mt-1">
-                            {{ $stats['pending_invoices'] }}
+                            <?php echo e($stats['pending_invoices']); ?>
+
                         </p>
                     </div>
 
@@ -110,7 +115,7 @@
             </div>
         </div>
 
-        {{-- PROJECT LIST --}}
+        
         <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-gray-100">
             <div class="px-8 py-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
                 <div>
@@ -124,92 +129,96 @@
                 </div>
             </div>
 
-            @forelse($projects as $project)
+            <?php $__empty_1 = true; $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <div class="p-8 border-b border-gray-50 hover:bg-gray-50/30 transition-all duration-300">
                     <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-8">
-                        {{-- LEFT --}}
+                        
                         <div class="flex-1 min-w-0">
                             <div class="flex items-start justify-between gap-4">
                                 <div>
                                     <p class="text-[10px] font-black text-gray-300 uppercase tracking-widest mb-2">
-                                        #SJM-{{ $project->id }}
+                                        #SJM-<?php echo e($project->id); ?>
+
                                     </p>
 
                                     <h4 class="text-xl font-black text-gray-900 uppercase tracking-tight leading-tight">
-                                        {{ $project->name }}
+                                        <?php echo e($project->name); ?>
+
                                     </h4>
 
                                     <div class="flex items-center text-sm text-gray-400 mt-3">
                                         <i class="fa-solid fa-location-dot mr-2"></i>
                                         <span>
-                                            {{ $project->location ?? 'Lokasi belum tersedia' }}
+                                            <?php echo e($project->location ?? 'Lokasi belum tersedia'); ?>
+
                                         </span>
                                     </div>
                                 </div>
 
                                 <span
                                     class="px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest
-                            {{ $project->status == 'completed'
+                            <?php echo e($project->status == 'completed'
                                 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                                : 'bg-orange-50 text-[#FF812E] border border-orange-100' }}">
-                                    {{ $project->status }}
+                                : 'bg-orange-50 text-[#FF812E] border border-orange-100'); ?>">
+                                    <?php echo e($project->status); ?>
+
                                 </span>
                             </div>
 
-                            {{-- PROGRESS --}}
+                            
                             <div class="mt-8">
                                 <div class="flex items-center justify-between mb-3">
                                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                                         Progress Proyek
                                     </p>
                                     <p class="text-sm font-black text-gray-900">
-                                        {{ $project->progress_percentage }}%
+                                        <?php echo e($project->progress_percentage); ?>%
                                     </p>
                                 </div>
 
                                 <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
                                     <div class="h-full rounded-full bg-gradient-to-r from-[#DD3517] to-[#FF812E] transition-all duration-700"
-                                        style="width: {{ $project->progress_percentage }}%">
+                                        style="width: <?php echo e($project->progress_percentage); ?>%">
                                     </div>
                                 </div>
                             </div>
 
-                            {{-- QUICK INFO --}}
+                            
                             <div class="flex flex-wrap gap-6 mt-6">
                                 <div class="flex items-center text-xs font-bold text-gray-500 uppercase tracking-wide">
                                     <i class="fa-solid fa-image mr-2 text-gray-300"></i>
-                                    {{ $project->progressPhotos->count() }} Foto
+                                    <?php echo e($project->progressPhotos->count()); ?> Foto
                                 </div>
 
                                 <div class="flex items-center text-xs font-bold text-gray-500 uppercase tracking-wide">
                                     <i class="fa-solid fa-file-lines mr-2 text-gray-300"></i>
-                                    {{ $project->documents->count() }} Dokumen
+                                    <?php echo e($project->documents->count()); ?> Dokumen
                                 </div>
 
                                 <div class="flex items-center text-xs font-bold text-gray-500 uppercase tracking-wide">
                                     <i class="fa-solid fa-file-invoice-dollar mr-2 text-gray-300"></i>
-                                    {{ $project->invoices->count() }} Invoice
+                                    <?php echo e($project->invoices->count()); ?> Invoice
                                 </div>
                             </div>
                         </div>
 
-                        {{-- RIGHT --}}
+                        
                         <div class="flex flex-col gap-3 min-w-[180px]">
-                            <a href="{{ route('client.projects.show', $project) }}"
+                            <a href="<?php echo e(route('client.projects.show', $project)); ?>"
                                 class="flex items-center justify-center px-5 py-3 rounded-2xl bg-[#DD3517] text-white text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg">
 
                                 <i class="fa-solid fa-eye mr-2"></i>
                                 Detail Proyek
                             </a>
 
-                            <a href="{{ route('client.documents.index') }}"
+                            <a href="<?php echo e(route('client.documents.index')); ?>"
                                 class="flex items-center justify-center px-5 py-3 rounded-2xl bg-gray-100 text-gray-700 text-xs font-black uppercase tracking-widest hover:bg-gray-200 transition-all">
 
                                 <i class="fa-solid fa-file-lines mr-2"></i>
                                 Dokumen
                             </a>
 
-                            <a href="{{ route('client.invoices.index') }}"
+                            <a href="<?php echo e(route('client.invoices.index')); ?>"
                                 class="flex items-center justify-center px-5 py-3 rounded-2xl bg-gray-100 text-gray-700 text-xs font-black uppercase tracking-widest hover:bg-gray-200 transition-all">
 
                                 <i class="fa-solid fa-file-invoice-dollar mr-2"></i>
@@ -219,7 +228,7 @@
                     </div>
                 </div>
 
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
 
                 <div class="p-20 text-center">
                     <div class="w-24 h-24 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-6">
@@ -234,8 +243,10 @@
                         Data proyek client belum tersedia
                     </p>
                 </div>
-            @endforelse
+            <?php endif; ?>
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\SIP\sinom-jatimas\resources\views/client/dashboard.blade.php ENDPATH**/ ?>

@@ -1,9 +1,9 @@
-@extends('layouts.app')
 
-@section('title', 'Laporan Harian - PT. Sinom Jati Mas')
-@section('page-title', 'Laporan Harian')
 
-@section('content')
+<?php $__env->startSection('title', 'Laporan Harian - PT. Sinom Jati Mas'); ?>
+<?php $__env->startSection('page-title', 'Laporan Harian'); ?>
+
+<?php $__env->startSection('content'); ?>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
@@ -25,7 +25,7 @@
     </style>
 
     <div class="space-y-6 animate-fade-in pb-10">
-        {{-- HEADER --}}
+        
         <div class="flex justify-between items-end px-2">
             <div>
                 <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        {{-- FILTER --}}
+        
         <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100" x-data="{
             init() {
                 new TomSelect('#filter_project', {
@@ -64,10 +64,10 @@
             }
         }">
 
-            <form action="{{ route('client.daily-reports.index') }}" method="GET"
+            <form action="<?php echo e(route('client.daily-reports.index')); ?>" method="GET"
                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 items-end">
 
-                {{-- FILTER PROYEK --}}
+                
                 <div>
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">
                         Pilih Proyek
@@ -78,26 +78,27 @@
                             Semua Proyek
                         </option>
 
-                        @foreach ($projects as $project)
-                            <option value="{{ $project->id }}"
-                                {{ request('project_id') == $project->id ? 'selected' : '' }}>
-                                {{ $project->name }}
+                        <?php $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($project->id); ?>"
+                                <?php echo e(request('project_id') == $project->id ? 'selected' : ''); ?>>
+                                <?php echo e($project->name); ?>
+
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
 
-                {{-- FILTER TANGGAL --}}
+                
                 <div>
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">
                         Pilih Tanggal
                     </label>
 
-                    <input type="date" name="date" value="{{ request('date') }}"
+                    <input type="date" name="date" value="<?php echo e(request('date')); ?>"
                         class="w-full border-gray-100 bg-gray-50 rounded-xl text-sm h-[46px] px-3 font-bold focus:ring-[#DD3517] focus:border-[#DD3517] transition-all">
                 </div>
 
-                {{-- BUTTON --}}
+                
                 <div class="flex space-x-2 h-[46px]">
                     <button type="submit"
                         class="flex-1 bg-gray-900 text-white rounded-xl hover:bg-black text-[10px] font-black uppercase tracking-widest transition-all shadow-md">
@@ -106,18 +107,18 @@
                         Terapkan
                     </button>
 
-                    @if (request()->anyFilled(['project_id', 'date']))
-                        <a href="{{ route('client.daily-reports.index') }}"
+                    <?php if(request()->anyFilled(['project_id', 'date'])): ?>
+                        <a href="<?php echo e(route('client.daily-reports.index')); ?>"
                             class="w-14 inline-flex items-center justify-center bg-gray-100 text-gray-400 rounded-xl hover:bg-gray-200 transition-all shadow-sm">
 
                             <i class="fas fa-rotate-left"></i>
                         </a>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </form>
         </div>
 
-        {{-- TABLE --}}
+        
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
@@ -152,38 +153,42 @@
                     </thead>
 
                     <tbody class="divide-y divide-gray-50">
-                        @forelse($reports as $report)
+                        <?php $__empty_1 = true; $__currentLoopData = $reports; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $report): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr class="hover:bg-gray-50/50 transition-colors group">
 
-                                {{-- TANGGAL --}}
+                                
                                 <td class="px-8 py-5">
                                     <p class="font-black text-gray-900 text-sm leading-none mb-1">
-                                        {{ $report->report_date->format('d M Y') }}
+                                        <?php echo e($report->report_date->format('d M Y')); ?>
+
                                     </p>
 
                                     <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest italic">
                                         Dibuat oleh:
-                                        {{ $report->creator->name ?? 'System' }}
+                                        <?php echo e($report->creator->name ?? 'System'); ?>
+
                                     </p>
                                 </td>
 
-                                {{-- PROYEK --}}
+                                
                                 <td class="px-8 py-5">
                                     <p class="text-sm font-black text-gray-900 leading-none uppercase tracking-tighter">
-                                        {{ $report->project->name }}
+                                        <?php echo e($report->project->name); ?>
+
                                     </p>
                                 </td>
 
-                                {{-- AKTIVITAS --}}
+                                
                                 <td class="px-8 py-5">
                                     <p class="text-xs text-gray-600 line-clamp-2 max-w-xs font-medium">
-                                        {{ $report->activity_description }}
+                                        <?php echo e($report->activity_description); ?>
+
                                     </p>
                                 </td>
 
-                                {{-- CUACA --}}
+                                
                                 <td class="px-8 py-5 text-center">
-                                    @php
+                                    <?php
                                         $weatherMap = [
                                             'sunny' => [
                                                 'icon' => 'fa-sun',
@@ -207,38 +212,39 @@
                                             ],
                                         ];
                                         $w = $weatherMap[$report->weather_condition] ?? $weatherMap['sunny'];
-                                    @endphp
+                                    ?>
 
-                                    <div class="{{ $w['color'] }} flex flex-col items-center">
-                                        <i class="fa-solid {{ $w['icon'] }} text-sm mb-1"></i>
+                                    <div class="<?php echo e($w['color']); ?> flex flex-col items-center">
+                                        <i class="fa-solid <?php echo e($w['icon']); ?> text-sm mb-1"></i>
                                         <span class="text-[8px] font-black">
-                                            {{ $w['label'] }}
+                                            <?php echo e($w['label']); ?>
+
                                         </span>
                                     </div>
                                 </td>
 
-                                {{-- FOTO --}}
+                                
                                 <td class="px-8 py-5 text-center">
-                                    @if ($report->photo)
-                                        <img src="{{ asset('storage/' . $report->photo) }}"
+                                    <?php if($report->photo): ?>
+                                        <img src="<?php echo e(asset('storage/' . $report->photo)); ?>"
                                             class="w-10 h-10 rounded-xl object-cover border border-gray-100 shadow-sm mx-auto">
-                                    @else
+                                    <?php else: ?>
                                         <i class="fa-solid fa-image text-gray-200"></i>
-                                    @endif
+                                    <?php endif; ?>
 
                                 </td>
 
-                                {{-- AKSI --}}
+                                
                                 <td class="px-8 py-5 text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end">
-                                        <a href="{{ route('client.daily-reports.show', $report) }}"
+                                        <a href="<?php echo e(route('client.daily-reports.show', $report)); ?>"
                                             class="p-2 bg-gray-50 text-gray-400 hover:text-blue-600 rounded-xl transition-all">
                                             <i class="fa-solid fa-eye"></i>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="6" class="px-8 py-20 text-center">
                                     <div class="flex flex-col items-center">
@@ -249,16 +255,19 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
 
-            @if ($reports->hasPages())
+            <?php if($reports->hasPages()): ?>
                 <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-50">
-                    {{ $reports->links() }}
+                    <?php echo e($reports->links()); ?>
+
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\SIP\sinom-jatimas\resources\views/client/daily-reports/index.blade.php ENDPATH**/ ?>

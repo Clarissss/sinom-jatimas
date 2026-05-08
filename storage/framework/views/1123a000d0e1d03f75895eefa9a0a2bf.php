@@ -1,25 +1,25 @@
-@extends('layouts.app')
 
-@section('title', 'Invoice ' . $invoice->invoice_number)
-@section('page-title', 'Detail Invoice')
 
-@section('content')
+<?php $__env->startSection('title', 'Invoice ' . $invoice->invoice_number); ?>
+<?php $__env->startSection('page-title', 'Detail Invoice'); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="max-w-4xl mx-auto animate-fade-in">
 
-    {{-- ACTION BAR --}}
+    
     <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <a href="{{ route('client.invoices.index') }}"
+        <a href="<?php echo e(route('client.invoices.index')); ?>"
            class="text-gray-500 hover:text-gray-900 font-medium transition-colors">
             <i class="fa-solid fa-arrow-left mr-2"></i>
             Kembali ke Daftar
         </a>
 
         <div class="flex space-x-3">
-            {{-- DOWNLOAD --}}
-            <a href="{{ route('client.invoices.download', $invoice) }}"
+            
+            <a href="<?php echo e(route('client.invoices.download', $invoice)); ?>"
                class="px-5 py-2 bg-[#DD3517] text-white font-bold rounded-xl hover:bg-[#FF812E] shadow-sm transition-all">
                 <i class="fa-solid fa-download mr-2"></i>
                 Download PDF
@@ -27,10 +27,10 @@
         </div>
     </div>
 
-    {{-- PAPER --}}
+    
     <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden p-8 sm:p-12">
 
-        {{-- HEADER --}}
+        
         <div class="flex justify-between items-start border-b-2 border-gray-100 pb-8 mb-8">
             <div>
                 <h1 class="text-3xl font-black text-[#DD3517] tracking-tight mb-2">
@@ -40,18 +40,20 @@
                 <p class="text-gray-500 font-medium">
                     No:
                     <strong class="text-gray-900">
-                        {{ $invoice->invoice_number }}
+                        <?php echo e($invoice->invoice_number); ?>
+
                     </strong>
                 </p>
 
                 <div class="mt-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-{{ $invoice->status_color }}-100 text-{{ $invoice->status_color }}-700">
-                        {{ $invoice->status_label }}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-<?php echo e($invoice->status_color); ?>-100 text-<?php echo e($invoice->status_color); ?>-700">
+                        <?php echo e($invoice->status_label); ?>
+
                     </span>
                 </div>
             </div>
 
-            {{-- COMPANY --}}
+            
             <div class="text-right">
                 <div class="w-16 h-16 bg-[#DD3517] text-white flex items-center justify-center rounded-2xl text-2xl font-black ml-auto mb-3 shadow-lg">
                     S
@@ -67,29 +69,32 @@
             </div>
         </div>
 
-        {{-- INFO --}}
+        
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10">
 
-            {{-- CLIENT --}}
+            
             <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
                 <p class="text-[10px] font-bold text-[#DD3517] uppercase tracking-wider mb-2">
                     Ditagihkan Kepada:
                 </p>
 
                 <h4 class="font-black text-gray-900 text-lg">
-                    {{ $invoice->project->client->name }}
+                    <?php echo e($invoice->project->client->name); ?>
+
                 </h4>
 
                 <p class="text-sm text-gray-600 mt-1">
-                    {{ $invoice->project->client->email }}
+                    <?php echo e($invoice->project->client->email); ?>
+
                 </p>
 
                 <p class="text-sm text-gray-600">
-                    {{ $invoice->project->client->phone ?? '-' }}
+                    <?php echo e($invoice->project->client->phone ?? '-'); ?>
+
                 </p>
             </div>
 
-            {{-- PROJECT --}}
+            
             <div class="bg-gray-50 p-5 rounded-xl border border-gray-100">
                 <p class="text-[10px] font-bold text-[#DD3517] uppercase tracking-wider mb-2">
                     Informasi Proyek & Penagihan:
@@ -102,7 +107,8 @@
                         </td>
 
                         <td class="font-bold text-gray-900 text-right">
-                            {{ $invoice->project->name }}
+                            <?php echo e($invoice->project->name); ?>
+
                         </td>
                     </tr>
 
@@ -112,7 +118,7 @@
                         </td>
 
                         <td class="font-bold text-gray-900 text-right">
-                            {{ $invoice->termin_percentage }}%
+                            <?php echo e($invoice->termin_percentage); ?>%
                         </td>
                     </tr>
 
@@ -122,7 +128,8 @@
                         </td>
 
                         <td class="font-bold text-gray-900 text-right">
-                            {{ $invoice->created_at->format('d M Y') }}
+                            <?php echo e($invoice->created_at->format('d M Y')); ?>
+
                         </td>
                     </tr>
 
@@ -133,14 +140,15 @@
 
                         <td class="font-bold text-[#DD3517] text-right">
 
-                            {{ $invoice->due_date ? $invoice->due_date->format('d M Y') : '-' }}
+                            <?php echo e($invoice->due_date ? $invoice->due_date->format('d M Y') : '-'); ?>
+
                         </td>
                     </tr>
                 </table>
             </div>
         </div>
 
-        {{-- ITEMS --}}
+        
         <div class="mb-8">
             <h4 class="text-sm font-black text-gray-900 mb-4 uppercase tracking-wider">
                 Rincian Pekerjaan
@@ -173,30 +181,36 @@
                     </thead>
 
                     <tbody class="divide-y divide-gray-100">
-                        @forelse($invoice->items as $index => $item)
+                        <?php $__empty_1 = true; $__currentLoopData = $invoice->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td class="px-4 py-3 text-center text-gray-500">
-                                {{ $index + 1 }}
+                                <?php echo e($index + 1); ?>
+
                             </td>
 
                             <td class="px-4 py-3 font-bold text-gray-900">
-                                {{ $item->item_name }}
+                                <?php echo e($item->item_name); ?>
+
                             </td>
 
                             <td class="px-4 py-3 text-center text-gray-600">
-                                {{ number_format($item->quantity, 1, ',', '') }}
-                                {{ $item->unit }}
+                                <?php echo e(number_format($item->quantity, 1, ',', '')); ?>
+
+                                <?php echo e($item->unit); ?>
+
                             </td>
 
                             <td class="px-4 py-3 text-right text-gray-600">
-                                Rp {{ number_format($item->price, 0, ',', '.') }}
+                                Rp <?php echo e(number_format($item->price, 0, ',', '.')); ?>
+
                             </td>
 
                             <td class="px-4 py-3 text-right font-bold text-gray-900">
-                                Rp {{ number_format($item->total, 0, ',', '.') }}
+                                Rp <?php echo e(number_format($item->total, 0, ',', '.')); ?>
+
                             </td>
                         </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
 
                         <tr>
                             <td colspan="5"
@@ -204,13 +218,13 @@
                                 Item pekerjaan belum diisi.
                             </td>
                         </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        {{-- TOTAL --}}
+        
         <div class="flex justify-end">
             <div class="w-full sm:w-1/2 md:w-1/3">
                 <div class="flex justify-between py-3 border-b border-gray-100">
@@ -219,7 +233,8 @@
                     </span>
 
                     <span class="font-bold text-gray-900">
-                        Rp {{ number_format($invoice->amount, 0, ',', '.') }}
+                        Rp <?php echo e(number_format($invoice->amount, 0, ',', '.')); ?>
+
                     </span>
                 </div>
 
@@ -229,7 +244,8 @@
                     </span>
 
                     <span class="font-black text-[#DD3517] text-lg">
-                        Rp {{ number_format($invoice->amount, 0, ',', '.') }}
+                        Rp <?php echo e(number_format($invoice->amount, 0, ',', '.')); ?>
+
                     </span>
                 </div>
             </div>
@@ -237,4 +253,5 @@
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\SIP\sinom-jatimas\resources\views/client/invoices/show.blade.php ENDPATH**/ ?>

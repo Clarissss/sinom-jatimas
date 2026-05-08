@@ -1,9 +1,9 @@
-@extends('layouts.app')
 
-@section('title', $project->name . ' - PT. Sinom Jati Mas')
-@section('page-title', 'Detail Proyek')
 
-@section('content')
+<?php $__env->startSection('title', $project->name . ' - PT. Sinom Jati Mas'); ?>
+<?php $__env->startSection('page-title', 'Detail Proyek'); ?>
+
+<?php $__env->startSection('content'); ?>
 
 <div class="space-y-6 animate-fade-in"
      x-data="{
@@ -11,12 +11,12 @@
     showProgressPreview: false
 }">
 
-    {{-- TOP BAR --}}
+    
     <div class="flex items-center justify-between">
 
         <div class="flex items-center gap-4">
 
-            <a href="{{ route('client.dashboard') }}"
+            <a href="<?php echo e(route('client.dashboard')); ?>"
                class="w-11 h-11 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-gray-500 hover:text-[#DD3517] hover:border-[#DD3517]/20 transition-all">
 
                 <i class="fa-solid fa-arrow-left"></i>
@@ -25,7 +25,7 @@
 
             <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em]">
 
-                <a href="{{ route('client.dashboard') }}"
+                <a href="<?php echo e(route('client.dashboard')); ?>"
                    class="text-gray-400 hover:text-[#DD3517] transition-colors duration-300">
 
                     Dashboard
@@ -46,19 +46,20 @@
 
     </div>
 
-    {{-- PROJECT HEADER --}}
+    
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
         <div class="p-6">
 
-            {{-- TITLE --}}
+            
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
                 <div>
 
                     <h2 class="text-2xl font-bold text-gray-900">
 
-                        {{ $project->name }}
+                        <?php echo e($project->name); ?>
+
 
                     </h2>
 
@@ -83,7 +84,8 @@
 
                         <span>
 
-                            {{ $project->location ?? 'Lokasi belum ditentukan' }}
+                            <?php echo e($project->location ?? 'Lokasi belum ditentukan'); ?>
+
 
                         </span>
 
@@ -91,10 +93,10 @@
 
                 </div>
 
-                {{-- STATUS --}}
+                
                 <div class="flex flex-wrap gap-2">
 
-                    @php
+                    <?php
 
                         $statusConfig = [
 
@@ -126,9 +128,9 @@
 
                         $config = $statusConfig[$project->status] ?? $statusConfig['pending'];
 
-                    @endphp
+                    ?>
 
-                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium {{ $config['class'] }}">
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium <?php echo e($config['class']); ?>">
 
                         <svg class="w-4 h-4 mr-1.5"
                              fill="none"
@@ -138,15 +140,16 @@
                             <path stroke-linecap="round"
                                   stroke-linejoin="round"
                                   stroke-width="2"
-                                  d="{{ $config['icon'] }}"/>
+                                  d="<?php echo e($config['icon']); ?>"/>
 
                         </svg>
 
-                        {{ $config['label'] }}
+                        <?php echo e($config['label']); ?>
+
 
                     </span>
 
-                    <a href="{{ route('chat.index', $project) }}"
+                    <a href="<?php echo e(route('chat.index', $project)); ?>"
                        class="inline-flex items-center px-4 py-1.5 bg-secondary-600 text-white rounded-lg text-sm font-medium hover:bg-secondary-700 transition-colors shadow-sm">
 
                         <svg class="w-4 h-4 mr-1.5"
@@ -169,7 +172,7 @@
 
             </div>
 
-            {{-- PROGRESS --}}
+            
 <div class="relative">
 
     <div class="flex items-center justify-between mb-2">
@@ -182,7 +185,7 @@
 
         <span class="text-lg font-bold text-primary-600">
 
-            {{ $project->progress_percentage }}%
+            <?php echo e($project->progress_percentage); ?>%
 
         </span>
 
@@ -194,12 +197,12 @@
             @click="activeTab = 'progress'"
             class="w-full group relative">
 
-        {{-- PREVIEW --}}
-        @if($project->progressPhotos->count())
+        
+        <?php if($project->progressPhotos->count()): ?>
 
-            @php
+            <?php
                 $latestPhoto = $project->progressPhotos->last();
-            @endphp
+            ?>
 
             <div x-show="showProgressPreview"
                  x-transition
@@ -207,7 +210,7 @@
 
                 <div class="aspect-video overflow-hidden bg-gray-100">
 
-                    <img src="{{ asset('storage/' . $latestPhoto->photo_path) }}"
+                    <img src="<?php echo e(asset('storage/' . $latestPhoto->photo_path)); ?>"
                          class="w-full h-full object-cover">
 
                 </div>
@@ -224,33 +227,34 @@
 
                         <span class="text-xs text-gray-400">
 
-                            {{ $project->progress_percentage }}%
+                            <?php echo e($project->progress_percentage); ?>%
 
                         </span>
 
                     </div>
 
-                    @if($latestPhoto->description)
+                    <?php if($latestPhoto->description): ?>
 
                         <p class="text-sm text-gray-600 line-clamp-2">
 
-                            {{ $latestPhoto->description }}
+                            <?php echo e($latestPhoto->description); ?>
+
 
                         </p>
 
-                    @endif
+                    <?php endif; ?>
 
                 </div>
 
             </div>
 
-        @endif
+        <?php endif; ?>
 
-        {{-- BAR --}}
+        
         <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
 
             <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-3 rounded-full transition-all duration-500 group-hover:brightness-110"
-                 style="width: {{ $project->progress_percentage }}%">
+                 style="width: <?php echo e($project->progress_percentage); ?>%">
 
             </div>
 
@@ -264,10 +268,10 @@
 
     </div>
 
-    {{-- CONTENT --}}
+    
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
 
-        {{-- TAB --}}
+        
         <div class="border-b border-gray-200">
 
             <nav class="flex -mb-px overflow-x-auto">
@@ -308,7 +312,7 @@
 
         <div class="p-6">
 
-            {{-- OVERVIEW --}}
+            
             <div x-show="activeTab === 'overview'"
                  class="space-y-6"
                  x-cloak>
@@ -326,7 +330,8 @@
                                 </dt>
 
                                 <dd class="text-sm font-semibold text-gray-900">
-                                    {{ $project->client->name }}
+                                    <?php echo e($project->client->name); ?>
+
                                 </dd>
 
                             </div>
@@ -338,7 +343,8 @@
                                 </dt>
 
                                 <dd class="text-sm font-bold text-gray-900">
-                                    Rp {{ number_format($project->contract_value, 0, ',', '.') }}
+                                    Rp <?php echo e(number_format($project->contract_value, 0, ',', '.')); ?>
+
                                 </dd>
 
                             </div>
@@ -350,7 +356,8 @@
                                 </dt>
 
                                 <dd class="text-sm font-bold text-blue-700">
-                                    Rp {{ number_format($project->total_invoiced, 0, ',', '.') }}
+                                    Rp <?php echo e(number_format($project->total_invoiced, 0, ',', '.')); ?>
+
                                 </dd>
 
                             </div>
@@ -362,7 +369,8 @@
                                 </dt>
 
                                 <dd class="text-base font-black text-red-700">
-                                    Rp {{ number_format($project->remaining_payment, 0, ',', '.') }}
+                                    Rp <?php echo e(number_format($project->remaining_payment, 0, ',', '.')); ?>
+
                                 </dd>
 
                             </div>
@@ -375,7 +383,8 @@
 
                                 <dd class="text-sm font-medium text-gray-900">
 
-                                    {{ $project->start_date ? $project->start_date->format('d M Y') : '-' }}
+                                    <?php echo e($project->start_date ? $project->start_date->format('d M Y') : '-'); ?>
+
 
                                 </dd>
 
@@ -389,7 +398,8 @@
 
                                 <dd class="text-sm font-medium text-gray-900">
 
-                                    {{ $project->end_date ? $project->end_date->format('d M Y') : '-' }}
+                                    <?php echo e($project->end_date ? $project->end_date->format('d M Y') : '-'); ?>
+
 
                                 </dd>
 
@@ -409,7 +419,8 @@
 
                         <p class="text-sm text-gray-600 leading-relaxed">
 
-                            {{ $project->description ?? 'Tidak ada deskripsi proyek.' }}
+                            <?php echo e($project->description ?? 'Tidak ada deskripsi proyek.'); ?>
+
 
                         </p>
 
@@ -419,20 +430,20 @@
 
             </div>
 
-            {{-- FOTO PROGRESS --}}
+            
             <div x-show="activeTab === 'progress'"
                  class="space-y-6"
                  x-cloak>
 
                 <div class="grid md:grid-cols-3 gap-4">
 
-                    @forelse($project->progressPhotos as $photo)
+                    <?php $__empty_1 = true; $__currentLoopData = $project->progressPhotos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $photo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
 
                         <div class="bg-gray-50 rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
 
                             <div class="aspect-[4/3] overflow-hidden bg-gray-100">
 
-                                <img src="{{ asset('storage/' . $photo->photo_path) }}"
+                                <img src="<?php echo e(asset('storage/' . $photo->photo_path)); ?>"
                                      alt="Foto Progress"
                                      class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
 
@@ -441,33 +452,35 @@
                             <div class="p-4">
 
                                 <span class="inline-block px-2 py-1 text-xs font-medium rounded-full
-                                    @if($photo->type === 'before')
+                                    <?php if($photo->type === 'before'): ?>
                                         bg-gray-100 text-gray-800
-                                    @elseif($photo->type === 'after')
+                                    <?php elseif($photo->type === 'after'): ?>
                                         bg-green-100 text-green-800
-                                    @else
+                                    <?php else: ?>
                                         bg-blue-100 text-blue-800
-                                    @endif">
+                                    <?php endif; ?>">
 
-                                    {{ ucfirst($photo->type) }}
+                                    <?php echo e(ucfirst($photo->type)); ?>
+
 
                                 </span>
 
-                                @if($photo->description)
+                                <?php if($photo->description): ?>
 
                                     <p class="text-sm text-gray-600 mt-2">
 
-                                        {{ $photo->description }}
+                                        <?php echo e($photo->description); ?>
+
 
                                     </p>
 
-                                @endif
+                                <?php endif; ?>
 
                             </div>
 
                         </div>
 
-                    @empty
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
 
                         <div class="col-span-3 text-center py-10 text-gray-500">
 
@@ -485,18 +498,18 @@
 
                         </div>
 
-                    @endforelse
+                    <?php endif; ?>
 
                 </div>
 
             </div>
 
-            {{-- INVOICE --}}
+            
             <div x-show="activeTab === 'invoice'"
                  class="space-y-4"
                  x-cloak>
 
-                @forelse($project->invoices as $invoice)
+                <?php $__empty_1 = true; $__currentLoopData = $project->invoices; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invoice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
 
                     <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 hover:shadow-sm transition-all">
 
@@ -506,19 +519,22 @@
 
                                 <h4 class="font-bold text-gray-900">
 
-                                    {{ $invoice->invoice_number }}
+                                    <?php echo e($invoice->invoice_number); ?>
+
 
                                 </h4>
 
                                 <p class="text-sm text-gray-500 mt-1">
 
-                                    {{ $invoice->created_at->format('d M Y') }}
+                                    <?php echo e($invoice->created_at->format('d M Y')); ?>
+
 
                                 </p>
 
                                 <p class="text-lg font-black text-primary-600 mt-3">
 
-                                    Rp {{ number_format($invoice->amount, 0, ',', '.') }}
+                                    Rp <?php echo e(number_format($invoice->amount, 0, ',', '.')); ?>
+
 
                                 </p>
 
@@ -526,14 +542,14 @@
 
                             <div class="flex items-center gap-2">
 
-                                <a href="{{ route('client.invoices.show', $invoice) }}"
+                                <a href="<?php echo e(route('client.invoices.show', $invoice)); ?>"
                                    class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all">
 
                                     <i class="fa-solid fa-eye text-sm"></i>
 
                                 </a>
 
-                                <a href="{{ route('client.invoices.download', $invoice) }}"
+                                <a href="<?php echo e(route('client.invoices.download', $invoice)); ?>"
                                    class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-green-50 text-green-600 hover:bg-green-100 transition-all">
 
                                     <i class="fa-solid fa-download text-sm"></i>
@@ -546,7 +562,7 @@
 
                     </div>
 
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
 
                     <div class="text-center py-10 text-gray-500">
 
@@ -564,7 +580,7 @@
 
                     </div>
 
-                @endforelse
+                <?php endif; ?>
 
             </div>
 
@@ -574,4 +590,5 @@
 
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\SIP\sinom-jatimas\resources\views/client/projects/show.blade.php ENDPATH**/ ?>

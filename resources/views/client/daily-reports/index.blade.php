@@ -226,7 +226,6 @@
 
                                 {{-- FOTO --}}
                                 <td class="px-8 py-5 text-center">
-                                    {{-- PERBAIKAN: Mengambil foto pertama untuk thumbnail --}}
                                     @if ($report->photo)
                                         @php
                                             $allPhotos = explode(',', $report->photo);
@@ -288,38 +287,4 @@
             @endif
         </div>
     </div>
-
-    {{-- POPUP MODAL PENGINGAT (REMINDER) KLIEN --}}
-    @php
-        $hasPendingReport = $reports->where('is_accepted', false)->count() > 0;
-    @endphp
-
-    @if($hasPendingReport)
-    <div id="reminderModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl border border-gray-100 animate-fade-in text-center">
-            <div class="w-16 h-16 bg-orange-50 text-[#DD3517] rounded-2xl flex items-center justify-center mx-auto mb-5 border border-orange-100 shadow-sm">
-                <i class="fa-solid fa-bell fa-bounce text-xl"></i>
-            </div>
-            <h3 class="text-xl font-black text-gray-900 uppercase tracking-tighter mb-2">Konfirmasi Laporan</h3>
-            <p class="text-xs text-gray-500 font-medium leading-relaxed mb-6 px-2">
-                Yth. Klien, Anda diminta untuk memeriksa dan melakukan konfirmasi <span class="text-[#DD3517] font-bold">"Terima Laporan"</span> pada sistem demi kelancaran progress pengerjaan di lapangan.
-            </p>
-            <button onclick="closeReminder()" class="w-full bg-gray-900 text-white p-4 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#DD3517] transition-all shadow-md">
-                Saya Mengerti & Periksa Laporan
-            </button>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!sessionStorage.getItem('daily_report_reminder_shown')) {
-                document.getElementById('reminderModal').classList.remove('hidden');
-            }
-        });
-        function closeReminder() {
-            document.getElementById('reminderModal').classList.add('hidden');
-            sessionStorage.setItem('daily_report_reminder_shown', 'true');
-        }
-    </script>
-    @endif
 @endsection

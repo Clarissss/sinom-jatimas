@@ -1,4 +1,5 @@
 <?php $__env->startSection('content'); ?>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
@@ -7,7 +8,7 @@
     .ts-wrapper.focus .ts-control { border-color: #DD3517 !important; box-shadow: 0 0 0 2px rgba(221, 53, 23, 0.1) !important; }
 </style>
 
-<div class="space-y-6 animate-fade-in">
+<div class="space-y-6 animate-fade-in pb-12">
     
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
@@ -21,12 +22,14 @@
          x-data="{
             init() {
                 new TomSelect('#filter_client', {
+                    plugins: ['clear_button'],
                     render: {
                         option: (data, escape) => `<div><span class='mr-2 text-gray-400'><i class='fas fa-user-tie w-4'></i></span>${escape(data.text)}</div>`,
                         item: (data, escape) => `<div><span class='mr-2 text-[#DD3517]'><i class='fas fa-user-tie w-4'></i></span>${escape(data.text)}</div>`
                     }
                 });
                 new TomSelect('#filter_project', {
+                    plugins: ['clear_button'],
                     render: {
                         option: (data, escape) => `<div><span class='mr-2 text-gray-400'><i class='fas fa-building w-4'></i></span>${escape(data.text)}</div>`,
                         item: (data, escape) => `<div><span class='mr-2 text-[#DD3517]'><i class='fas fa-building w-4'></i></span>${escape(data.text)}</div>`
@@ -38,7 +41,7 @@
             
             
             <div>
-                <label for="filter_client" class="block text-sm font-medium text-gray-700 mb-1">Klien</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Klien</label>
                 <select name="client_id" id="filter_client" placeholder="Pilih Klien...">
                     <option value="">Semua Klien</option>
                     <?php $__currentLoopData = $clients; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $client): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -52,7 +55,7 @@
 
             
             <div>
-                <label for="filter_project" class="block text-sm font-medium text-gray-700 mb-1">Proyek</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Proyek</label>
                 <select name="project_id" id="filter_project" placeholder="Pilih Proyek...">
                     <option value="">Semua Proyek</option>
                     <?php $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -130,25 +133,29 @@
                             <div class="flex items-center">
                                 <?php
                                     $icon = 'fa-file-lines text-gray-400';
-                                    if($file->source == 'chat') $icon = 'fa-comment-dots text-blue-500';
-                                    if($file->source == 'report') $icon = 'fa-images text-emerald-500';
+                                    if($file['source'] == 'chat') $icon = 'fa-file-invoice-dollar text-blue-500'; // Ikon invoice tagihan
+                                    if($file['source'] == 'report') $icon = 'fa-image text-emerald-500'; // Ikon foto pengerjaan harian
                                 ?>
                                 <i class="fa-solid <?php echo e($icon); ?> mr-3 text-lg"></i>
-                                <span class="font-bold text-gray-800 text-xs break-all"><?php echo e($file->file_name ?? 'N/A'); ?></span>
+                                <span class="font-bold text-gray-800 text-xs break-all">
+                                    <?php echo e($file['file_name'] ?? 'N/A'); ?>
+
+                                </span>
                             </div>
                         </td>
                         <td class="px-6 py-4 text-xs font-bold text-gray-600">
-                            <?php echo e($file->client_name); ?>
+                            <?php echo e($file['client_name']); ?>
 
                         </td>
                         <td class="px-6 py-4">
                             <span class="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-black text-gray-500 uppercase">
-                                <?php echo e($file->project_name); ?>
+                                <?php echo e($file['project_name']); ?>
 
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="<?php echo e(route('admin.documents.download', $file->id)); ?>?source=<?php echo e($file->source); ?>" 
+                            
+                            <a href="<?php echo e(route('admin.documents.download', $file['id'])); ?>?source=<?php echo e($file['source']); ?><?php echo e($file['extra_path'] ? '&path=' . urlencode($file['extra_path']) : ''); ?>" 
                                class="bg-gray-900 text-white px-4 py-2 rounded-lg font-black text-[10px] hover:bg-gray-800 transition-all">
                                 <i class="fa-solid fa-download mr-1"></i> DOWNLOAD
                             </a>

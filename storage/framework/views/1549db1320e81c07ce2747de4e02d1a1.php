@@ -1,9 +1,7 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Laporan Harian - PT. Sinom Jati Mas'); ?>
+<?php $__env->startSection('page-title', 'Laporan Harian'); ?>
 
-@section('title', 'Laporan Harian - PT. Sinom Jati Mas')
-@section('page-title', 'Laporan Harian')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
@@ -25,7 +23,7 @@
     </style>
 
     <div class="space-y-6 animate-fade-in pb-10">
-        {{-- HEADER --}}
+        
         <div class="flex justify-between items-end px-2">
             <div>
                 <h2 class="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
@@ -38,7 +36,7 @@
             </div>
         </div>
 
-        {{-- FILTER --}}
+        
         <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100" x-data="{
             init() {
                 new TomSelect('#filter_project', {
@@ -64,10 +62,10 @@
             }
         }">
 
-            <form action="{{ route('client.daily-reports.index') }}" method="GET"
+            <form action="<?php echo e(route('client.daily-reports.index')); ?>" method="GET"
                 class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 items-end">
 
-                {{-- FILTER PROYEK --}}
+                
                 <div>
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">
                         Pilih Proyek
@@ -78,26 +76,27 @@
                             Semua Proyek
                         </option>
 
-                        @foreach ($projects as $project)
-                            <option value="{{ $project->id }}"
-                                {{ request('project_id') == $project->id ? 'selected' : '' }}>
-                                {{ $project->name }}
+                        <?php $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($project->id); ?>"
+                                <?php echo e(request('project_id') == $project->id ? 'selected' : ''); ?>>
+                                <?php echo e($project->name); ?>
+
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                 </div>
 
-                {{-- FILTER TANGGAL --}}
+                
                 <div>
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">
                         Pilih Tanggal
                     </label>
 
-                    <input type="date" name="date" value="{{ request('date') }}"
+                    <input type="date" name="date" value="<?php echo e(request('date')); ?>"
                         class="w-full border-gray-100 bg-gray-50 rounded-xl text-sm h-[46px] px-3 font-bold focus:ring-[#DD3517] focus:border-[#DD3517] transition-all">
                 </div>
 
-                {{-- BUTTON --}}
+                
                 <div class="flex space-x-2 h-[46px]">
                     <button type="submit"
                         class="flex-1 bg-gray-900 text-white rounded-xl hover:bg-black text-[10px] font-black uppercase tracking-widest transition-all shadow-md">
@@ -106,18 +105,18 @@
                         Terapkan
                     </button>
 
-                    @if (request()->anyFilled(['project_id', 'date']))
-                        <a href="{{ route('client.daily-reports.index') }}"
+                    <?php if(request()->anyFilled(['project_id', 'date'])): ?>
+                        <a href="<?php echo e(route('client.daily-reports.index')); ?>"
                             class="w-14 inline-flex items-center justify-center bg-gray-100 text-gray-400 rounded-xl hover:bg-gray-200 transition-all shadow-sm">
 
                             <i class="fas fa-rotate-left"></i>
                         </a>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </form>
         </div>
 
-        {{-- TABLE --}}
+        
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
@@ -152,45 +151,49 @@
                     </thead>
 
                     <tbody class="divide-y divide-gray-50">
-                        @forelse($reports as $report)
+                        <?php $__empty_1 = true; $__currentLoopData = $reports; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $report): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr class="hover:bg-gray-50/50 transition-colors group">
 
-                                {{-- TANGGAL --}}
+                                
                                 <td class="px-8 py-5">
                                     <p class="font-black text-gray-900 text-sm leading-none mb-1">
-                                        {{ $report->report_date->format('d M Y') }}
+                                        <?php echo e($report->report_date->format('d M Y')); ?>
+
                                     </p>
 
                                     <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest italic">
                                         Dibuat oleh:
-                                        {{ $report->creator->name ?? 'System' }}
+                                        <?php echo e($report->creator->name ?? 'System'); ?>
+
                                     </p>
                                 </td>
 
-                                {{-- PROYEK --}}
+                                
                                 <td class="px-8 py-5">
                                     <p class="text-sm font-black text-gray-900 leading-none uppercase tracking-tighter mb-1">
-                                        {{ $report->project->name }}
+                                        <?php echo e($report->project->name); ?>
+
                                     </p>
                                     <div>
-                                        @if($report->is_accepted)
+                                        <?php if($report->is_accepted): ?>
                                             <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 text-[8px] px-2 py-0.5 rounded-md font-black">DITERIMA</span>
-                                        @else
+                                        <?php else: ?>
                                             <span class="bg-orange-50 text-orange-600 border border-orange-100 text-[8px] px-2 py-0.5 rounded-md font-black">BELUM DIKONFIRMASI</span>
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                 </td>
 
-                                {{-- AKTIVITAS --}}
+                                
                                 <td class="px-8 py-5">
                                     <p class="text-xs text-gray-600 line-clamp-2 max-w-xs font-medium">
-                                        {{ $report->activity_description }}
+                                        <?php echo e($report->activity_description); ?>
+
                                     </p>
                                 </td>
 
-                                {{-- CUACA --}}
+                                
                                 <td class="px-8 py-5 text-center">
-                                    @php
+                                    <?php
                                         $weatherMap = [
                                             'sunny' => [
                                                 'icon' => 'fa-sun',
@@ -214,58 +217,60 @@
                                             ],
                                         ];
                                         $w = $weatherMap[$report->weather_condition] ?? $weatherMap['sunny'];
-                                    @endphp
+                                    ?>
 
-                                    <div class="{{ $w['color'] }} flex flex-col items-center">
-                                        <i class="fa-solid {{ $w['icon'] }} text-sm mb-1"></i>
+                                    <div class="<?php echo e($w['color']); ?> flex flex-col items-center">
+                                        <i class="fa-solid <?php echo e($w['icon']); ?> text-sm mb-1"></i>
                                         <span class="text-[8px] font-black">
-                                            {{ $w['label'] }}
+                                            <?php echo e($w['label']); ?>
+
                                         </span>
                                     </div>
                                 </td>
 
-                                {{-- FOTO --}}
+                                
                                 <td class="px-8 py-5 text-center">
-                                    {{-- PERBAIKAN: Mengambil foto pertama untuk thumbnail --}}
-                                    @if ($report->photo)
-                                        @php
+                                    
+                                    <?php if($report->photo): ?>
+                                        <?php
                                             $allPhotos = explode(',', $report->photo);
                                             $firstPhoto = trim($allPhotos[0]);
-                                        @endphp
+                                        ?>
                                         <div class="relative inline-block">
-                                            <img src="{{ asset('storage/' . $firstPhoto) }}" class="w-10 h-10 rounded-xl object-cover border border-gray-100 shadow-sm mx-auto">
-                                            @if(count($allPhotos) > 1)
+                                            <img src="<?php echo e(asset('storage/' . $firstPhoto)); ?>" class="w-10 h-10 rounded-xl object-cover border border-gray-100 shadow-sm mx-auto">
+                                            <?php if(count($allPhotos) > 1): ?>
                                                 <span class="absolute -top-1.5 -right-1.5 bg-gray-900 text-white font-black text-[8px] px-1 py-0.5 rounded-md border border-white">
-                                                    +{{ count($allPhotos) - 1 }}
+                                                    +<?php echo e(count($allPhotos) - 1); ?>
+
                                                 </span>
-                                            @endif
+                                            <?php endif; ?>
                                         </div>
-                                    @else
+                                    <?php else: ?>
                                         <i class="fa-solid fa-image text-gray-200"></i>
-                                    @endif
+                                    <?php endif; ?>
 
                                 </td>
 
-                                {{-- AKSI --}}
+                                
                                 <td class="px-8 py-5 text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end space-x-2">
-                                        <a href="{{ route('client.daily-reports.show', $report) }}"
+                                        <a href="<?php echo e(route('client.daily-reports.show', $report)); ?>"
                                             class="p-2 bg-gray-50 text-gray-400 hover:text-blue-600 rounded-xl transition-all">
                                             <i class="fa-solid fa-eye"></i>
                                         </a>
 
-                                        @if(!$report->is_accepted)
-                                            <form action="{{ route('client.daily-reports.accept', $report) }}" method="POST" class="inline" onsubmit="return confirm('Konfirmasi bahwa Anda menyetujui laporan harian ini?');">
-                                                @csrf @method('PATCH')
+                                        <?php if(!$report->is_accepted): ?>
+                                            <form action="<?php echo e(route('client.daily-reports.accept', $report)); ?>" method="POST" class="inline" onsubmit="return confirm('Konfirmasi bahwa Anda menyetujui laporan harian ini?');">
+                                                <?php echo csrf_field(); ?> <?php echo method_field('PATCH'); ?>
                                                 <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-orange-50 text-orange-600 border border-orange-100 hover:bg-emerald-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Konfirmasi Terima Laporan">
                                                     <i class="fa-solid fa-check mr-1"></i> Terima
                                                 </button>
                                             </form>
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="6" class="px-8 py-20 text-center">
                                     <div class="flex flex-col items-center">
@@ -276,25 +281,26 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforelse
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
 
-            @if ($reports->hasPages())
+            <?php if($reports->hasPages()): ?>
                 <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-50">
-                    {{ $reports->links() }}
+                    <?php echo e($reports->links()); ?>
+
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
-    {{-- POPUP MODAL PENGINGAT (REMINDER) KLIEN --}}
-    @php
+    
+    <?php
         $hasPendingReport = $reports->where('is_accepted', false)->count() > 0;
-    @endphp
+    ?>
 
-    @if($hasPendingReport)
+    <?php if($hasPendingReport): ?>
     <div id="reminderModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl border border-gray-100 animate-fade-in text-center">
             <div class="w-16 h-16 bg-orange-50 text-[#DD3517] rounded-2xl flex items-center justify-center mx-auto mb-5 border border-orange-100 shadow-sm">
@@ -321,5 +327,6 @@
             sessionStorage.setItem('daily_report_reminder_shown', 'true');
         }
     </script>
-    @endif
-@endsection
+    <?php endif; ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/ilyaskalamullah/Documents/SIP/sinom-jatimas/resources/views/client/daily-reports/index.blade.php ENDPATH**/ ?>

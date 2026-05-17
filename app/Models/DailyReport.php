@@ -11,18 +11,20 @@ class DailyReport extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'client_id',
-        'project_id',
-        'report_date',
-        'activity_description',
-        'weather_condition',
-        'photo',
-        'created_by',
-    ];
+    'client_id',
+    'project_id',
+    'report_date',
+    'activity_description',
+    'weather_condition',
+    'photo',
+    'created_by',
+    'is_accepted',
+];
 
-    protected $casts = [
-        'report_date' => 'date',
-    ];
+protected $casts = [
+    'report_date' => 'date',
+    'is_accepted' => 'boolean',
+];
 
     /**
      * Get the client that owns this daily report.

@@ -1,9 +1,7 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'Tambah Laporan Harian - PT. Sinom Jati Mas'); ?>
+<?php $__env->startSection('page-title', 'Tambah Laporan Harian'); ?>
 
-@section('title', 'Tambah Laporan Harian - PT. Sinom Jati Mas')
-@section('page-title', 'Tambah Laporan Harian')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
@@ -31,12 +29,12 @@
         </div>
         
         <div class="p-6">
-            <form action="{{ route('admin.daily-reports.store') }}" method="POST" enctype="multipart/form-data" 
+            <form action="<?php echo e(route('admin.daily-reports.store')); ?>" method="POST" enctype="multipart/form-data" 
                   x-data='{ 
                       loading: false,
                       imagePreviews: [],
-                      selectedClient: "{{ old("client_id") }}",
-                      allProjects: @json($projects),
+                      selectedClient: "<?php echo e(old("client_id")); ?>",
+                      allProjects: <?php echo json_encode($projects, 15, 512) ?>,
                       
                       clientSelect: null,
                       projectSelect: null,
@@ -109,16 +107,16 @@
                       }
                   }' 
                   @submit="loading = true">
-                @csrf
+                <?php echo csrf_field(); ?>
                 
                 <div class="grid md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Klien <span class="text-red-500">*</span></label>
                         <select x-ref="client_select" name="client_id" placeholder="Cari klien..." required>
                             <option value="">Pilih Klien</option>
-                            @foreach($clients as $client)
-                                <option value="{{ $client->id }}">{{ $client->name }}</option>
-                            @endforeach
+                            <?php $__currentLoopData = $clients; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $client): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($client->id); ?>"><?php echo e($client->name); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </select>
                     </div>
 
@@ -132,25 +130,25 @@
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Laporan <span class="text-red-500">*</span></label>
-                    <input type="date" name="report_date" value="{{ old('report_date', date('Y-m-d')) }}" 
+                    <input type="date" name="report_date" value="<?php echo e(old('report_date', date('Y-m-d'))); ?>" 
                            class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517]" required>
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Kondisi Cuaca</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        @foreach(['sunny' => 'Cerah', 'cloudy' => 'Berawan', 'rainy' => 'Hujan', 'storm' => 'Badai'] as $val => $label)
+                        <?php $__currentLoopData = ['sunny' => 'Cerah', 'cloudy' => 'Berawan', 'rainy' => 'Hujan', 'storm' => 'Badai']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $val => $label): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <label class="cursor-pointer">
-                            <input type="radio" name="weather_condition" value="{{ $val }}" class="peer hidden" {{ $loop->first ? 'checked' : '' }}>
+                            <input type="radio" name="weather_condition" value="<?php echo e($val); ?>" class="peer hidden" <?php echo e($loop->first ? 'checked' : ''); ?>>
                             <div class="text-center p-2 border rounded-lg peer-checked:border-[#DD3517] peer-checked:bg-orange-50 peer-checked:text-[#DD3517] hover:bg-gray-50 transition-all">
-                                <span class="text-xs font-medium">{{ $label }}</span>
+                                <span class="text-xs font-medium"><?php echo e($label); ?></span>
                             </div>
                         </label>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </div>
                 </div>
 
-                {{-- Input Area Upload Berkas Multiple --}}
+                
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Dokumentasi Foto (Bisa Pilih Banyak)</label>
                     <div @click="$refs.photoInput.click()" 
@@ -165,12 +163,12 @@
                             <p class="text-xs text-gray-400 mt-1">PNG, JPG, JPEG (Maks. 2MB per foto)</p>
                         </div>
 
-                        {{-- Menggunakan key photos[] array dan atribut multiple --}}
+                        
                         <input type="file" x-ref="photoInput" name="photos[]" class="hidden" accept="image/*" multiple
                                @change="handleFiles($event.target.files)">
                     </div>
 
-                    {{-- Grid Container Preview Multiple --}}
+                    
                     <template x-if="imagePreviews.length > 0">
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
                             <template x-for="(img, index) in imagePreviews" :key="img.id">
@@ -190,11 +188,11 @@
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Aktivitas <span class="text-red-500">*</span></label>
-                    <textarea name="activity_description" rows="4" class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517]" placeholder="Jelaskan progres hari ini..." required>{{ old('activity_description') }}</textarea>
+                    <textarea name="activity_description" rows="4" class="w-full border-gray-300 rounded-lg focus:ring-[#DD3517] focus:border-[#DD3517]" placeholder="Jelaskan progres hari ini..." required><?php echo e(old('activity_description')); ?></textarea>
                 </div>
 
                 <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
-                    <a href="{{ route('admin.daily-reports.index') }}" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50">Batal</a>
+                    <a href="<?php echo e(route('admin.daily-reports.index')); ?>" class="px-6 py-2.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50">Batal</a>
                     <button type="submit" :disabled="loading" class="bg-[#DD3517] text-white px-6 py-2.5 rounded-lg hover:bg-[#FF812E] text-sm font-medium shadow-md transition-all inline-flex items-center">
                         <i x-show="loading" class="fas fa-spinner fa-spin mr-2"></i>
                         <span x-text="loading ? 'Menyimpan...' : 'Simpan Laporan'"></span>
@@ -204,4 +202,5 @@
         </div>
     </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /Users/ilyaskalamullah/Documents/SIP/sinom-jatimas/resources/views/admin/daily-reports/create.blade.php ENDPATH**/ ?>

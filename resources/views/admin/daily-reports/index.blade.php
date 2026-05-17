@@ -73,7 +73,7 @@
                 <input type="date" name="date" value="{{ request('date') }}" class="w-full border-gray-100 bg-gray-50 rounded-xl text-sm h-[46px] font-bold focus:ring-[#DD3517] focus:border-[#DD3517] transition-all">
             </div>
 
-            {{-- Tombol Aksi (Gaya Button Invoice) --}}
+            {{-- Tombol Aksi --}}
             <div class="flex space-x-2 h-[46px]">
                 <button type="submit" class="flex-1 bg-gray-900 text-white rounded-xl hover:bg-black text-[10px] font-black uppercase tracking-widest transition-all shadow-md">
                     <i class="fas fa-filter mr-1 text-[8px]"></i> Terapkan
@@ -110,7 +110,14 @@
                             </td>
                             <td class="px-8 py-5">
                                 <p class="text-sm font-black text-gray-900 leading-none uppercase tracking-tighter">{{ $report->project->name }}</p>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 italic">{{ $report->client->name }}</p>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 italic flex items-center">
+                                    {{ $report->client->name }}
+                                    @if($report->is_accepted)
+                                        <span class="ml-2 bg-emerald-50 text-emerald-600 border border-emerald-200 text-[8px] px-2 py-0.5 rounded-md font-black">DITERIMA</span>
+                                    @else
+                                        <span class="ml-2 bg-orange-50 text-orange-600 border border-orange-200 text-[8px] px-2 py-0.5 rounded-md font-black">PENDING</span>
+                                    @endif
+                                </p>
                             </td>
                             <td class="px-8 py-5">
                                 <p class="text-xs text-gray-600 line-clamp-2 max-w-xs font-medium">{{ $report->activity_description }}</p>
@@ -131,8 +138,20 @@
                                 </div>
                             </td>
                             <td class="px-8 py-5 text-center">
+                                {{-- PERBAIKAN: Mengambil foto pertama untuk thumbnail --}}
                                 @if($report->photo)
-                                    <img src="{{ asset('storage/' . $report->photo) }}" class="w-10 h-10 rounded-xl object-cover border border-gray-100 shadow-sm mx-auto">
+                                    @php
+                                        $allPhotos = explode(',', $report->photo);
+                                        $firstPhoto = trim($allPhotos[0]);
+                                    @endphp
+                                    <div class="relative inline-block">
+                                        <img src="{{ asset('storage/' . $firstPhoto) }}" class="w-10 h-10 rounded-xl object-cover border border-gray-100 shadow-sm mx-auto">
+                                        @if(count($allPhotos) > 1)
+                                            <span class="absolute -top-1.5 -right-1.5 bg-gray-900 text-white font-black text-[8px] px-1 py-0.5 rounded-md border border-white">
+                                                +{{ count($allPhotos) - 1 }}
+                                            </span>
+                                        @endif
+                                    </div>
                                 @else
                                     <i class="fa-solid fa-image text-gray-200"></i>
                                 @endif
@@ -140,11 +159,16 @@
                             <td class="px-8 py-5 text-right whitespace-nowrap">
                                 <div class="flex items-center justify-end space-x-2">
                                     <a href="{{ route('admin.daily-reports.show', $report) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-blue-600 rounded-xl transition-all"><i class="fa-solid fa-eye"></i></a>
-                                    <a href="{{ route('admin.daily-reports.edit', $report) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-yellow-600 rounded-xl transition-all"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form action="{{ route('admin.daily-reports.destroy', $report) }}" method="POST" class="inline" onsubmit="return confirm('Hapus laporan ini?');">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 rounded-xl transition-all"><i class="fa-solid fa-trash-can"></i></button>
-                                    </form>
+                                    
+                                    @if(!$report->is_accepted)
+                                        <a href="{{ route('admin.daily-reports.edit', $report) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-yellow-600 rounded-xl transition-all"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <form action="{{ route('admin.daily-reports.destroy', $report) }}" method="POST" class="inline" onsubmit="return confirm('Hapus laporan ini?');">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 rounded-xl transition-all"><i class="fa-solid fa-trash-can"></i></button>
+                                        </form>
+                                    @else
+                                        <span class="text-xs text-gray-400 font-bold px-2 flex items-center italic"><i class="fa-solid fa-lock mr-1 text-[10px]"></i> Terkunci</span>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

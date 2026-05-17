@@ -166,13 +166,12 @@
             var items = groupedProjects[key];
             var coords = key.split(',');
             
-            // Ambil nama kota dari proyek pertama di grup ini
+           
             var cityLocation = items[0].location ? items[0].location : 'Lokasi Tidak Diketahui';
 
             var hasActive = items.some(i => i.status === 'in_progress');
             var color = hasActive ? '#FF812E' : '#10B981';
 
-            // Header Pop-up sekarang menyertakan Nama Kota/Lokasi
             var popupContent = `<div class="custom-popup space-y-3 p-1 min-w-[220px]">
                 <div class="border-b border-gray-100 pb-2 mb-2">
                     <div class="flex items-center text-[#DD3517] mb-1">

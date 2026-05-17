@@ -42,8 +42,13 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     Route::get('/invoices', [\App\Http\Controllers\Client\InvoiceController::class, 'index'])->name('invoices.index');
     Route::get('/invoices/{invoice}', [\App\Http\Controllers\Client\InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('/invoices/{invoice}/download', [\App\Http\Controllers\Client\InvoiceController::class, 'download'])->name('invoices.download');
+    
+    // Daily Reports (Sisi Klien)
     Route::get('/daily-reports', [\App\Http\Controllers\Client\DailyReportController::class, 'index'])->name('daily-reports.index');
     Route::get('/daily-reports/{project}', [\App\Http\Controllers\Client\DailyReportController::class, 'show'])->name('daily-reports.show');
+    
+    
+    Route::patch('/daily-reports/{dailyReport}/accept', [\App\Http\Controllers\Admin\DailyReportController::class, 'acceptReport'])->name('daily-reports.accept');
 });
 
 // Admin Routes
@@ -56,7 +61,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/projects/{project}/progress', [\App\Http\Controllers\Admin\ProjectProgressController::class, 'updateProgress'])->name('projects.progress.update');
     Route::delete('/projects/{project}/progress/{progress}', [\App\Http\Controllers\Admin\ProjectProgressController::class, 'destroy'])->name('projects.progress.destroy');
     
-    // Daily Reports
+    // Daily Reports (Sisi Admin)
     Route::resource('daily-reports', \App\Http\Controllers\Admin\DailyReportController::class);
     
     // Documents

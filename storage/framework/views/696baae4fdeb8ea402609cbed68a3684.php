@@ -108,7 +108,15 @@
                             </td>
                             <td class="px-8 py-5">
                                 <p class="text-sm font-black text-gray-900 leading-none uppercase tracking-tighter"><?php echo e($report->project->name); ?></p>
-                                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 italic"><?php echo e($report->client->name); ?></p>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase mt-1 italic flex items-center">
+                                    <?php echo e($report->client->name); ?>
+
+                                    <?php if($report->is_accepted): ?>
+                                        <span class="ml-2 bg-emerald-50 text-emerald-600 border border-emerald-200 text-[8px] px-2 py-0.5 rounded-md font-black">DITERIMA</span>
+                                    <?php else: ?>
+                                        <span class="ml-2 bg-orange-50 text-orange-600 border border-orange-200 text-[8px] px-2 py-0.5 rounded-md font-black">PENDING</span>
+                                    <?php endif; ?>
+                                </p>
                             </td>
                             <td class="px-8 py-5">
                                 <p class="text-xs text-gray-600 line-clamp-2 max-w-xs font-medium"><?php echo e($report->activity_description); ?></p>
@@ -129,8 +137,21 @@
                                 </div>
                             </td>
                             <td class="px-8 py-5 text-center">
+                                
                                 <?php if($report->photo): ?>
-                                    <img src="<?php echo e(asset('storage/' . $report->photo)); ?>" class="w-10 h-10 rounded-xl object-cover border border-gray-100 shadow-sm mx-auto">
+                                    <?php
+                                        $allPhotos = explode(',', $report->photo);
+                                        $firstPhoto = trim($allPhotos[0]);
+                                    ?>
+                                    <div class="relative inline-block">
+                                        <img src="<?php echo e(asset('storage/' . $firstPhoto)); ?>" class="w-10 h-10 rounded-xl object-cover border border-gray-100 shadow-sm mx-auto">
+                                        <?php if(count($allPhotos) > 1): ?>
+                                            <span class="absolute -top-1.5 -right-1.5 bg-gray-900 text-white font-black text-[8px] px-1 py-0.5 rounded-md border border-white">
+                                                +<?php echo e(count($allPhotos) - 1); ?>
+
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
                                 <?php else: ?>
                                     <i class="fa-solid fa-image text-gray-200"></i>
                                 <?php endif; ?>
@@ -138,11 +159,16 @@
                             <td class="px-8 py-5 text-right whitespace-nowrap">
                                 <div class="flex items-center justify-end space-x-2">
                                     <a href="<?php echo e(route('admin.daily-reports.show', $report)); ?>" class="p-2 bg-gray-50 text-gray-400 hover:text-blue-600 rounded-xl transition-all"><i class="fa-solid fa-eye"></i></a>
-                                    <a href="<?php echo e(route('admin.daily-reports.edit', $report)); ?>" class="p-2 bg-gray-50 text-gray-400 hover:text-yellow-600 rounded-xl transition-all"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form action="<?php echo e(route('admin.daily-reports.destroy', $report)); ?>" method="POST" class="inline" onsubmit="return confirm('Hapus laporan ini?');">
-                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                                        <button type="submit" class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 rounded-xl transition-all"><i class="fa-solid fa-trash-can"></i></button>
-                                    </form>
+                                    
+                                    <?php if(!$report->is_accepted): ?>
+                                        <a href="<?php echo e(route('admin.daily-reports.edit', $report)); ?>" class="p-2 bg-gray-50 text-gray-400 hover:text-yellow-600 rounded-xl transition-all"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <form action="<?php echo e(route('admin.daily-reports.destroy', $report)); ?>" method="POST" class="inline" onsubmit="return confirm('Hapus laporan ini?');">
+                                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                                            <button type="submit" class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 rounded-xl transition-all"><i class="fa-solid fa-trash-can"></i></button>
+                                        </form>
+                                    <?php else: ?>
+                                        <span class="text-xs text-gray-400 font-bold px-2 flex items-center italic"><i class="fa-solid fa-lock mr-1 text-[10px]"></i> Terkunci</span>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>

@@ -102,6 +102,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/projects/{project}/chat', [ChatController::class, 'store'])->name('chat.store');
     Route::get('/projects/{project}/chat/unread', [ChatController::class, 'unreadCount'])->name('chat.unread');
     Route::get('/chat/download/{message}', [ChatController::class, 'download'])->name('chat.download');
+
+    // General Chat (Pre-sales / Support)
+    Route::get('/chat/general', [\App\Http\Controllers\ConversationChatController::class, 'clientChat'])->name('chat.general');
+    Route::post('/chat/general/{conversation}', [\App\Http\Controllers\ConversationChatController::class, 'store'])->name('chat.general.store');
+    Route::get('/chat/general/unread', [\App\Http\Controllers\ConversationChatController::class, 'unreadCount'])->name('chat.general.unread');
+    Route::get('/chat/general/download/{message}', [\App\Http\Controllers\ConversationChatController::class, 'download'])->name('chat.general.download');
+
+    // Admin: Conversations
+    Route::get('/admin/conversations', [\App\Http\Controllers\ConversationChatController::class, 'adminIndex'])->name('admin.conversations.index');
+    Route::get('/admin/conversations/{conversation}', [\App\Http\Controllers\ConversationChatController::class, 'adminChat'])->name('admin.conversations.show');
+    Route::post('/admin/conversations/{conversation}/convert', [\App\Http\Controllers\ConversationChatController::class, 'convertToProject'])->name('admin.conversations.convert');
 });
 
 // Test broadcast (admin only) - Remove in production

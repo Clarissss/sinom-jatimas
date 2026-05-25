@@ -27,6 +27,7 @@
             @php
                 $navItems = [
                     ['route' => 'client.dashboard', 'icon' => 'fa-th-large', 'label' => 'Dashboard'],
+                    ['route' => 'chat.general', 'icon' => 'fa-comments', 'label' => 'Chat Support'],
                     ['route' => 'client.documents.index', 'icon' => 'fa-file-lines', 'label' => 'Dokumen'],
                     ['route' => 'client.invoices.index', 'icon' => 'fa-file-invoice-dollar', 'label' => 'Invoice'],
                     [

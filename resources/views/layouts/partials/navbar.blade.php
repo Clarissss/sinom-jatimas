@@ -49,7 +49,44 @@
 
                             {{-- Content Chat --}}
                             <div class="max-h-[420px] overflow-y-auto">
-                                @forelse($unreadChats as $projectId => $messages)
+                                {{-- General Chat Notifications --}}
+                                @foreach($unreadConversations as $conversationId => $messages)
+                                    @php
+                                        $message = $messages->first();
+                                        $conversation = $message->conversation;
+                                    @endphp
+                                    <a href="{{ auth()->user()->isAdmin() ? route('admin.conversations.show', $conversation) : route('chat.general') }}"
+                                        class="flex items-start gap-4 px-6 py-5 hover:bg-gray-50 transition-all border-b border-gray-50">
+                                        <div
+                                            class="w-12 h-12 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-black text-sm flex-shrink-0">
+                                            <i class="fa-solid fa-headset"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center justify-between gap-3">
+                                                <h4 class="text-sm font-black text-gray-900 truncate uppercase">
+                                                    Chat Support
+                                                </h4>
+                                                <span class="text-[10px] text-gray-400 font-bold whitespace-nowrap">
+                                                    {{ $message->created_at->diffForHumans() }}
+                                                </span>
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1 truncate">
+                                                {{ $message->sender->name }}:
+                                                {{ $message->message ?? 'Mengirim file' }}
+                                            </p>
+                                            <div class="mt-3 flex items-center justify-between">
+                                                <span
+                                                    class="text-[10px] uppercase tracking-widest text-gray-400 font-black">
+                                                    {{ $messages->count() }} pesan baru
+                                                </span>
+                                                <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                @endforeach
+
+                                {{-- Project Chat Notifications --}}
+                                @foreach($unreadChats as $projectId => $messages)
                                     @php
                                         $message = $messages->first();
                                         $project = $message->project;
@@ -82,7 +119,9 @@
                                             </div>
                                         </div>
                                     </a>
-                                @empty
+                                @endforeach
+
+                                @if($unreadConversations->isEmpty() && $unreadChats->isEmpty())
                                     <div class="p-12 text-center">
                                         <div
                                             class="w-20 h-20 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-5">
@@ -95,7 +134,7 @@
                                             Semua chat sudah dibaca
                                         </p>
                                     </div>
-                                @endforelse
+                                @endif
                             </div>
                         </div>
                     </div>

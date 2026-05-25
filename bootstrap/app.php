@@ -24,4 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->create();
+    })
+    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
+        // Archive chat messages older than 90 days daily at 02:00 AM
+        $schedule->command('chat:archive')->dailyAt('02:00');
+    })
+    ->create();

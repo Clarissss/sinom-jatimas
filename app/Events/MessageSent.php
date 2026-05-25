@@ -22,9 +22,19 @@ class MessageSent implements ShouldBroadcastNow
 
     public function broadcastOn(): array
     {
-        return [
-            new Channel('project.' . $this->message->project_id),
-        ];
+        $channels = [];
+
+        // Project-based chat
+        if ($this->message->project_id) {
+            $channels[] = new Channel('project.' . $this->message->project_id);
+        }
+
+        // General conversation chat
+        if ($this->message->conversation_id) {
+            $channels[] = new Channel('conversation.' . $this->message->conversation_id);
+        }
+
+        return $channels;
     }
 
     public function broadcastAs(): string
@@ -36,6 +46,8 @@ class MessageSent implements ShouldBroadcastNow
     {
         return [
             'id' => $this->message->id,
+            'project_id' => $this->message->project_id,
+            'conversation_id' => $this->message->conversation_id,
             'message' => $this->message->message,
             'file_path' => $this->message->file_path,
             'file_name' => $this->message->file_name,

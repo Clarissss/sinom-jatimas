@@ -19,23 +19,42 @@ class AppServiceProvider extends ServiceProvider
 
             $unreadCount = 0;
             $unreadChats = collect();
+            $unreadConversations = collect();
 
             if (auth()->check()) {
+                $user = auth()->user();
 
-                $messages = \App\Models\ChatMessage::with(['project', 'sender'])
-                    ->where('sender_id', '!=', auth()->id())
+                // Project-based unread messages
+                $projectMessages = ChatMessage::with(['project', 'sender'])
+                    ->where('sender_id', '!=', $user->id)
                     ->where('is_read', false)
+                    ->whereNotNull('project_id')
                     ->latest()
                     ->get();
 
-                $unreadCount = $messages->count();
+                // Conversation-based unread messages (general chat)
+                $conversationQuery = ChatMessage::with(['conversation.user', 'sender'])
+                    ->where('sender_id', '!=', $user->id)
+                    ->where('is_read', false)
+                    ->whereNotNull('conversation_id');
 
-                $unreadChats = $messages->groupBy('project_id');
+                if ($user->isClient()) {
+                    $conversationQuery->whereHas('conversation', function ($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    });
+                }
+
+                $conversationMessages = $conversationQuery->latest()->get();
+
+                $unreadCount = $projectMessages->count() + $conversationMessages->count();
+                $unreadChats = $projectMessages->groupBy('project_id');
+                $unreadConversations = $conversationMessages->groupBy('conversation_id');
             }
 
             $view->with([
                 'unreadCount' => $unreadCount,
                 'unreadChats' => $unreadChats,
+                'unreadConversations' => $unreadConversations,
             ]);
         });
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -10,8 +11,8 @@ class CompanyProfileController extends Controller
 {
     public function index()
     {
-        // Ambil data pertama, jika tidak ada buat objek kosong
         $profile = CompanyProfile::first() ?? new CompanyProfile();
+
         return view('admin.company-profile.index', compact('profile'));
     }
 
@@ -27,15 +28,28 @@ class CompanyProfileController extends Controller
             'address' => 'required',
             'email' => 'required|email',
             'phone' => 'required',
-            'logo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048'
+            'logo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'about_image_1' => 'nullable|image|mimes:jpg,png,jpeg|max:4096',
+            'about_image_2' => 'nullable|image|mimes:jpg,png,jpeg|max:4096',
+            'about_image_3' => 'nullable|image|mimes:jpg,png,jpeg|max:4096',
         ]);
 
         if ($request->hasFile('logo')) {
-            if ($profile->logo) Storage::delete($profile->logo);
+            if ($profile->logo) {
+                Storage::disk('public')->delete($profile->logo);
+            }
             $validated['logo'] = $request->file('logo')->store('company_logos', 'public');
         }
 
-        // Update data jika ada, buat baru jika belum ada
+        foreach (['about_image_1', 'about_image_2', 'about_image_3'] as $field) {
+            if ($request->hasFile($field)) {
+                if ($profile->{$field}) {
+                    Storage::disk('public')->delete($profile->{$field});
+                }
+                $validated[$field] = $request->file($field)->store('company_about', 'public');
+            }
+        }
+
         CompanyProfile::updateOrCreate(['id' => 1], $validated);
 
         return back()->with('success', 'Profil Perusahaan berhasil diperbarui.');

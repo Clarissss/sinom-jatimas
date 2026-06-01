@@ -9,8 +9,10 @@ use App\Http\Controllers\Admin\CompanyProfileController;
 use App\Http\Controllers\Admin\ServiceController;
 use Illuminate\Support\Facades\Route;
 
-// Landing Page
+// Public Pages
 Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/about', [LandingController::class, 'about'])->name('about');
+Route::get('/service', [LandingController::class, 'service'])->name('service');
 
 // Default home redirect
 Route::get('/home', function () {

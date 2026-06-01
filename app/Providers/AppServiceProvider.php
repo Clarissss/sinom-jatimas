@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
 use App\Models\ChatMessage;
+use App\Models\CompanyProfile;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,15 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        View::composer(
+            ['layouts.public', 'partials.public.navbar', 'partials.public.footer', 'partials.public.cta-banner'],
+            function ($view) {
+                if (! array_key_exists('companyProfile', $view->getData())) {
+                    $view->with('companyProfile', CompanyProfile::first());
+                }
+            }
+        );
+
         View::composer('*', function ($view) {
 
             $unreadCount = 0;

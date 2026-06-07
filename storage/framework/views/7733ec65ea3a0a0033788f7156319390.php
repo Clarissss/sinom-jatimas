@@ -1,13 +1,13 @@
-@php
+<?php
     $stackImages = [
         ['field' => 'about_image_1', 'fallback' => 'images/landing/about-1.jpg', 'class' => 'about-img-1'],
         ['field' => 'about_image_2', 'fallback' => 'images/landing/about-2.jpg', 'class' => 'about-img-2'],
         ['field' => 'about_image_3', 'fallback' => 'images/landing/about-3.jpg', 'class' => 'about-img-3'],
     ];
-@endphp
+?>
 
-@once
-    @push('styles')
+<?php if (! $__env->hasRenderedOnce('5fc17eee-726a-4714-943d-b923afbc5551')): $__env->markAsRenderedOnce('5fc17eee-726a-4714-943d-b923afbc5551'); ?>
+    <?php $__env->startPush('styles'); ?>
     <style>
         .about-gallery {
             position: relative;
@@ -86,40 +86,41 @@
             }
         }
     </style>
-    @endpush
-@endonce
+    <?php $__env->stopPush(); ?>
+<?php endif; ?>
 
 <section class="mb-8 overflow-visible bg-brand py-12 pb-16 text-white lg:mb-12 lg:py-16 lg:pb-20">
     <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
             <div class="relative order-2 mt-8 lg:order-1 lg:mt-0">
                 <div class="dot-grid dot-grid--cols-5 absolute right-0 top-2 hidden lg:grid">
-                    @for($i = 0; $i < 20; $i++)<span></span>@endfor
+                    <?php for($i = 0; $i < 20; $i++): ?><span></span><?php endfor; ?>
                 </div>
 
                 <div class="about-gallery relative mx-auto lg:mx-0">
-                    @foreach($stackImages as $index => $image)
+                    <?php $__currentLoopData = $stackImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <img
-                            src="{{ $companyProfile?->aboutImageUrl($image['field'], $image['fallback']) }}"
-                            alt="About {{ $index + 1 }}"
-                            class="{{ $image['class'] }}"
+                            src="<?php echo e($companyProfile?->aboutImageUrl($image['field'], $image['fallback'])); ?>"
+                            alt="About <?php echo e($index + 1); ?>"
+                            class="<?php echo e($image['class']); ?>"
                         >
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
 
                 <div class="dot-grid dot-grid--cols-5 absolute bottom-2 left-0 hidden lg:grid">
-                    @for($i = 0; $i < 15; $i++)<span></span>@endfor
+                    <?php for($i = 0; $i < 15; $i++): ?><span></span><?php endfor; ?>
                 </div>
             </div>
 
             <div class="order-1 lg:order-2">
                 <h2 class="text-2xl font-bold md:text-3xl">Visi</h2>
                 <hr class="my-4 border-white/80">
-                <p class="text-base leading-relaxed text-white/95 sm:text-lg">{{ $companyProfile?->vision ?? 'Menjadi perusahaan nasional yang berkelanjutan dan berkembang pesat.' }}</p>
+                <p class="text-base leading-relaxed text-white/95 sm:text-lg"><?php echo e($companyProfile?->vision ?? 'Menjadi perusahaan nasional yang berkelanjutan dan berkembang pesat.'); ?></p>
                 <h2 class="mt-8 text-2xl font-bold md:text-3xl">Misi</h2>
                 <hr class="my-4 border-white/80">
-                <p class="text-base leading-relaxed text-white/95 sm:text-lg">{{ $companyProfile?->mission ?? 'Meningkatkan daya saing perusahaan melalui pelayanan prima dan teknologi mutakhir.' }}</p>
+                <p class="text-base leading-relaxed text-white/95 sm:text-lg"><?php echo e($companyProfile?->mission ?? 'Meningkatkan daya saing perusahaan melalui pelayanan prima dan teknologi mutakhir.'); ?></p>
             </div>
         </div>
     </div>
 </section>
+<?php /**PATH C:\Users\HP\sinojatimas\sinom-jatimas\resources\views/partials/public/about-vision-mission.blade.php ENDPATH**/ ?>

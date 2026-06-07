@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/about', [LandingController::class, 'about'])->name('about');
 Route::get('/service', [LandingController::class, 'service'])->name('service');
+Route::get('/project', [LandingController::class, 'project'])->name('project');
+Route::get('/contact', [LandingController::class, 'contact'])->name('contact');
 
 // Default home redirect
 Route::get('/home', function () {

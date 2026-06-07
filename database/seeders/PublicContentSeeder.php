@@ -19,8 +19,8 @@ class PublicContentSeeder extends Seeder
             [
                 'company_name' => 'PT. Sinom Jati Mas',
                 'about_us' => 'PT. Sinom Jati Mas operates in General Contractor, Cut and Fill, and General Trading. We are committed to delivering trusted, on-time, and high-quality construction solutions for partners across Indonesia.',
-                'vision' => 'To become a sustainable national company that grows rapidly in construction and trading.',
-                'mission' => 'To strengthen competitiveness through excellent service, workplace safety, and modern technology on every project.',
+                'vision' => 'PT. SINOM JATI MAS will become one of the best companies in Indonesia by emphasizing sustainable growth, human resource development, technology management, and good corporate governance—building a strong, resilient company that contributes to national progress.',
+                'mission' => 'To increase competitiveness in the construction industry by developing the best services and technology for our partners and stakeholders; to improve HR training for a quality workforce, create a conducive work environment, and provide broad employment opportunities.',
                 'address' => 'Link. Sukarela RT/RW 006/001, Kel. Mekarsari, Kec. Pulomerak',
                 'email' => 'sinomjatimas@gmail.com',
                 'phone' => '0877-7130-0570',

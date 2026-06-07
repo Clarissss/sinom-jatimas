@@ -20,6 +20,11 @@ class CompanyProfile extends Model
         'about_image_3',
     ];
 
+    public function displayName(): string
+    {
+        return $this->company_name ?? 'PT. Sinom Jati Mas';
+    }
+
     public function imageUrl(?string $path): string
     {
         if (empty($path)) {
@@ -31,5 +36,12 @@ class CompanyProfile extends Model
         }
 
         return asset('storage/' . ltrim($path, '/'));
+    }
+
+    public function aboutImageUrl(string $field, string $fallbackAsset): string
+    {
+        $path = $this->{$field} ?? null;
+
+        return ! empty($path) ? $this->imageUrl($path) : asset($fallbackAsset);
     }
 }

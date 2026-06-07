@@ -42,7 +42,7 @@
     </main>
 
     <?php if (! (isset($hideCta) && $hideCta)): ?>
-        <?php echo $__env->make('partials.public.cta-banner', ['ctaClass' => ($activePage ?? '') === 'about' ? 'mt-4' : ''], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        <?php echo $__env->make('partials.public.cta-banner', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     <?php endif; ?>
 
     <?php echo $__env->make('partials.public.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>

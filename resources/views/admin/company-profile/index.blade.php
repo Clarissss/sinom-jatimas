@@ -56,12 +56,22 @@
                         <label class="block text-xs font-black text-gray-400 uppercase mb-2">Tentang Perusahaan</label>
                         <textarea name="about_us" rows="5" class="w-full border-gray-100 rounded-xl text-sm focus:ring-[#DD3517]">{{ old('about_us', $profile->about_us) }}</textarea>
                     </div>
+                    <div class="rounded-2xl border border-orange-100 bg-orange-50/60 p-4 text-sm text-gray-600">
+                        <p class="font-semibold text-gray-800">Gambar Halaman About Us</p>
+                        <p class="mt-1 text-xs leading-relaxed">Upload gambar di bawah untuk mengganti foto di halaman About Us. Kosongkan jika ingin memakai gambar default.</p>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        @foreach(['about_image_1' => 'Gambar About 1', 'about_image_2' => 'Gambar About 2', 'about_image_3' => 'Gambar About 3'] as $field => $label)
+                        @foreach([
+                            'about_image_1' => ['label' => 'Gambar 1', 'hint' => 'Intro About (kiri) & tumpukan Visi/Misi (atas)'],
+                            'about_image_2' => ['label' => 'Gambar 2', 'hint' => 'Tumpukan Visi/Misi (tengah)'],
+                            'about_image_3' => ['label' => 'Gambar 3', 'hint' => 'Tumpukan Visi/Misi (bawah)'],
+                        ] as $field => $meta)
                             <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase mb-2">{{ $label }}</label>
+                                <label class="block text-xs font-black text-gray-400 uppercase mb-1">{{ $meta['label'] }}</label>
+                                <p class="mb-2 text-[11px] leading-snug text-gray-500">{{ $meta['hint'] }}</p>
                                 @if($profile->{$field})
-                                    <img src="{{ $profile->imageUrl($profile->{$field}) }}" alt="{{ $label }}" class="mb-2 h-28 w-full rounded-xl object-cover border border-gray-100">
+                                    <img src="{{ $profile->imageUrl($profile->{$field}) }}" alt="{{ $meta['label'] }}" class="mb-2 h-28 w-full rounded-xl object-cover border border-gray-100">
                                 @endif
                                 <input type="file" name="{{ $field }}" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:rounded-full file:border-0 file:bg-red-50 file:px-3 file:py-2 file:text-xs file:font-black file:text-[#DD3517]">
                             </div>

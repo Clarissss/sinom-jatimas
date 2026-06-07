@@ -42,7 +42,7 @@
     </main>
 
     @unless(isset($hideCta) && $hideCta)
-        @include('partials.public.cta-banner', ['ctaClass' => ($activePage ?? '') === 'about' ? 'mt-4' : ''])
+        @include('partials.public.cta-banner')
     @endunless
 
     @include('partials.public.footer')

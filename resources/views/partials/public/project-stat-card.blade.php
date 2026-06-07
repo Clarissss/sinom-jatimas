@@ -1,8 +1,3 @@
-@php
-    $variant = $variant ?? 'landing';
-    $isAbout = $variant === 'about';
-@endphp
-
 @once
     @push('styles')
     <style>
@@ -12,9 +7,6 @@
         .project-stat-card.is-open {
             border-color: rgba(211, 63, 35, 0.28);
             box-shadow: 0 8px 24px -8px rgba(211, 63, 35, 0.22);
-        }
-        .project-stat-card.is-open.project-stat-card--about {
-            background-color: #fff;
         }
         .project-stat-toggle {
             transition: transform 0.25s ease;
@@ -99,10 +91,10 @@
     @endpush
 @endonce
 
-<div class="project-stat-card project-stat-card--{{ $variant }} flex w-full flex-col items-center text-center {{ $isAbout ? 'rounded-2xl border border-gray-200 bg-gray-50 p-6' : 'rounded-xl' }}">
+<div class="project-stat-card flex w-full flex-col items-center rounded-xl text-center">
     <button
         type="button"
-        class="project-stat-toggle group flex w-full flex-col items-center rounded-xl border border-transparent px-4 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 {{ $isAbout ? 'p-0 hover:bg-transparent' : 'transition-colors duration-300 hover:border-brand/20 hover:bg-brand/5' }}"
+        class="project-stat-toggle group flex w-full flex-col items-center rounded-xl border border-transparent px-4 py-3 transition-colors duration-300 hover:border-brand/20 hover:bg-brand/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
         aria-expanded="false"
     >
         <p class="text-3xl font-bold tabular-nums text-brand transition-transform duration-300 group-active:scale-95">{{ $totalProjects }}</p>
@@ -113,9 +105,9 @@
         </p>
     </button>
 
-    <div class="project-stat-panel {{ $isAbout ? 'w-full' : 'w-full max-w-xs' }}" role="region" aria-label="Total project breakdown" aria-hidden="true">
+    <div class="project-stat-panel w-full max-w-xs" role="region" aria-label="Total project breakdown" aria-hidden="true">
         <div class="project-stat-panel-inner">
-            <div class="project-stat-breakdown-content {{ $isAbout ? 'pt-3' : 'pt-1' }}">
+            <div class="project-stat-breakdown-content pt-1">
                 <div class="space-y-2.5 rounded-lg border border-gray-100 bg-white px-4 py-3.5 text-left text-sm shadow-sm">
                     <div class="project-stat-row flex items-center justify-between gap-4">
                         <span class="flex items-center gap-2 text-gray-600">

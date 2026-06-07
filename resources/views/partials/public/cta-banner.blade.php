@@ -1,9 +1,17 @@
 <section class="w-full overflow-hidden {{ $ctaClass ?? '' }}">
-    <a href="{{ route('login') }}" class="block">
+    <div class="relative w-full">
         <img
             src="{{ asset('images/landing/proyek-1.png') }}"
-            alt="Trusted. Precise. Professional. Build Better with {{ $companyProfile?->company_name ?? 'PT. Sinom Jati Mas' }}"
-            class="h-auto w-full object-cover object-center"
+            alt=""
+            class="w-full object-cover object-center"
+            style="max-height: 20rem;"
         >
-    </a>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 max-w-xl px-6 pb-6 pt-16 text-left sm:px-10 sm:pb-8 lg:px-16">
+            <p class="text-lg font-bold leading-tight text-white sm:text-xl">Trusted. Precise. Professional.</p>
+            <p class="mt-1 text-sm text-white/90 sm:text-base">
+                Build Better with {{ $companyProfile?->company_name ?? 'PT. Sinom Jati Mas' }}
+            </p>
+        </div>
+    </div>
 </section>

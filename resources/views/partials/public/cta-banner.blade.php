@@ -6,12 +6,14 @@
             class="w-full object-cover object-center"
             style="max-height: 20rem;"
         >
-        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent"></div>
-        <div class="absolute bottom-0 left-0 max-w-xl px-6 pb-6 pt-16 text-left sm:px-10 sm:pb-8 lg:px-16">
-            <p class="text-lg font-bold leading-tight text-white sm:text-xl">Trusted. Precise. Professional.</p>
-            <p class="mt-1 text-sm text-white/90 sm:text-base">
-                Build Better with {{ $companyProfile?->company_name ?? 'PT. Sinom Jati Mas' }}
-            </p>
+        <div class="absolute inset-0 bg-black/55"></div>
+        <div class="absolute inset-0 flex items-center justify-center px-6">
+            <div class="text-center">
+                <p class="text-2xl font-bold leading-tight text-white sm:text-3xl tracking-tight">Trusted. Precise. Professional.</p>
+                <p class="mt-2 text-base text-white/90 sm:text-lg">
+                    Build Better with {{ $companyProfile?->company_name ?? 'PT. Sinom Jati Mas' }}
+                </p>
+            </div>
         </div>
     </div>
 </section>

@@ -46,6 +46,11 @@
                         <p x-show="selectedClient && filteredProjects.length === 0" class="text-[10px] text-red-500 mt-1.5 font-bold" style="display: none;">
                             *Klien ini tidak memiliki proyek aktif.
                         </p>
+                        {{-- Progress Proyek Terpilih --}}
+                        <div x-show="selectedProject" class="mt-2 flex items-center gap-2" style="display: none;">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase">Progress:</span>
+                            <span class="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100" x-text="selectedProjectProgress + '%'"></span>
+                        </div>
                     </div>
 
                     {{-- 3. Input Termin (Dropdown + Bisa Diketik) --}}
@@ -77,10 +82,10 @@
                             {{-- Menu Dropdown Custom --}}
                             <div x-show="terminOpen" x-transition class="absolute z-20 w-full mt-1.5 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden" style="display: none;">
                                 <ul class="py-1 text-sm font-medium text-gray-700">
-                                    <li><button type="button" @click="terminPercentage = 30; terminOpen = false" class="block w-full text-left px-4 py-2.5 hover:bg-[#DD3517] hover:text-white transition-colors">30% (Pekerjaan Awal)</button></li>
-                                    <li><button type="button" @click="terminPercentage = 50; terminOpen = false" class="block w-full text-left px-4 py-2.5 hover:bg-[#DD3517] hover:text-white transition-colors">50% (Setengah Jalan)</button></li>
-                                    <li><button type="button" @click="terminPercentage = 70; terminOpen = false" class="block w-full text-left px-4 py-2.5 hover:bg-[#DD3517] hover:text-white transition-colors">70% (Progres Lanjut)</button></li>
-                                    <li><button type="button" @click="terminPercentage = 100; terminOpen = false" class="block w-full text-left px-4 py-2.5 hover:bg-[#DD3517] hover:text-white transition-colors">100% (Pelunasan Akhir)</button></li>
+                                    <li><button type="button" @click="terminPercentage = 30; terminOpen = false" class="block w-full text-left px-4 py-2.5 hover:bg-[#DD3517] hover:text-white transition-colors">30%</button></li>
+                                    <li><button type="button" @click="terminPercentage = 50; terminOpen = false" class="block w-full text-left px-4 py-2.5 hover:bg-[#DD3517] hover:text-white transition-colors">50%</button></li>
+                                    <li><button type="button" @click="terminPercentage = 70; terminOpen = false" class="block w-full text-left px-4 py-2.5 hover:bg-[#DD3517] hover:text-white transition-colors">70%</button></li>
+                                    <li><button type="button" @click="terminPercentage = 100; terminOpen = false" class="block w-full text-left px-4 py-2.5 hover:bg-[#DD3517] hover:text-white transition-colors">100%</button></li>
                                 </ul>
                             </div>
                         </div>
@@ -192,6 +197,12 @@ function invoiceForm() {
             if (this.selectedClient === '') return [];
             // Filter proyek yang client_id nya sama dengan client yang dipilih di dropdown
             return this.allProjects.filter(project => project.client_id == this.selectedClient);
+        },
+
+        get selectedProjectProgress() {
+            if (!this.selectedProject) return 0;
+            const project = this.allProjects.find(p => p.id == this.selectedProject);
+            return project ? project.progress_percentage : 0;
         },
 
         // --- COMBOBOX TERMIN ---

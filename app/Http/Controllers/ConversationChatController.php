@@ -7,7 +7,9 @@ use App\Events\MessageSent;
 use App\Models\ChatMessage;
 use App\Models\Conversation;
 use App\Models\Project;
+use App\Services\ChatEncryptionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -19,9 +21,21 @@ class ConversationChatController extends Controller
      * Client: Show the general chat interface.
      * Auto-creates a conversation if none exists.
      */
-    public function clientChat(): View|JsonResponse
+    public function clientChat(): View|JsonResponse|RedirectResponse
     {
         $user = auth()->user();
+
+        // Jika client sudah pernah deal dan punya project dari convert conversation,
+        // langsung arahkan ke room chat projectnya
+        $convertedConversation = Conversation::where('user_id', $user->id)
+            ->where('status', 'converted')
+            ->whereNotNull('project_id')
+            ->latest()
+            ->first();
+
+        if ($convertedConversation) {
+            return redirect()->route('chat.index', $convertedConversation->project);
+        }
 
         $conversation = Conversation::firstOrCreate(
             ['user_id' => $user->id, 'status' => 'active'],
@@ -63,8 +77,15 @@ class ConversationChatController extends Controller
      */
     public function adminIndex(): View
     {
+        // Ambil user_id yang sudah punya conversation converted (sudah deal & punya project)
+        $convertedUserIds = Conversation::where('status', 'converted')
+            ->whereNotNull('project_id')
+            ->pluck('user_id');
+
+        // Hanya tampilkan active conversation dari user yang belum pernah convert
         $conversations = Conversation::with(['user', 'admin', 'latestMessage'])
-            ->whereIn('status', ['active', 'converted'])
+            ->where('status', 'active')
+            ->whereNotIn('user_id', $convertedUserIds)
             ->orderByDesc('last_message_at')
             ->orderByDesc('created_at')
             ->get();
@@ -75,9 +96,14 @@ class ConversationChatController extends Controller
     /**
      * Admin: Show chat for a specific conversation.
      */
-    public function adminChat(Conversation $conversation): View|JsonResponse
+    public function adminChat(Conversation $conversation): View|JsonResponse|RedirectResponse
     {
         $this->authorizeAdmin();
+
+        // Jika conversation sudah dikonversi ke project, arahkan ke room chat project
+        if ($conversation->isConverted() && $conversation->project_id) {
+            return redirect()->route('chat.index', $conversation->project);
+        }
 
         // Auto-assign admin if not assigned
         if ($conversation->admin_id === null) {
@@ -253,6 +279,71 @@ class ConversationChatController extends Controller
     }
 
     /**
+     * Get full unread notifications data for navbar (project + conversation).
+     */
+    public function unreadNotifications(): JsonResponse
+    {
+        $user = auth()->user();
+
+        // Project-based unread messages
+        $projectQuery = ChatMessage::with(['project', 'sender'])
+            ->where('sender_id', '!=', $user->id)
+            ->where('is_read', false)
+            ->whereNotNull('project_id');
+
+        if ($user->isClient()) {
+            $projectQuery->whereHas('project', function ($q) use ($user) {
+                $q->where('client_id', $user->id);
+            });
+        }
+
+        $projectMessages = $projectQuery->latest()->get();
+
+        // Conversation-based unread messages
+        $conversationQuery = ChatMessage::with(['conversation.user', 'sender'])
+            ->where('sender_id', '!=', $user->id)
+            ->where('is_read', false)
+            ->whereNotNull('conversation_id');
+
+        if ($user->isClient()) {
+            $conversationQuery->whereHas('conversation', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+
+        $conversationMessages = $conversationQuery->latest()->get();
+
+        return response()->json([
+            'count' => $projectMessages->count() + $conversationMessages->count(),
+            'unread_chats' => $projectMessages->groupBy('project_id')->map(function ($messages) {
+                $first = $messages->first();
+                return [
+                    'project_id' => $first->project_id,
+                    'project_name' => $first->project?->name,
+                    'count' => $messages->count(),
+                    'sender_name' => $first->sender?->name,
+                    'preview' => $first->message ?? 'Mengirim file',
+                    'time' => $first->created_at->diffForHumans(),
+                    'url' => route('chat.index', $first->project),
+                ];
+            })->values(),
+            'unread_conversations' => $conversationMessages->groupBy('conversation_id')->map(function ($messages) {
+                $first = $messages->first();
+                return [
+                    'conversation_id' => $first->conversation_id,
+                    'count' => $messages->count(),
+                    'sender_name' => $first->sender?->name,
+                    'preview' => $first->message ?? 'Mengirim file',
+                    'time' => $first->created_at->diffForHumans(),
+                    'url' => auth()->user()->isAdmin()
+                        ? route('admin.conversations.show', $first->conversation)
+                        : route('chat.general'),
+                ];
+            })->values(),
+        ]);
+    }
+
+    /**
      * Convert an active conversation to a project.
      */
     public function convertToProject(Request $request, Conversation $conversation)
@@ -285,9 +376,35 @@ class ConversationChatController extends Controller
             'project_id' => $project->id,
         ]);
 
-        // Link all messages from this conversation to the new project
-        ChatMessage::where('conversation_id', $conversation->id)
-            ->update(['project_id' => $project->id]);
+        // Re-encrypt all conversation messages with the new project key
+        $messages = ChatMessage::where('conversation_id', $conversation->id)->get();
+        $encryption = app(ChatEncryptionService::class);
+
+        foreach ($messages as $message) {
+            $rawEncrypted = $message->getAttributes()['content_encrypted'] ?? null;
+
+            if (!empty($rawEncrypted)) {
+                try {
+                    // Decrypt using the old conversation key
+                    $plaintext = $encryption->decrypt($rawEncrypted, 'conv:' . $conversation->id);
+                    // Re-encrypt using the new project key
+                    $newEncrypted = $encryption->encrypt($plaintext, $project->id);
+
+                    ChatMessage::where('id', $message->id)->update([
+                        'project_id' => $project->id,
+                        'content_encrypted' => $newEncrypted,
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to re-encrypt message during convertToProject', [
+                        'message_id' => $message->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            } else {
+                // No encrypted content to migrate, just update the foreign key
+                ChatMessage::where('id', $message->id)->update(['project_id' => $project->id]);
+            }
+        }
 
         return response()->json([
             'message' => 'Project berhasil dibuat.',

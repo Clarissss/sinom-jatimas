@@ -96,7 +96,7 @@
                     </select>
                 </div>
 
-                {{-- TYPE (Disesuaikan menjadi Kategori Invoice) --}}
+                {{-- TYPE --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Jenis File
@@ -106,15 +106,11 @@
                         <option value="">
                             Semua Jenis
                         </option>
-                        <option value="daily_report" {{ request('type') == 'daily_report' ? 'selected' : '' }}>
-                            Laporan Harian
-                        </option>
-                        <option value="invoice" {{ request('type') == 'invoice' ? 'selected' : '' }}>
-                            Invoice Tagihan
-                        </option>
-                        <option value="contract" {{ request('type') == 'contract' ? 'selected' : '' }}>
-                            Kontrak Kerja
-                        </option>
+                        @foreach($categories as $key => $cat)
+                            <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>
+                                {{ $cat['label'] }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -157,49 +153,21 @@
         </div>
 
         {{-- CATEGORY CARDS --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-            {{-- DAILY REPORT --}}
-            <a href="{{ route('client.documents.index', ['type' => 'daily_report', 'project_id' => request('project_id'), 'date' => request('date'), 'search' => request('search')]) }}"
-                class="group bg-white p-6 rounded-[2rem] border-2 {{ request('type') == 'daily_report' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
-                <div class="bg-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-calendar-check"></i>
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            @foreach($categories as $key => $cat)
+            <a href="{{ route('client.documents.index', ['type' => $key, 'project_id' => request('project_id'), 'date' => request('date'), 'search' => request('search')]) }}"
+                class="group bg-white p-5 rounded-[1.5rem] border-2 {{ request('type') == $key ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
+                <div class="{{ $cat['color'] }} w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg mb-3 shadow-lg group-hover:scale-110 transition-transform">
+                    <i class="fa-solid {{ $cat['icon'] }}"></i>
                 </div>
-                <h4 class="font-black text-gray-900 text-sm">
-                    Laporan Harian
+                <h4 class="font-black text-gray-900 text-xs">
+                    {{ $cat['label'] }}
                 </h4>
                 <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">
-                    {{ $categories['daily_report']['count'] }} Berkas
+                    {{ $cat['count'] }} Berkas
                 </p>
             </a>
-
-            {{-- INVOICE TAGIHAN (Mengubah Tampilan File Chat Lama) --}}
-            <a href="{{ route('client.documents.index', ['type' => 'invoice', 'project_id' => request('project_id'), 'date' => request('date'), 'search' => request('search')]) }}"
-                class="group bg-white p-6 rounded-[2rem] border-2 {{ request('type') == 'invoice' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
-                <div class="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-file-invoice-dollar"></i>
-                </div>
-                <h4 class="font-black text-gray-900 text-sm">
-                    Invoice Tagihan
-                </h4>
-                <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">
-                    {{ $categories['invoice']['count'] }} Berkas
-                </p>
-            </a>
-
-            {{-- CONTRACT --}}
-            <a href="{{ route('client.documents.index', ['type' => 'contract', 'project_id' => request('project_id'), 'date' => request('date'), 'search' => request('search')]) }}"
-                class="group bg-white p-6 rounded-[2rem] border-2 {{ request('type') == 'contract' ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
-                <div class="bg-orange-500 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-file-contract"></i>
-                </div>
-                <h4 class="font-black text-gray-900 text-sm">
-                    Kontrak Kerja
-                </h4>
-                <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">
-                    {{ $categories['contract']['count'] }} Berkas
-                </p>
-            </a>
+            @endforeach
         </div>
 
         {{-- DATA TABLE --}}
@@ -226,22 +194,20 @@
                     <tbody class="divide-y divide-gray-50">
                         @forelse($results as $file)
                             @php
-                                $fileObj = (object) $file; 
+                                $fileObj = (object) $file;
+                                $typeIcons = [
+                                    'contract' => 'fa-file-contract text-orange-500',
+                                    'field_map' => 'fa-map text-amber-500',
+                                    'technical_drawing' => 'fa-ruler-combined text-blue-500',
+                                    'bast' => 'fa-clipboard-check text-emerald-500',
+                                    'material_report' => 'fa-boxes-stacked text-purple-500',
+                                    'other' => 'fa-file-lines text-gray-400',
+                                ];
+                                $icon = $typeIcons[$fileObj->type ?? 'other'] ?? 'fa-file-lines text-gray-400';
                             @endphp
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
-                                        @php
-                                            $icon = 'fa-file-lines text-gray-400';
-
-                                            if ($fileObj->source == 'chat') {
-                                                $icon = 'fa-file-invoice-dollar text-blue-500'; // Ikon invoice tagihan
-                                            }
-
-                                            if ($fileObj->source == 'report') {
-                                                $icon = 'fa-image text-emerald-500'; // Ikon foto lapangan harian
-                                            }
-                                        @endphp
                                         <i class="fa-solid {{ $icon }} mr-3 text-lg"></i>
                                         <span class="font-bold text-gray-800 text-xs break-all">
                                             {{ $fileObj->file_name ?? 'N/A' }}
@@ -257,13 +223,12 @@
 
                                 <td class="px-6 py-4">
                                     <span class="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-black text-gray-500 uppercase">
-                                        {{ str_replace('_', ' ', $fileObj->type == 'chat_file' ? 'invoice' : $fileObj->type) }}
+                                        {{ str_replace('_', ' ', $fileObj->type) }}
                                     </span>
                                 </td>
 
                                 <td class="px-6 py-4 text-right">
-                                    {{-- Mengamankan rute unduhan dengan query parameter path spesifik multiple foto --}}
-                                    <a href="{{ route('client.documents.download', ['project' => $fileObj->project_id, 'document' => $fileObj->id]) }}?source={{ $fileObj->source }}{{ isset($fileObj->extra_path) && $fileObj->extra_path ? '&path=' . urlencode($fileObj->extra_path) : '' }}"
+                                    <a href="{{ route('client.documents.download', ['project' => $fileObj->project_id, 'document' => $fileObj->id]) }}"
                                         class="bg-[#0F172A] text-white px-4 py-2 rounded-xl font-bold text-[10px] hover:bg-black transition-all">
                                         <i class="fa-solid fa-download mr-1"></i>
                                         DOWNLOAD

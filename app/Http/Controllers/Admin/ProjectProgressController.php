@@ -20,7 +20,7 @@ class ProjectProgressController extends Controller
             'description' => ['nullable', 'string'],
         ]);
 
-        $path = $request->file('photo')->store('progress-photos', 'local');
+        $path = $request->file('photo')->store('progress-photos', 'public');
 
         $progress = ProjectProgress::create([
             'project_id' => $project->id,
@@ -42,7 +42,7 @@ class ProjectProgressController extends Controller
     public function updateProgress(Request $request, Project $project, InvoiceService $invoiceService)
     {
         $validated = $request->validate([
-            'progress_percentage' => ['required', 'integer', 'min:0', 'max:100'],
+            'progress_percentage' => ['required', 'integer', 'min:' . $project->progress_percentage, 'max:100'],
         ]);
 
         $project->update(['progress_percentage' => $validated['progress_percentage']]);
@@ -60,7 +60,7 @@ class ProjectProgressController extends Controller
 
     public function destroy(Project $project, ProjectProgress $progress)
     {
-        Storage::delete($progress->photo_path);
+        Storage::disk('public')->delete($progress->photo_path);
         $progress->delete();
 
         return back()->with('success', 'Foto progres berhasil dihapus.');

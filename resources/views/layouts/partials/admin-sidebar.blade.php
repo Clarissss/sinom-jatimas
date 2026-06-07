@@ -21,8 +21,9 @@
             @php
                 $navItems = [
                     ['route' => 'admin.dashboard', 'icon' => 'fa-th-large', 'label' => 'Dashboard'],
-                    ['route' => 'admin.conversations.index', 'icon' => 'fa-comments', 'label' => 'Percakapan'],
+                    ['route' => 'admin.conversations.index', 'icon' => 'fa-headset', 'label' => 'Chat Support'],
                     ['route' => 'admin.projects.index', 'icon' => 'fa-building-user', 'label' => 'Proyek'],
+                    ['route' => 'admin.project-chats.index', 'icon' => 'fa-comments', 'label' => 'Live Chat Proyek'],
                     ['route' => 'admin.daily-reports.index', 'icon' => 'fa-clipboard-list', 'label' => 'Laporan Harian'],
                     ['route' => 'admin.documents.index', 'icon' => 'fa-file-lines', 'label' => 'Dokumen'],
                     ['route' => 'admin.invoices.index', 'icon' => 'fa-file-invoice-dollar', 'label' => 'Invoice'],

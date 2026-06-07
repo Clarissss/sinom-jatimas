@@ -119,6 +119,7 @@
                         <th class="px-8 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">No. Invoice</th>
                         <th class="px-8 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Klien & Proyek</th>
                         <th class="px-8 py-6 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Termin</th>
+                        <th class="px-8 py-6 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Progress</th>
                         <th class="px-8 py-6 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Total Tagihan</th>
                         <th class="px-8 py-6 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
                         <th class="px-8 py-6 text-center text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Opsi</th>
@@ -138,6 +139,11 @@
                             <td class="px-8 py-5 text-center">
                                 <span class="px-3 py-1 bg-gray-100 rounded-lg text-[10px] font-black text-gray-600">
                                     {{ $invoice->termin_percentage }}%
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <span class="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-lg text-[10px] font-black">
+                                    {{ $invoice->project->progress_percentage }}%
                                 </span>
                             </td>
                             <td class="px-8 py-5 text-right font-black text-[#DD3517] text-sm tracking-tighter">
@@ -175,7 +181,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-8 py-24 text-center">
+                            <td colspan="7" class="px-8 py-24 text-center">
                                 <div class="flex flex-col items-center opacity-30">
                                     <i class="fa-solid fa-file-invoice text-5xl mb-4"></i>
                                     <p class="text-xs font-black uppercase tracking-widest">Tidak ada invoice ditemukan</p>

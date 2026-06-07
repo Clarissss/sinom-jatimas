@@ -125,7 +125,7 @@
                             @method('PATCH')
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Geser untuk Update %</label>
-                                <input type="range" name="progress_percentage" min="0" max="100" value="{{ $project->progress_percentage }}" 
+                                <input type="range" name="progress_percentage" min="{{ $project->progress_percentage }}" max="100" value="{{ $project->progress_percentage }}" 
                                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
                                        oninput="document.getElementById('progress-preview').textContent = this.value + '%'">
                                 <div class="text-center mt-2">
@@ -183,8 +183,8 @@
                 <div class="grid md:grid-cols-3 gap-4">
                     @forelse($project->progressPhotos as $photo)
                         <div class="bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
-                            <div class="h-48 bg-gray-200 flex items-center justify-center">
-                                <span class="text-gray-400">Foto Progress</span>
+                            <div class="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+                                <img src="{{ asset('storage/' . $photo->photo_path) }}" alt="Foto Progress" class="w-full h-full object-cover">
                             </div>
                             <div class="p-4">
                                 <span class="inline-block px-2 py-1 text-xs font-medium rounded-full

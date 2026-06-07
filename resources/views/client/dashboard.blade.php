@@ -236,6 +236,12 @@
                 </div>
             @endforelse
         </div>
+
+        @if($projects->hasPages())
+            <div class="px-8 py-4 border-t border-gray-50">
+                {{ $projects->links() }}
+            </div>
+        @endif
     </div>
 
 @endsection

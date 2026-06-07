@@ -122,4 +122,27 @@ class ProjectController extends Controller
         $project->delete();
         return redirect()->route('admin.projects.index')->with('success', 'Proyek berhasil dihapus.');
     }
+
+    /**
+     * Tampilkan halaman Live Chat Proyek — list semua project dengan akses cepat ke chat.
+     */
+    public function chats(Request $request)
+    {
+        $query = Project::with(['client', 'chatMessages' => function ($q) {
+            $q->latest()->limit(1);
+        }]);
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('client_id')) {
+            $query->where('client_id', $request->client_id);
+        }
+
+        $projects = $query->latest()->get();
+        $clients = User::where('role', 'client')->orderBy('name')->get();
+
+        return view('admin.project-chats.index', compact('projects', 'clients'));
+    }
 }

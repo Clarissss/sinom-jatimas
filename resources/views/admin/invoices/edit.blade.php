@@ -52,6 +52,11 @@
                                 <option :value="project.id.toString()" x-text="project.name" :selected="project.id == selectedProject"></option>
                             </template>
                         </select>
+                        {{-- Progress Proyek Terpilih --}}
+                        <div x-show="selectedProject" class="mt-2 flex items-center gap-2" style="display: none;">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase">Progress:</span>
+                            <span class="text-xs font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100" x-text="selectedProjectProgress + '%'"></span>
+                        </div>
                     </div>
 
                     {{-- 3. Input Termin --}}
@@ -202,6 +207,12 @@ function editInvoiceForm(projectsData, invoiceData, itemsData) {
                 // Gunakan == agar perbandingan string/int tidak masalah
                 return project.client_id == this.selectedClient || project.user_id == this.selectedClient;
             });
+        },
+        
+        get selectedProjectProgress() {
+            if (!this.selectedProject) return 0;
+            const project = this.allProjects.find(p => p.id == this.selectedProject);
+            return project ? project.progress_percentage : 0;
         },
         
         addItem() {

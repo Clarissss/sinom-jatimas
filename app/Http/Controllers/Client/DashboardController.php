@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -11,7 +12,11 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Ambil hanya project milik client login
+        // Ambil semua project milik client untuk statistik
+        $allProjects = $user->projects()->get();
+        $projectIds = $allProjects->pluck('id');
+
+        // Pagination untuk tampilan list
         $projects = $user->projects()
             ->with([
                 'progressPhotos',
@@ -20,23 +25,21 @@ class DashboardController extends Controller
                 'documents',
             ])
             ->latest()
-            ->get();
+            ->paginate(5);
 
         // Statistik Dashboard Client
         $stats = [
-            'total_projects' => $projects->count(),
+            'total_projects' => $allProjects->count(),
 
-            'active_projects' => $projects
+            'active_projects' => $allProjects
                 ->where('status', 'in_progress')
                 ->count(),
 
-            'completed_projects' => $projects
+            'completed_projects' => $allProjects
                 ->where('status', 'completed')
                 ->count(),
 
-            'pending_invoices' => $projects
-                ->pluck('invoices')
-                ->flatten()
+            'pending_invoices' => Invoice::whereIn('project_id', $projectIds)
                 ->where('status', 'sent')
                 ->count(),
         ];

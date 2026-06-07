@@ -266,7 +266,8 @@
                     <div class="invoice-meta">
                         Nomor: <strong>{{ $invoice->invoice_number }}</strong><br>
                         Tanggal Terbit: <strong>{{ $invoice->created_at->format('d F Y') }}</strong><br>
-                        Termin Penagihan: <strong style="color: #DD3517;">{{ $invoice->termin_percentage }}%</strong>
+                        Termin Penagihan: <strong style="color: #DD3517;">{{ $invoice->termin_percentage }}%</strong><br>
+                        Progress Pekerjaan: <strong style="color: #DD3517;">{{ $invoice->project->progress_percentage }}%</strong>
                     </div>
                 </td>
             </tr>

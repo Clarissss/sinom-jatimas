@@ -58,12 +58,32 @@ class EncryptedMessageCast implements CastsAttributes
                 'model_id' => $model->getKey(),
             ]);
 
-            throw ChatEncryptionException::decryptionFailed(
-                'Cannot decrypt message without a project_id or conversation_id context'
-            );
+            return '[Pesan tidak dapat didekripsi]';
         }
 
-        return app(ChatEncryptionService::class)->decrypt((string) $value, $conversationId);
+        try {
+            return app(ChatEncryptionService::class)->decrypt((string) $value, $conversationId);
+        } catch (\Exception $e) {
+            // Fallback: message may have been encrypted with conversation key before convertToProject
+            $fallbackConversationId = $model->getAttribute('conversation_id')
+                ?? $attributes['conversation_id']
+                ?? null;
+
+            if ($fallbackConversationId !== null) {
+                try {
+                    return app(ChatEncryptionService::class)->decrypt((string) $value, 'conv:' . $fallbackConversationId);
+                } catch (\Exception $e2) {
+                    // Both keys failed
+                }
+            }
+
+            Log::warning('Chat message decryption failed, returning placeholder', [
+                'model_id' => $model->getKey(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return '[Pesan tidak dapat dibaca]';
+        }
     }
 
     /**

@@ -118,6 +118,16 @@
 
                     <tr>
                         <td class="text-gray-500 py-1">
+                            Progress Pekerjaan
+                        </td>
+
+                        <td class="font-bold text-gray-900 text-right">
+                            {{ $invoice->project->progress_percentage }}%
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-gray-500 py-1">
                             Tanggal Terbit
                         </td>
 

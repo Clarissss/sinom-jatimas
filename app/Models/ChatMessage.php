@@ -22,6 +22,7 @@ class ChatMessage extends Model
         'file_name',
         'file_type',
         'file_size',
+        'document_type',
         'archived_at',
         'archive_path',
     ];

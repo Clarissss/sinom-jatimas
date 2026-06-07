@@ -35,12 +35,18 @@ class AppServiceProvider extends ServiceProvider
                 $user = auth()->user();
 
                 // Project-based unread messages
-                $projectMessages = ChatMessage::with(['project', 'sender'])
+                $projectQuery = ChatMessage::with(['project', 'sender'])
                     ->where('sender_id', '!=', $user->id)
                     ->where('is_read', false)
-                    ->whereNotNull('project_id')
-                    ->latest()
-                    ->get();
+                    ->whereNotNull('project_id');
+
+                if ($user->isClient()) {
+                    $projectQuery->whereHas('project', function ($q) use ($user) {
+                        $q->where('client_id', $user->id);
+                    });
+                }
+
+                $projectMessages = $projectQuery->latest()->get();
 
                 // Conversation-based unread messages (general chat)
                 $conversationQuery = ChatMessage::with(['conversation.user', 'sender'])

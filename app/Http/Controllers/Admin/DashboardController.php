@@ -49,8 +49,8 @@ class DashboardController extends Controller
         ];
 
         // 5. Data Tabel Terbaru
-        $recent_projects = Project::with('client')->latest()->limit(5)->get();
-        $recent_invoices = Invoice::with(['project.client'])->latest()->limit(5)->get();
+        $recent_projects = Project::with('client')->latest()->paginate(5, ['*'], 'projects_page');
+        $recent_invoices = Invoice::with(['project.client'])->latest()->paginate(5, ['*'], 'invoices_page');
 
         return view('admin.dashboard', compact(
             'stats', 'projects_for_map', 'recent_projects', 

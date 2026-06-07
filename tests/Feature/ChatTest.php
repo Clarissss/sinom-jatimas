@@ -18,16 +18,17 @@ class ChatTest extends TestCase
         $project = Project::factory()->create(['client_id' => $client->id]);
         $this->actingAs($client);
 
-        $response = $this->post("/projects/{$project->id}/chat", [
+        $response = $this->postJson("/projects/{$project->id}/chat", [
             'message' => 'Halo, ini pesan dari klien',
         ]);
 
-        $response->assertRedirect();
-        $this->assertDatabaseHas('chat_messages', [
-            'project_id' => $project->id,
-            'sender_id' => $client->id,
-            'message' => 'Halo, ini pesan dari klien',
-        ]);
+        $response->assertStatus(200);
+        $response->assertJsonPath('message', 'Halo, ini pesan dari klien');
+        $message = ChatMessage::where('project_id', $project->id)
+            ->where('sender_id', $client->id)
+            ->first();
+        $this->assertNotNull($message);
+        $this->assertEquals('Halo, ini pesan dari klien', $message->message);
     }
 
     public function test_admin_can_send_chat_message_in_any_project()
@@ -36,16 +37,17 @@ class ChatTest extends TestCase
         $project = Project::factory()->create();
         $this->actingAs($admin);
 
-        $response = $this->post("/projects/{$project->id}/chat", [
+        $response = $this->postJson("/projects/{$project->id}/chat", [
             'message' => 'Halo dari admin',
         ]);
 
-        $response->assertRedirect();
-        $this->assertDatabaseHas('chat_messages', [
-            'project_id' => $project->id,
-            'sender_id' => $admin->id,
-            'message' => 'Halo dari admin',
-        ]);
+        $response->assertStatus(200);
+        $response->assertJsonPath('message', 'Halo dari admin');
+        $message = ChatMessage::where('project_id', $project->id)
+            ->where('sender_id', $admin->id)
+            ->first();
+        $this->assertNotNull($message);
+        $this->assertEquals('Halo dari admin', $message->message);
     }
 
     public function test_client_cannot_send_chat_in_other_project()

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
 use App\Models\ChatMessage;
+use App\Models\Document;
 use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,10 +51,22 @@ class ChatController extends Controller
         ]);
 
         try {
-            $validated = $request->validate([
+            $rules = [
                 'message' => ['nullable', 'string', 'max:2000'],
-                'file' => ['nullable', 'file', 'max:10240'], // Max 10MB
-            ]);
+                'document_type' => ['nullable', 'in:field_map,contract'],
+            ];
+
+            // Validasi file berdasarkan jenis dokumen
+            $docType = $request->input('document_type');
+            if ($docType === 'field_map') {
+                $rules['file'] = ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:10240'];
+            } elseif ($docType === 'contract' || $docType === '' || $docType === null) {
+                $rules['file'] = ['nullable', 'file', 'mimes:pdf', 'max:10240'];
+            } else {
+                $rules['file'] = ['nullable', 'file', 'max:10240'];
+            }
+
+            $validated = $request->validate($rules);
         } catch (\Exception $e) {
             Log::error('Validation failed: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 422);
@@ -108,8 +121,22 @@ class ChatController extends Controller
             'file_name' => $fileName,
             'file_type' => $fileType,
             'file_size' => $fileSize,
+            'document_type' => $validated['document_type'] ?? null,
             'is_read' => false,
         ]);
+
+        // Semua file yang dikirim dari chat masuk ke dokumen manager
+        if ($filePath) {
+            Document::create([
+                'project_id' => $project->id,
+                'type' => $validated['document_type'] ?? 'other',
+                'file_name' => $fileName,
+                'file_path' => $filePath,
+                'file_type' => $fileType,
+                'file_size' => $fileSize,
+                'uploaded_by' => auth()->id(),
+            ]);
+        }
 
         $message->load('sender');
 
@@ -130,6 +157,7 @@ class ChatController extends Controller
             'file_name' => $message->file_name,
             'file_type' => $message->file_type,
             'file_size' => $message->file_size,
+            'document_type' => $message->document_type,
             'sender' => [
                 'id' => $message->sender->id,
                 'name' => $message->sender->name,

@@ -59,6 +59,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     
     // Projects & Progress
     Route::resource('projects', \App\Http\Controllers\Admin\ProjectController::class);
+    Route::get('/project-chats', [\App\Http\Controllers\Admin\ProjectController::class, 'chats'])->name('project-chats.index');
     Route::post('/projects/{project}/progress', [\App\Http\Controllers\Admin\ProjectProgressController::class, 'store'])->name('projects.progress.store');
     Route::patch('/projects/{project}/progress', [\App\Http\Controllers\Admin\ProjectProgressController::class, 'updateProgress'])->name('projects.progress.update');
     Route::delete('/projects/{project}/progress/{progress}', [\App\Http\Controllers\Admin\ProjectProgressController::class, 'destroy'])->name('projects.progress.destroy');
@@ -110,6 +111,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/chat/general/{conversation}', [\App\Http\Controllers\ConversationChatController::class, 'store'])->name('chat.general.store');
     Route::get('/chat/general/unread', [\App\Http\Controllers\ConversationChatController::class, 'unreadCount'])->name('chat.general.unread');
     Route::get('/chat/general/download/{message}', [\App\Http\Controllers\ConversationChatController::class, 'download'])->name('chat.general.download');
+    Route::get('/notifications/unread', [\App\Http\Controllers\ConversationChatController::class, 'unreadNotifications'])->name('notifications.unread');
 
     // Admin: Conversations
     Route::get('/admin/conversations', [\App\Http\Controllers\ConversationChatController::class, 'adminIndex'])->name('admin.conversations.index');

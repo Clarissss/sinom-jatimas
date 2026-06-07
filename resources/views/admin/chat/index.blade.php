@@ -136,6 +136,12 @@
             
             channel.listen('.conversation.updated', (data) => {
                 console.log('Conversation updated:', data);
+                // Jika conversation sudah dikonversi ke project, hapus dari daftar
+                if (data.conversation.status === 'converted') {
+                    const existing = document.getElementById('conversation-' + data.conversation.id);
+                    if (existing) existing.remove();
+                    return;
+                }
                 this.updateOrPrependConversation(data.conversation);
                 this.playNotificationSound();
             });

@@ -27,7 +27,7 @@
             @php
                 $navItems = [
                     ['route' => 'client.dashboard', 'icon' => 'fa-th-large', 'label' => 'Dashboard'],
-                    ['route' => 'chat.general', 'icon' => 'fa-comments', 'label' => 'Chat Support'],
+                    ['route' => 'chat.general', 'icon' => 'fa-headset', 'label' => 'Chat Support'],
                     ['route' => 'client.documents.index', 'icon' => 'fa-file-lines', 'label' => 'Dokumen'],
                     ['route' => 'client.invoices.index', 'icon' => 'fa-file-invoice-dollar', 'label' => 'Invoice'],
                     [
@@ -56,6 +56,20 @@
                     </span>
                 </a>
             @endforeach
+
+            {{-- Chat Proyek — muncul hanya jika client sudah punya project --}}
+            @php
+                $latestProject = auth()->user()->projects()->latest()->first();
+            @endphp
+            @if($latestProject)
+                <a href="{{ route('chat.index', $latestProject) }}"
+                   class="flex items-center space-x-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group
+                   {{ request()->routeIs('chat.index') ? 'bg-white/10 text-white border border-white/10' : 'text-primary-100 hover:bg-white/5' }}">
+                    <i class="fa-solid fa-comments w-5 text-center text-sm
+                    {{ request()->routeIs('chat.index') ? 'text-white' : 'text-primary-400 group-hover:text-white' }}"></i>
+                    <span class="text-sm font-semibold tracking-wide">Chat Proyek</span>
+                </a>
+            @endif
         </nav>
     </div>
 

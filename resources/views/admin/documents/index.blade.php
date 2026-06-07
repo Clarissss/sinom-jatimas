@@ -101,14 +101,14 @@
     </div>
 
     {{-- Category Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
         @foreach($categories as $key => $cat)
         <a href="{{ route('admin.documents.index', ['type' => $key, 'client_id' => request('client_id'), 'project_id' => request('project_id'), 'date' => request('date')]) }}" 
-           class="group bg-white p-6 rounded-[2rem] border-2 {{ request('type') == $key ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
-            <div class="{{ $cat['color'] }} w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-4 shadow-lg group-hover:scale-110 transition-transform">
+           class="group bg-white p-5 rounded-[1.5rem] border-2 {{ request('type') == $key ? 'border-[#DD3517] bg-red-50/20' : 'border-transparent' }} shadow-sm hover:border-[#DD3517] transition-all transform hover:-translate-y-1">
+            <div class="{{ $cat['color'] }} w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg mb-3 shadow-lg group-hover:scale-110 transition-transform">
                 <i class="fa-solid {{ $cat['icon'] }}"></i>
             </div>
-            <h4 class="font-black text-gray-900 text-sm">{{ $cat['label'] }}</h4>
+            <h4 class="font-black text-gray-900 text-xs">{{ $cat['label'] }}</h4>
             <p class="text-[10px] font-bold text-gray-400 mt-1 uppercase tracking-widest">{{ $cat['count'] }} Berkas</p>
         </a>
         @endforeach
@@ -132,9 +132,15 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center">
                                 @php
-                                    $icon = 'fa-file-lines text-gray-400';
-                                    if($file['source'] == 'chat') $icon = 'fa-file-invoice-dollar text-blue-500'; // Ikon invoice tagihan
-                                    if($file['source'] == 'report') $icon = 'fa-image text-emerald-500'; // Ikon foto pengerjaan harian
+                                    $typeIcons = [
+                                        'contract' => 'fa-file-contract text-orange-500',
+                                        'field_map' => 'fa-map text-amber-500',
+                                        'technical_drawing' => 'fa-ruler-combined text-blue-500',
+                                        'bast' => 'fa-clipboard-check text-emerald-500',
+                                        'material_report' => 'fa-boxes-stacked text-purple-500',
+                                        'other' => 'fa-file-lines text-gray-400',
+                                    ];
+                                    $icon = $typeIcons[$file['type'] ?? 'other'] ?? 'fa-file-lines text-gray-400';
                                 @endphp
                                 <i class="fa-solid {{ $icon }} mr-3 text-lg"></i>
                                 <span class="font-bold text-gray-800 text-xs break-all">
@@ -151,8 +157,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            {{-- Modifikasi Link: Menyertakan parameter path spesifik jika sumbernya dari report multiple foto --}}
-                            <a href="{{ route('admin.documents.download', $file['id']) }}?source={{ $file['source'] }}{{ $file['extra_path'] ? '&path=' . urlencode($file['extra_path']) : '' }}" 
+                            <a href="{{ route('admin.documents.download', $file['id']) }}" 
                                class="bg-gray-900 text-white px-4 py-2 rounded-lg font-black text-[10px] hover:bg-gray-800 transition-all">
                                 <i class="fa-solid fa-download mr-1"></i> DOWNLOAD
                             </a>

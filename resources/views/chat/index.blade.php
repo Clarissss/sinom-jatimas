@@ -107,10 +107,27 @@
         <form id="chat-form" class="chat-form" enctype="multipart/form-data" x-data="{ sending: false }">
             @csrf
             
-            <label for="file-input" class="btn-attach" title="Upload file (maksimal 10MB)" aria-label="Upload file">
-                <i class="fa-solid fa-paperclip text-lg"></i>
-            </label>
+            <div class="relative" id="attach-wrapper">
+                <button type="button" id="attach-btn" class="btn-attach" title="Upload file (maksimal 10MB)" aria-label="Upload file">
+                    <i class="fa-solid fa-paperclip text-lg"></i>
+                </button>
+                <div id="attach-menu" class="attach-menu hidden">
+                    <button type="button" data-type="" class="attach-option">
+                        <i class="fa-solid fa-file text-gray-400"></i>
+                        <span>File Biasa</span>
+                    </button>
+                    <button type="button" data-type="field_map" class="attach-option">
+                        <i class="fa-solid fa-map text-amber-500"></i>
+                        <span>Peta Lapangan</span>
+                    </button>
+                    <button type="button" data-type="contract" class="attach-option">
+                        <i class="fa-solid fa-file-contract text-orange-500"></i>
+                        <span>Kontrak Kerja</span>
+                    </button>
+                </div>
+            </div>
             <input type="file" id="file-input" name="file" class="hidden" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" aria-label="Pilih file">
+            <input type="hidden" id="document-type-input" name="document_type" value="">
             
             <textarea id="message-input" 
                       name="message" 
@@ -134,9 +151,12 @@
             <span class="file-preview-icon" aria-hidden="true">
                 <i class="fa-regular fa-file text-gray-500"></i>
             </span>
-            <span id="file-preview-name" class="text-sm text-gray-700 font-medium"></span>
-            <span id="file-preview-size" class="text-xs text-gray-500"></span>
-            <button type="button" id="remove-file" class="btn-remove" aria-label="Hapus file">
+            <div class="flex-1 min-w-0">
+                <span id="file-preview-name" class="text-sm text-gray-700 font-medium block truncate"></span>
+                <span id="file-preview-type-label" class="text-[10px] font-bold text-[#DD3517] uppercase tracking-wider"></span>
+            </div>
+            <span id="file-preview-size" class="text-xs text-gray-500 flex-shrink-0"></span>
+            <button type="button" id="remove-file" class="btn-remove flex-shrink-0" aria-label="Hapus file">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -325,6 +345,47 @@
     background: #f3f4f6;
     color: #dc2626;
 }
+
+/* Attachment Type Menu */
+.attach-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    padding: 6px;
+    min-width: 180px;
+    z-index: 50;
+    animation: attachMenuSlide 0.2s ease-out;
+}
+@keyframes attachMenuSlide {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.attach-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: #374151;
+    text-align: left;
+    transition: background 0.15s;
+}
+.attach-option:hover {
+    background: #f3f4f6;
+}
+.attach-option i {
+    width: 20px;
+    text-align: center;
+}
 #message-input {
     flex: 1;
     border: 1px solid #e5e7eb;
@@ -469,19 +530,90 @@
             const sendBtn = document.getElementById('send-btn');
             
             let selectedFile = null;
+            let selectedDocumentType = '';
+            const attachBtn = document.getElementById('attach-btn');
+            const attachMenu = document.getElementById('attach-menu');
+            const documentTypeInput = document.getElementById('document-type-input');
+            const attachOptions = attachMenu.querySelectorAll('.attach-option');
+            
+            // Toggle attachment menu
+            attachBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                attachMenu.classList.toggle('hidden');
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!attachMenu.contains(e.target) && e.target !== attachBtn) {
+                    attachMenu.classList.add('hidden');
+                }
+            });
+            
+            // Select attachment type
+            attachOptions.forEach(opt => {
+                opt.addEventListener('click', () => {
+                    selectedDocumentType = opt.dataset.type;
+                    documentTypeInput.value = selectedDocumentType;
+                    attachMenu.classList.add('hidden');
+                    
+                    // Atur filter file picker sesuai jenis dokumen
+                    if (selectedDocumentType === 'field_map') {
+                        fileInput.accept = 'image/jpeg,image/png,image/jpg';
+                    } else {
+                        fileInput.accept = '.pdf';
+                    }
+                    
+                    fileInput.click();
+                });
+            });
             
             // File select
             fileInput.addEventListener('change', (e) => {
                 if (e.target.files[0]) {
                     selectedFile = e.target.files[0];
+                    
+                    // Validasi tipe file berdasarkan jenis dokumen
+                    if (selectedDocumentType === 'field_map') {
+                        if (!selectedFile.type.startsWith('image/')) {
+                            alert('Peta Lapangan hanya boleh file gambar (JPG/PNG)!');
+                            selectedFile = null;
+                            fileInput.value = '';
+                            documentTypeInput.value = '';
+                            selectedDocumentType = '';
+                            fileInput.accept = 'image/jpeg,image/png,image/jpg,.pdf';
+                            return;
+                        }
+                    } else if (selectedDocumentType === 'contract' || selectedDocumentType === '') {
+                        if (selectedFile.type !== 'application/pdf') {
+                            alert('File Biasa dan Kontrak Kerja hanya boleh file PDF!');
+                            selectedFile = null;
+                            fileInput.value = '';
+                            documentTypeInput.value = '';
+                            selectedDocumentType = '';
+                            fileInput.accept = 'image/jpeg,image/png,image/jpg,.pdf';
+                            return;
+                        }
+                    }
+                    
                     if (selectedFile.size > 10 * 1024 * 1024) {
                         alert('File terlalu besar! Maksimal 10MB');
                         selectedFile = null;
                         fileInput.value = '';
+                        documentTypeInput.value = '';
+                        selectedDocumentType = '';
+                        fileInput.accept = 'image/jpeg,image/png,image/jpg,.pdf';
                         return;
                     }
                     document.getElementById('file-preview-name').textContent = selectedFile.name;
                     document.getElementById('file-preview-size').textContent = (selectedFile.size / 1024).toFixed(1) + ' KB';
+                    
+                    const typeLabels = {
+                        '': 'File Biasa',
+                        'field_map': 'Peta Lapangan',
+                        'contract': 'Kontrak Kerja'
+                    };
+                    document.getElementById('file-preview-type-label').textContent = typeLabels[selectedDocumentType] || 'File Biasa';
+                    
                     filePreview.classList.remove('hidden');
                 }
             });
@@ -489,7 +621,10 @@
             // Remove file
             removeBtn.addEventListener('click', () => {
                 selectedFile = null;
+                selectedDocumentType = '';
                 fileInput.value = '';
+                documentTypeInput.value = '';
+                fileInput.accept = 'image/jpeg,image/png,image/jpg,.pdf';
                 filePreview.classList.add('hidden');
             });
             
@@ -514,6 +649,9 @@
                 
                 if (selectedFile) {
                     formData.append('file', selectedFile, selectedFile.name);
+                }
+                if (selectedDocumentType) {
+                    formData.append('document_type', selectedDocumentType);
                 }
                 
                 // Clear input

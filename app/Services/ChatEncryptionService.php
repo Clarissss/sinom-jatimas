@@ -10,7 +10,7 @@ class ChatEncryptionService
     private const CIPHER = 'aes-256-gcm';
     private const NONCE_LENGTH = 12; // 96-bit IV for GCM
     private const TAG_LENGTH = 16;   // 128-bit authentication tag
-    private const KEY_LENGTH = 32;   // 256-bit key
+    private const KEY_LENGTH = 32;   // 256-bit key 
 
     private readonly string $masterKey;
 

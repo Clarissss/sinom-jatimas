@@ -118,6 +118,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="px-8 py-4 border-t border-gray-50">
+                {{ $recent_projects->links() }}
+            </div>
         </div>
 
         <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-gray-100">
@@ -136,6 +139,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="px-8 py-4 border-t border-gray-50">
+                {{ $recent_invoices->links() }}
+            </div>
         </div>
     </div>
 </div>

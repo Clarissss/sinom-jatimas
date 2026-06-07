@@ -1,5 +1,18 @@
 
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+    #projectMap {
+        z-index: 1;
+    }
+
+    .leaflet-container {
+        border-radius: 24px;
+    }
+</style>
+
 <?php $__env->startSection('title', 'Projects - PT. Sinom Jati Mas'); ?>
 <?php $__env->startSection('meta_description', 'Portfolio proyek PT. Sinom Jati Mas.'); ?>
 
@@ -32,12 +45,11 @@
             Build Better with Sinom Jati Mas
         </p>
 
-        <div class="mt-10 flex justify-center">
-            <img
-                src="<?php echo e(asset('images/landing/peta.png')); ?>"
-                alt="Peta Indonesia"
-                class="w-full max-w-4xl object-contain">
-        </div>
+        <div class="mt-10">
+    <div id="projectMap"
+        class="h-[450px] w-full rounded-3xl border border-gray-200 shadow-sm">
+    </div>
+</div>
 
     </div>
 </section>
@@ -143,6 +155,47 @@
 
         </div>
     </section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const map = L.map('projectMap', {
+        scrollWheelZoom: false
+    }).setView([-2.5489, 118.0149], 5);
+
+    L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+    ).addTo(map);
+
+    const projects = <?php echo json_encode($projectsForMap, 15, 512) ?>;
+
+    projects.forEach(project => {
+
+        const color =
+            project.status === 'completed'
+            ? '#10B981'
+            : '#FF812E';
+
+        L.circleMarker(
+            [project.latitude, project.longitude],
+            {
+                radius: 10,
+                fillColor: color,
+                color: '#fff',
+                weight: 2,
+                fillOpacity: 0.9
+            }
+        )
+        .addTo(map)
+        .bindPopup(`
+            <div>
+                <strong>${project.name}</strong><br>
+                ${project.location ?? '-'}<br>
+                Progress: ${project.progress_percentage}%
+            </div>
+        `);
+    });
+
+});
+</script>
 <?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.public', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\KULIAH\SEMESTER 8\Sistem Informasi Perusahaan\Project\sinom-jatimas\resources\views/project.blade.php ENDPATH**/ ?>

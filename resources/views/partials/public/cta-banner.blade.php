@@ -1,9 +1,15 @@
-<section class="w-full overflow-hidden {{ $ctaClass ?? '' }}">
-    <a href="{{ route('login') }}" class="block">
+<section class="relative w-full overflow-hidden {{ $ctaClass ?? '' }}">
+    
+    <a href="{{ route('login') }}" class="relative block">
+
         <img
             src="{{ asset('images/landing/proyek-1.png') }}"
             alt="Trusted. Precise. Professional. Build Better with {{ $companyProfile?->company_name ?? 'PT. Sinom Jati Mas' }}"
             class="h-auto w-full object-cover object-center"
         >
+
+        <div class="absolute inset-0 bg-black/40"></div>
+
     </a>
+
 </section>

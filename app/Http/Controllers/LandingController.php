@@ -36,6 +36,16 @@ class LandingController extends Controller
         ]));
     }
 
+ public function project()
+{
+    $projects = Project::with([
+        'client',
+        'progressPhotos'
+    ])->latest()->get();
+
+    return view('project', compact('projects'));
+}
+
     /**
      * @return array{
      *     companyProfile: ?CompanyProfile,

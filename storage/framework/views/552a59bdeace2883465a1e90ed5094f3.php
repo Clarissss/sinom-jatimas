@@ -30,9 +30,9 @@
 
             <?php echo $navItem('service', 'Services', route('service')); ?>
 
-            <?php echo $navItem('project', 'Project', route('landing') . '#projects'); ?>
+            <?php echo $navItem('project', 'Project', route('project')); ?>
 
-            <?php echo $navItem('contact', 'Contact Us', route('landing') . '#contact'); ?>
+            <?php echo $navItem('contact', 'Contact Us', route('contact')); ?>
 
         </nav>
 
@@ -51,8 +51,8 @@
             <a href="<?php echo e(route('landing')); ?>" class="block rounded-lg px-3 py-2 text-sm font-medium <?php echo e($active === 'home' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10'); ?>">Home</a>
             <a href="<?php echo e(route('about')); ?>" class="block rounded-lg px-3 py-2 text-sm font-medium <?php echo e($active === 'about' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10'); ?>">About Us</a>
             <a href="<?php echo e(route('service')); ?>" class="block rounded-lg px-3 py-2 text-sm font-medium <?php echo e($active === 'service' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10'); ?>">Services</a>
-            <a href="<?php echo e(route('landing')); ?>#projects" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/90 hover:bg-white/10">Project</a>
-            <a href="<?php echo e(route('landing')); ?>#contact" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/90 hover:bg-white/10">Contact Us</a>
+            <a href="<?php echo e(route('project')); ?>" class="block rounded-lg px-3 py-2 text-sm font-medium <?php echo e($active === 'service' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10'); ?>">Project</a>
+            <a href="<?php echo e(route('contact')); ?>" class="block rounded-lg px-3 py-2 text-sm font-medium <?php echo e($active === 'service' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10'); ?>">Contact Us</a>
         </div>
         <div class="mt-4 grid grid-cols-2 gap-2">
             <a href="<?php echo e(route('login')); ?>" class="rounded-full border border-white/30 bg-white/10 px-3 py-2 text-center text-sm font-medium text-white">Login</a>

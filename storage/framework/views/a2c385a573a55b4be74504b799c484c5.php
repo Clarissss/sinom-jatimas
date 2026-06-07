@@ -1,7 +1,7 @@
 
 
 <?php $__env->startSection('title', 'About Us - PT. Sinom Jati Mas'); ?>
-<?php $__env->startSection('meta_description', 'Tentang PT. Sinom Jati Mas - Visi, Misi, dan profil perusahaan.'); ?>
+<?php $__env->startSection('meta_description', 'About PT. Sinom Jati Mas - Vision, mission, and company profile.'); ?>
 
 <?php $__env->startPush('styles'); ?>
 <style>
@@ -37,7 +37,7 @@
     <section class="bg-white py-14 lg:py-20">
         <div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
             <p class="text-base leading-relaxed text-gray-600 sm:text-lg">
-                <?php echo e($companyProfile?->about_us ?? 'PT. Sinom Jati Mas bergerak di bidang General Contractor, Cut and Fill, serta General Trading.'); ?>
+                <?php echo e($companyProfile?->about_us ?? 'PT. Sinom Jati Mas operates in General Contractor, Cut and Fill, and General Trading.'); ?>
 
             </p>
             <div class="mt-10 grid gap-8 sm:grid-cols-2">
@@ -75,16 +75,16 @@
                     </div>
                 </div>
                 <div class="order-1 lg:order-2 lg:pb-4">
-                    <h2 class="text-3xl font-bold md:text-4xl">Visi</h2>
+                    <h2 class="text-3xl font-bold md:text-4xl">Vision</h2>
                     <hr class="my-4 border-white/80">
-                    <p class="text-base leading-relaxed text-white/95 sm:text-lg"><?php echo e($companyProfile?->vision ?? 'Menjadi perusahaan nasional yang berkelanjutan dan berkembang pesat.'); ?></p>
-                    <h2 class="mt-10 text-3xl font-bold md:text-4xl">Misi</h2>
+                    <p class="text-base leading-relaxed text-white/95 sm:text-lg"><?php echo e($companyProfile?->vision ?? 'To become a sustainable national company that grows rapidly and responsibly.'); ?></p>
+                    <h2 class="mt-10 text-3xl font-bold md:text-4xl">Mission</h2>
                     <hr class="my-4 border-white/80">
-                    <p class="text-base leading-relaxed text-white/95 sm:text-lg"><?php echo e($companyProfile?->mission ?? 'Meningkatkan daya saing perusahaan melalui pelayanan prima dan teknologi mutakhir.'); ?></p>
+                    <p class="text-base leading-relaxed text-white/95 sm:text-lg"><?php echo e($companyProfile?->mission ?? 'To strengthen competitiveness through excellent service and modern technology on every project.'); ?></p>
                 </div>
             </div>
         </div>
     </section>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.public', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\HP\sinojatimas\sinom-jatimas\resources\views/about.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.public', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\KULIAH\SEMESTER 8\Sistem Informasi Perusahaan\Project\sinom-jatimas\resources\views/about.blade.php ENDPATH**/ ?>

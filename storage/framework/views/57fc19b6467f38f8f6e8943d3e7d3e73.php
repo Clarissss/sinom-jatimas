@@ -3,7 +3,7 @@
     $isAbout = $variant === 'about';
 ?>
 
-<?php if (! $__env->hasRenderedOnce('7b599f3d-d4a1-4954-a86b-4bd4e19766a9')): $__env->markAsRenderedOnce('7b599f3d-d4a1-4954-a86b-4bd4e19766a9'); ?>
+<?php if (! $__env->hasRenderedOnce('0babb9e6-d40c-4730-82e1-40865fe97581')): $__env->markAsRenderedOnce('0babb9e6-d40c-4730-82e1-40865fe97581'); ?>
     <?php $__env->startPush('styles'); ?>
     <style>
         .project-stat-card {

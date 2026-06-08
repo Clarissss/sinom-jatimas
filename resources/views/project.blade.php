@@ -18,20 +18,18 @@
 
 @section('content')
 
-    <!-- HERO -->
-    <section class="relative overflow-hidden bg-gray-900 pt-32 pb-20">
-        <div class="absolute inset-0 bg-cover bg-center"
-            style="background-image:url('{{ asset('images/landing/hero-bg.png') }}')">
-        </div>
-
+    <section class="relative overflow-hidden bg-gray-900 pt-32 pb-16 lg:pt-40 lg:pb-20">
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{{ asset('images/landing/hero-bg.png') }}');"></div>
         <div class="absolute inset-0 bg-black/60"></div>
-
-        <div class="relative mx-auto max-w-7xl px-6">
-            <h1 class="text-5xl font-bold text-white">
-                Project
-            </h1>
+        <div class="relative mx-auto max-w-5xl px-4 text-left sm:px-6 lg:px-8">
+            <p class="mb-3 text-sm font-semibold uppercase tracking-wider text-white/80">Our</p>
+            <h1 class="text-3xl font-bold text-white sm:text-4xl md:text-5xl">Project</h1>
+            <p class="mb-3 mt-6 max-w-3xl text-white/90 ">
+            Integrated solutions for your construction and trading project needs.
+            </p>
         </div>
     </section>
+
 
     <!-- INTRO -->
 <section class="bg-white py-16">

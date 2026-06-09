@@ -36,6 +36,41 @@ class LandingController extends Controller
         ]));
     }
 
+public function project()
+{
+    $projects = Project::with([
+        'client',
+        'progressPhotos'
+    ])->latest()->get();
+
+    $projectsForMap = Project::whereNotNull('latitude')
+        ->whereNotNull('longitude')
+        ->get([
+            'id',
+            'name',
+            'location',
+            'latitude',
+            'longitude',
+            'status',
+            'progress_percentage'
+        ]);
+
+    return view('project', compact(
+        'projects',
+        'projectsForMap'
+    ));
+}
+
+public function contact()
+{
+    return view('contact', array_merge(
+        $this->publicStats(),
+        [
+            'activePage' => 'contact'
+        ]
+    ));
+}
+
     /**
      * @return array{
      *     companyProfile: ?CompanyProfile,

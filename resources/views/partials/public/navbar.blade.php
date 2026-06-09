@@ -27,8 +27,8 @@
             {!! $navItem('home', 'Home', route('landing')) !!}
             {!! $navItem('about', 'About Us', route('about')) !!}
             {!! $navItem('service', 'Services', route('service')) !!}
-            {!! $navItem('project', 'Project', route('landing') . '#projects') !!}
-            {!! $navItem('contact', 'Contact Us', route('landing') . '#contact') !!}
+            {!! $navItem('project', 'Project', route('project')) !!}
+            {!! $navItem('contact', 'Contact Us', route('contact')) !!}
         </nav>
 
         <div id="nav-actions" class="hidden items-center gap-3 md:flex">
@@ -46,8 +46,8 @@
             <a href="{{ route('landing') }}" class="block rounded-lg px-3 py-2 text-sm font-medium {{ $active === 'home' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10' }}">Home</a>
             <a href="{{ route('about') }}" class="block rounded-lg px-3 py-2 text-sm font-medium {{ $active === 'about' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10' }}">About Us</a>
             <a href="{{ route('service') }}" class="block rounded-lg px-3 py-2 text-sm font-medium {{ $active === 'service' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10' }}">Services</a>
-            <a href="{{ route('landing') }}#projects" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/90 hover:bg-white/10">Project</a>
-            <a href="{{ route('landing') }}#contact" class="block rounded-lg px-3 py-2 text-sm font-medium text-white/90 hover:bg-white/10">Contact Us</a>
+            <a href="{{ route('project') }}" class="block rounded-lg px-3 py-2 text-sm font-medium {{ $active === 'service' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10' }}">Project</a>
+            <a href="{{ route('contact') }}" class="block rounded-lg px-3 py-2 text-sm font-medium {{ $active === 'service' ? 'bg-white/20 text-white' : 'text-white/90 hover:bg-white/10' }}">Contact Us</a>
         </div>
         <div class="mt-4 grid grid-cols-2 gap-2">
             <a href="{{ route('login') }}" class="rounded-full border border-white/30 bg-white/10 px-3 py-2 text-center text-sm font-medium text-white">Login</a>

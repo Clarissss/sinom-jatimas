@@ -223,7 +223,7 @@ function editInvoiceForm(projectsData, invoiceData, itemsData) {
             if (this.items.length > 1) {
                 this.items.splice(index, 1);
             } else {
-                alert("Minimal harus ada 1 baris pekerjaan!");
+                openAlertModal({title: 'Tidak Dapat Menghapus', message: 'Minimal harus ada 1 baris pekerjaan.', icon: 'fa-circle-info', iconColor: 'text-blue-500', bgColor: 'bg-blue-50'});
             }
         },
         

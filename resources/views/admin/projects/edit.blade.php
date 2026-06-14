@@ -139,7 +139,10 @@
     // FUNGSI PENCARIAN OTOMATIS (INI YANG KURANG)
     async function searchCity() {
         const query = document.getElementById('citySearch').value;
-        if (!query) return alert('Masukkan nama kota!');
+        if (!query) {
+            openAlertModal({title: 'Pencarian Lokasi', message: 'Masukkan nama kota terlebih dahulu.', icon: 'fa-magnifying-glass-location', iconColor: 'text-blue-500', bgColor: 'bg-blue-50'});
+            return;
+        }
 
         try {
             const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&countrycodes=id`);
@@ -152,7 +155,7 @@
                 map.flyTo([lat, lon], 13);
                 updateMarker(lat, lon);
             } else {
-                alert("Lokasi tidak ditemukan di Indonesia.");
+                openAlertModal({title: 'Lokasi Tidak Ditemukan', message: 'Lokasi tidak ditemukan di Indonesia. Silakan coba kata kunci lain.', icon: 'fa-location-dot', iconColor: 'text-red-500', bgColor: 'bg-red-50'});
             }
         } catch (error) {
             console.error("Error geocoding:", error);

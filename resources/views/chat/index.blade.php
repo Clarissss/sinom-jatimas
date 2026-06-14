@@ -575,7 +575,7 @@
                     // Validasi tipe file berdasarkan jenis dokumen
                     if (selectedDocumentType === 'field_map') {
                         if (!selectedFile.type.startsWith('image/')) {
-                            alert('Peta Lapangan hanya boleh file gambar (JPG/PNG)!');
+                            openAlertModal({title: 'Format File Tidak Sesuai', message: 'Peta Lapangan hanya boleh file gambar (JPG/PNG).', icon: 'fa-image', iconColor: 'text-amber-500', bgColor: 'bg-amber-50'});
                             selectedFile = null;
                             fileInput.value = '';
                             documentTypeInput.value = '';
@@ -585,7 +585,7 @@
                         }
                     } else if (selectedDocumentType === 'contract' || selectedDocumentType === '') {
                         if (selectedFile.type !== 'application/pdf') {
-                            alert('File Biasa dan Kontrak Kerja hanya boleh file PDF!');
+                            openAlertModal({title: 'Format File Tidak Sesuai', message: 'File Biasa dan Kontrak Kerja hanya boleh file PDF.', icon: 'fa-file-pdf', iconColor: 'text-red-500', bgColor: 'bg-red-50'});
                             selectedFile = null;
                             fileInput.value = '';
                             documentTypeInput.value = '';
@@ -596,7 +596,7 @@
                     }
                     
                     if (selectedFile.size > 10 * 1024 * 1024) {
-                        alert('File terlalu besar! Maksimal 10MB');
+                        openAlertModal({title: 'Ukuran File Terlalu Besar', message: 'Ukuran file maksimal yang diperbolehkan adalah 10 MB.', icon: 'fa-triangle-exclamation', iconColor: 'text-orange-500', bgColor: 'bg-orange-50'});
                         selectedFile = null;
                         fileInput.value = '';
                         documentTypeInput.value = '';
@@ -641,7 +641,7 @@
                 
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
                 if (!csrfToken) {
-                    alert('Sesi telah berakhir. Silakan refresh halaman.');
+                    openAlertModal({title: 'Sesi Berakhir', message: 'Sesi telah berakhir. Silakan refresh halaman (F5).', icon: 'fa-clock', iconColor: 'text-orange-500', bgColor: 'bg-orange-50'});
                     sendBtn.disabled = false;
                     return;
                 }
@@ -678,15 +678,15 @@
                         this.addMessage(data);
                         selectedFile = null;
                     } else if (res.status === 419) {
-                        alert('Sesi telah berakhir. Silakan refresh halaman (F5).');
+                        openAlertModal({title: 'Sesi Berakhir', message: 'Sesi telah berakhir. Silakan refresh halaman (F5).', icon: 'fa-clock', iconColor: 'text-orange-500', bgColor: 'bg-orange-50'});
                     } else {
                         const error = await res.text();
                         console.error('Server error:', error);
-                        alert('Gagal mengirim pesan. Silakan coba lagi.');
+                        openAlertModal({title: 'Gagal Mengirim', message: 'Gagal mengirim pesan. Silakan coba lagi.', icon: 'fa-circle-xmark', iconColor: 'text-red-500', bgColor: 'bg-red-50'});
                     }
                 } catch (err) {
                     console.error(err);
-                    alert('Error koneksi. Cek internet Anda.');
+                    openAlertModal({title: 'Koneksi Bermasalah', message: 'Error koneksi. Cek internet Anda.', icon: 'fa-wifi', iconColor: 'text-red-500', bgColor: 'bg-red-50'});
                 } finally {
                     sendBtn.disabled = false;
                 }

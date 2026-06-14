@@ -50,7 +50,8 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     // Daily Reports (Sisi Klien)
     Route::get('/daily-reports', [\App\Http\Controllers\Client\DailyReportController::class, 'index'])->name('daily-reports.index');
     Route::get('/daily-reports/{project}', [\App\Http\Controllers\Client\DailyReportController::class, 'show'])->name('daily-reports.show');
-    
+    Route::get('/daily-reports/{dailyReport}/photos/{photo}/download', [\App\Http\Controllers\Client\DailyReportController::class, 'downloadPhoto'])
+        ->name('daily-reports.photos.download');
     
     Route::patch('/daily-reports/{dailyReport}/accept', [\App\Http\Controllers\Admin\DailyReportController::class, 'acceptReport'])->name('daily-reports.accept');
 });
@@ -68,6 +69,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     
     // Daily Reports (Sisi Admin)
     Route::resource('daily-reports', \App\Http\Controllers\Admin\DailyReportController::class);
+    Route::get('/daily-reports/{dailyReport}/photos/{photo}/download', [\App\Http\Controllers\Admin\DailyReportController::class, 'downloadPhoto'])
+        ->name('daily-reports.photos.download');
     
     // Documents
     Route::resource('documents', \App\Http\Controllers\Admin\DocumentController::class);

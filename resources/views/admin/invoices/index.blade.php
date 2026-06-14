@@ -169,12 +169,21 @@
                                     <a href="{{ route('admin.invoices.download', $invoice) }}" class="w-9 h-9 flex items-center justify-center text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"><i class="fa-solid fa-file-pdf text-xs"></i></a>
                                     
                                     @if(in_array($invoice->status, ['sent', 'overdue']))
-                                        <form action="{{ route('admin.invoices.mark-paid', $invoice) }}" method="POST" class="inline" onsubmit="return confirm('Konfirmasi pelunasan invoice ini?')">
-                                            @csrf
-                                            <button type="submit" class="w-9 h-9 flex items-center justify-center text-emerald-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all">
-                                                <i class="fa-solid fa-check-double text-xs"></i>
-                                            </button>
-                                        </form>
+                                        <button type="button"
+                                                x-data="{}"
+                                                @click="$dispatch('open-confirm', {
+                                                    title: 'Konfirmasi Pelunasan',
+                                                    message: 'Tandai invoice {{ $invoice->invoice_number }} sebagai lunas?',
+                                                    action: '{{ route('admin.invoices.mark-paid', $invoice) }}',
+                                                    method: 'POST',
+                                                    buttonText: 'Tandai Lunas',
+                                                    buttonClass: 'bg-emerald-600 hover:bg-emerald-700',
+                                                    icon: 'fa-check-double'
+                                                })"
+                                                class="w-9 h-9 flex items-center justify-center text-emerald-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                                                title="Tandai Lunas">
+                                            <i class="fa-solid fa-check-double text-xs"></i>
+                                        </button>
                                     @endif
                                 </div>
                             </td>

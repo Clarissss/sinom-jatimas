@@ -163,4 +163,15 @@ class DailyReportController extends Controller
 
         return back()->with('success', 'Laporan harian berhasil dikonfirmasi dan diterima.');
     }
+
+    public function downloadPhoto(DailyReport $dailyReport, $photo)
+    {
+        $photoPath = base64_decode($photo, true);
+
+        if ($photoPath === false || !Storage::disk('public')->exists($photoPath)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download($photoPath);
+    }
 }

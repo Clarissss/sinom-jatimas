@@ -203,7 +203,17 @@
 
                             <div class="border-t border-gray-100 my-1"></div>
 
-                            <button onclick="document.getElementById('logout-form').submit()"
+                            <button type="button"
+                                x-data="{}"
+                                @click="$dispatch('open-confirm', {
+                                    title: 'Keluar Akun',
+                                    message: 'Apakah Anda yakin ingin keluar dari akun ini?',
+                                    action: '{{ route('logout') }}',
+                                    method: 'POST',
+                                    buttonText: 'Keluar',
+                                    buttonClass: 'bg-red-600 hover:bg-red-700',
+                                    icon: 'fa-arrow-right-from-bracket'
+                                })"
                                 class="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                                 role="menuitem">
                                 <i class="fa-solid fa-arrow-right-from-bracket w-4 mr-3"></i>

@@ -55,12 +55,20 @@
                     <button onclick="openEditModal({{ $partner }})" class="w-10 h-10 flex items-center justify-center bg-gray-900 text-white hover:bg-blue-600 rounded-xl transition-all shadow-lg">
                         <i class="fa-solid fa-pen-to-square text-[10px]"></i>
                     </button>
-                    <form action="{{ route('admin.partners.destroy', $partner) }}" method="POST" onsubmit="return confirm('Hapus mitra ini?')">
-                        @csrf @method('DELETE')
-                        <button class="w-10 h-10 flex items-center justify-center bg-white text-[#DD3517] border border-red-50 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-lg">
-                            <i class="fa-solid fa-trash text-[10px]"></i>
-                        </button>
-                    </form>
+                    <button type="button"
+                            x-data="{}"
+                            @click="$dispatch('open-confirm', {
+                                title: 'Hapus Mitra',
+                                message: 'Yakin ingin menghapus mitra {{ addslashes($partner->name) }}?',
+                                action: '{{ route('admin.partners.destroy', $partner) }}',
+                                method: 'DELETE',
+                                buttonText: 'Hapus',
+                                buttonClass: 'bg-red-600 hover:bg-red-700',
+                                icon: 'fa-trash'
+                            })"
+                            class="w-10 h-10 flex items-center justify-center bg-white text-[#DD3517] border border-red-50 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-lg">
+                        <i class="fa-solid fa-trash text-[10px]"></i>
+                    </button>
                 </div>
             </div>
         </div>

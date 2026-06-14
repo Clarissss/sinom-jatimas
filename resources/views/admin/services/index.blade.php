@@ -37,12 +37,20 @@
                     <a href="{{ route('admin.services.edit', $service) }}" class="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm" title="Edit">
                         <i class="fa-solid fa-pen-to-square text-xs"></i>
                     </a>
-                    <form action="{{ route('admin.services.destroy', $service) }}" method="POST" onsubmit="return confirm('Hapus layanan ini?')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Hapus">
-                            <i class="fa-solid fa-trash text-xs"></i>
-                        </button>
-                    </form>
+                    <button type="button"
+                            x-data="{}"
+                            @click="$dispatch('open-confirm', {
+                                title: 'Hapus Layanan',
+                                message: 'Yakin ingin menghapus layanan {{ addslashes($service->name) }}?',
+                                action: '{{ route('admin.services.destroy', $service) }}',
+                                method: 'DELETE',
+                                buttonText: 'Hapus',
+                                buttonClass: 'bg-red-600 hover:bg-red-700',
+                                icon: 'fa-trash'
+                            })"
+                            class="p-2 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Hapus">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
                 </div>
             </div>
 

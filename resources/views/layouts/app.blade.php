@@ -157,15 +157,29 @@
       x-init="
         @auth
         idleTimeout = setTimeout(() => { 
-            alert('Sesi Anda telah berakhir karena tidak ada aktivitas.'); 
-            document.getElementById('logout-form').submit(); 
+            openAlertModal({
+                title: 'Sesi Berakhir',
+                message: 'Sesi Anda telah berakhir karena tidak ada aktivitas. Anda akan keluar dari sistem.',
+                icon: 'fa-clock',
+                iconColor: 'text-orange-500',
+                bgColor: 'bg-orange-50',
+                buttonText: 'Keluar',
+                callback: () => document.getElementById('logout-form').submit()
+            });
         }, 1800000);
         
         const resetIdleTimeout = () => {
             clearTimeout(idleTimeout);
             idleTimeout = setTimeout(() => { 
-                alert('Sesi Anda telah berakhir karena tidak ada aktivitas.'); 
-                document.getElementById('logout-form').submit(); 
+                openAlertModal({
+                    title: 'Sesi Berakhir',
+                    message: 'Sesi Anda telah berakhir karena tidak ada aktivitas. Anda akan keluar dari sistem.',
+                    icon: 'fa-clock',
+                    iconColor: 'text-orange-500',
+                    bgColor: 'bg-orange-50',
+                    buttonText: 'Keluar',
+                    callback: () => document.getElementById('logout-form').submit()
+                });
             }, 1800000);
         };
         
@@ -282,6 +296,7 @@
         </div>
     </main>
 
+    @include('components.modals')
     @stack('scripts')
 </body>
 </html>

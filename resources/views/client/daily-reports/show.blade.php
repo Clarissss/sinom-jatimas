@@ -36,12 +36,20 @@
 
             <div class="flex items-center space-x-3">
                 @if(!$dailyReport->is_accepted)
-                    <form action="{{ route('client.daily-reports.accept', $dailyReport) }}" method="POST" onsubmit="return confirm('Konfirmasi terima laporan ini?');">
-                        @csrf @method('PATCH')
-                        <button type="submit" class="inline-flex items-center text-[10px] font-black bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl uppercase tracking-wider transition-all shadow-md">
-                            <i class="fa-solid fa-check mr-1.5"></i> Terima Laporan
-                        </button>
-                    </form>
+                    <button type="button"
+                            x-data="{}"
+                            @click="$dispatch('open-confirm', {
+                                title: 'Terima Laporan Harian',
+                                message: 'Konfirmasi bahwa Anda menyetujui laporan harian ini? Setelah diterima, laporan tidak dapat diubah.',
+                                action: '{{ route('client.daily-reports.accept', $dailyReport) }}',
+                                method: 'PATCH',
+                                buttonText: 'Terima Laporan',
+                                buttonClass: 'bg-emerald-600 hover:bg-emerald-700',
+                                icon: 'fa-check'
+                            })"
+                            class="inline-flex items-center text-[10px] font-black bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl uppercase tracking-wider transition-all shadow-md">
+                        <i class="fa-solid fa-check mr-1.5"></i> Terima Laporan
+                    </button>
                 @else
                     <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black px-4 py-2 rounded-xl flex items-center shadow-sm uppercase tracking-wider">
                         <i class="fa-solid fa-circle-check mr-1.5"></i> Laporan Diterima

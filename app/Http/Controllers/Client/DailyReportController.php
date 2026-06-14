@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\DailyReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DailyReportController extends Controller
 {
@@ -58,5 +59,16 @@ class DailyReportController extends Controller
         return view('client.daily-reports.show', compact(
             'dailyReport'
         ));
+    }
+
+    public function downloadPhoto(DailyReport $dailyReport, $photo)
+    {
+        $photoPath = base64_decode($photo, true);
+
+        if ($photoPath === false || !Storage::disk('public')->exists($photoPath)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download($photoPath);
     }
 }

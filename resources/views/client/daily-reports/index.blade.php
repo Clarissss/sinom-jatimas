@@ -254,12 +254,20 @@
                                         </a>
 
                                         @if(!$report->is_accepted)
-                                            <form action="{{ route('client.daily-reports.accept', $report) }}" method="POST" class="inline" onsubmit="return confirm('Konfirmasi bahwa Anda menyetujui laporan harian ini?');">
-                                                @csrf @method('PATCH')
-                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-orange-50 text-orange-600 border border-orange-100 hover:bg-emerald-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Konfirmasi Terima Laporan">
-                                                    <i class="fa-solid fa-check mr-1"></i> Terima
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                    x-data="{}"
+                                                    @click="$dispatch('open-confirm', {
+                                                        title: 'Terima Laporan Harian',
+                                                        message: 'Konfirmasi bahwa Anda menyetujui laporan harian tanggal {{ $report->report_date->format('d/m/Y') }}? Setelah diterima, laporan tidak dapat diubah.',
+                                                        action: '{{ route('client.daily-reports.accept', $report) }}',
+                                                        method: 'PATCH',
+                                                        buttonText: 'Terima',
+                                                        buttonClass: 'bg-emerald-600 hover:bg-emerald-700',
+                                                        icon: 'fa-check'
+                                                    })"
+                                                    class="inline-flex items-center px-3 py-1.5 bg-orange-50 text-orange-600 border border-orange-100 hover:bg-emerald-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all" title="Konfirmasi Terima Laporan">
+                                                <i class="fa-solid fa-check mr-1"></i> Terima
+                                            </button>
                                         @endif
                                     </div>
                                 </td>

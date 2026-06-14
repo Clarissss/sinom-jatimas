@@ -20,14 +20,18 @@ class InvoiceTest extends TestCase
     public function test_admin_can_create_invoice()
     {
         $admin = $this->adminUser();
-        $project = Project::factory()->create();
+        $client = User::factory()->client()->create();
+        $project = Project::factory()->create(['client_id' => $client->id]);
         $this->actingAs($admin);
 
         $response = $this->post('/admin/invoices', [
+            'client_id' => $client->id,
             'project_id' => $project->id,
             'termin_percentage' => 30,
-            'amount' => 5000000,
             'due_date' => now()->addMonth()->format('Y-m-d'),
+            'items' => [
+                ['item_name' => 'Pekerjaan 1', 'quantity' => 1, 'unit' => 'ls', 'price' => 5000000],
+            ],
         ]);
 
         $response->assertRedirect('/admin/invoices');
@@ -35,7 +39,7 @@ class InvoiceTest extends TestCase
             'project_id' => $project->id,
             'termin_percentage' => 30,
             'amount' => 5000000,
-            'status' => 'draft',
+            'status' => 'sent',
         ]);
     }
 

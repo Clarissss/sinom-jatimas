@@ -253,7 +253,7 @@
                 if (e.target.files[0]) {
                     selectedFile = e.target.files[0];
                     if (selectedFile.size > 10 * 1024 * 1024) {
-                        alert('File terlalu besar! Maksimal 10MB');
+                        openAlertModal({title: 'Ukuran File Terlalu Besar', message: 'Ukuran file maksimal yang diperbolehkan adalah 10 MB.', icon: 'fa-triangle-exclamation', iconColor: 'text-orange-500', bgColor: 'bg-orange-50'});
                         selectedFile = null;
                         fileInput.value = '';
                         return;
@@ -282,7 +282,7 @@
                 
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
                 if (!csrfToken) {
-                    alert('Sesi telah berakhir. Silakan refresh halaman.');
+                    openAlertModal({title: 'Sesi Berakhir', message: 'Sesi telah berakhir. Silakan refresh halaman (F5).', icon: 'fa-clock', iconColor: 'text-orange-500', bgColor: 'bg-orange-50'});
                     sendBtn.disabled = false;
                     return;
                 }
@@ -315,15 +315,15 @@
                         this.addMessage(data);
                         selectedFile = null;
                     } else if (res.status === 419) {
-                        alert('Sesi telah berakhir. Silakan refresh halaman (F5).');
+                        openAlertModal({title: 'Sesi Berakhir', message: 'Sesi telah berakhir. Silakan refresh halaman (F5).', icon: 'fa-clock', iconColor: 'text-orange-500', bgColor: 'bg-orange-50'});
                     } else {
                         const error = await res.text();
                         console.error('Server error:', error);
-                        alert('Gagal mengirim pesan. Silakan coba lagi.');
+                        openAlertModal({title: 'Gagal Mengirim', message: 'Gagal mengirim pesan. Silakan coba lagi.', icon: 'fa-circle-xmark', iconColor: 'text-red-500', bgColor: 'bg-red-50'});
                     }
                 } catch (err) {
                     console.error(err);
-                    alert('Error koneksi. Cek internet Anda.');
+                    openAlertModal({title: 'Koneksi Bermasalah', message: 'Error koneksi. Cek internet Anda.', icon: 'fa-wifi', iconColor: 'text-red-500', bgColor: 'bg-red-50'});
                 } finally {
                     sendBtn.disabled = false;
                 }

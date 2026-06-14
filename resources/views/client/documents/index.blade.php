@@ -201,9 +201,17 @@
                                     'technical_drawing' => 'fa-ruler-combined text-blue-500',
                                     'bast' => 'fa-clipboard-check text-emerald-500',
                                     'material_report' => 'fa-boxes-stacked text-purple-500',
+                                    'invoice' => 'fa-file-invoice-dollar text-cyan-500',
+                                    'daily_report' => 'fa-images text-pink-500',
                                     'other' => 'fa-file-lines text-gray-400',
                                 ];
                                 $icon = $typeIcons[$fileObj->type ?? 'other'] ?? 'fa-file-lines text-gray-400';
+
+                                $downloadUrl = match($fileObj->source) {
+                                    'invoice' => route('client.invoices.download', $fileObj->id),
+                                    'daily_report' => route('client.daily-reports.photos.download', ['dailyReport' => $fileObj->id, 'photo' => base64_encode($fileObj->extra_path)]),
+                                    default => route('client.documents.download', ['project' => $fileObj->project_id, 'document' => $fileObj->id]),
+                                };
                             @endphp
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-6 py-4">
@@ -228,7 +236,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('client.documents.download', ['project' => $fileObj->project_id, 'document' => $fileObj->id]) }}"
+                                    <a href="{{ $downloadUrl }}"
                                         class="bg-[#0F172A] text-white px-4 py-2 rounded-xl font-bold text-[10px] hover:bg-black transition-all">
                                         <i class="fa-solid fa-download mr-1"></i>
                                         DOWNLOAD

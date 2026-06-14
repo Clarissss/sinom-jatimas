@@ -222,7 +222,7 @@ function invoiceForm() {
             if (this.items.length > 1) {
                 this.items.splice(index, 1);
             } else {
-                alert("Invoice minimal harus memiliki 1 item/pekerjaan!");
+                openAlertModal({title: 'Tidak Dapat Menghapus', message: 'Invoice minimal harus memiliki 1 item/pekerjaan.', icon: 'fa-circle-info', iconColor: 'text-blue-500', bgColor: 'bg-blue-50'});
             }
         },
         

@@ -135,10 +135,21 @@
                                 <div class="flex items-center justify-end space-x-2">
                                     <a href="{{ route('admin.projects.show', $project) }}" class="p-2 text-gray-400 hover:text-[#DD3517] transition-all"><i class="fa-solid fa-eye"></i></a>
                                     <a href="{{ route('admin.projects.edit', $project) }}" class="p-2 text-gray-400 hover:text-blue-600 transition-all"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" class="inline" onsubmit="return confirm('Hapus?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="p-2 text-gray-300 hover:text-red-600 transition-all"><i class="fa-solid fa-trash-can"></i></button>
-                                    </form>
+                                    <button type="button"
+                                            x-data="{}"
+                                            @click="$dispatch('open-confirm', {
+                                                title: 'Hapus Proyek',
+                                                message: 'Yakin ingin menghapus proyek {{ addslashes($project->name) }}? Tindakan ini tidak dapat dibatalkan.',
+                                                action: '{{ route('admin.projects.destroy', $project) }}',
+                                                method: 'DELETE',
+                                                buttonText: 'Hapus',
+                                                buttonClass: 'bg-red-600 hover:bg-red-700',
+                                                icon: 'fa-trash-can'
+                                            })"
+                                            class="p-2 text-gray-300 hover:text-red-600 transition-all"
+                                            title="Hapus">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>

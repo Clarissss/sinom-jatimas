@@ -162,10 +162,21 @@
                                     
                                     @if(!$report->is_accepted)
                                         <a href="{{ route('admin.daily-reports.edit', $report) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-yellow-600 rounded-xl transition-all"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <form action="{{ route('admin.daily-reports.destroy', $report) }}" method="POST" class="inline" onsubmit="return confirm('Hapus laporan ini?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 rounded-xl transition-all"><i class="fa-solid fa-trash-can"></i></button>
-                                        </form>
+                                        <button type="button"
+                                                x-data="{}"
+                                                @click="$dispatch('open-confirm', {
+                                                    title: 'Hapus Laporan Harian',
+                                                    message: 'Yakin ingin menghapus laporan harian tanggal {{ $report->report_date->format('d/m/Y') }}?',
+                                                    action: '{{ route('admin.daily-reports.destroy', $report) }}',
+                                                    method: 'DELETE',
+                                                    buttonText: 'Hapus',
+                                                    buttonClass: 'bg-red-600 hover:bg-red-700',
+                                                    icon: 'fa-trash-can'
+                                                })"
+                                                class="p-2 bg-gray-50 text-gray-400 hover:text-red-600 rounded-xl transition-all"
+                                                title="Hapus">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
                                     @else
                                         <span class="text-xs text-gray-400 font-bold px-2 flex items-center italic"><i class="fa-solid fa-lock mr-1 text-[10px]"></i> Terkunci</span>
                                     @endif

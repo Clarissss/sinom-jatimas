@@ -138,9 +138,17 @@
                                         'technical_drawing' => 'fa-ruler-combined text-blue-500',
                                         'bast' => 'fa-clipboard-check text-emerald-500',
                                         'material_report' => 'fa-boxes-stacked text-purple-500',
+                                        'invoice' => 'fa-file-invoice-dollar text-cyan-500',
+                                        'daily_report' => 'fa-images text-pink-500',
                                         'other' => 'fa-file-lines text-gray-400',
                                     ];
                                     $icon = $typeIcons[$file['type'] ?? 'other'] ?? 'fa-file-lines text-gray-400';
+
+                                    $downloadUrl = match($file['source']) {
+                                        'invoice' => route('admin.invoices.download', $file['id']),
+                                        'daily_report' => route('admin.daily-reports.photos.download', ['dailyReport' => $file['id'], 'photo' => base64_encode($file['extra_path'])]),
+                                        default => route('admin.documents.download', $file['id']),
+                                    };
                                 @endphp
                                 <i class="fa-solid {{ $icon }} mr-3 text-lg"></i>
                                 <span class="font-bold text-gray-800 text-xs break-all">
@@ -157,7 +165,7 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('admin.documents.download', $file['id']) }}" 
+                            <a href="{{ $downloadUrl }}" 
                                class="bg-gray-900 text-white px-4 py-2 rounded-lg font-black text-[10px] hover:bg-gray-800 transition-all">
                                 <i class="fa-solid fa-download mr-1"></i> DOWNLOAD
                             </a>
